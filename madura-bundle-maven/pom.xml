@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>nz.co.senanque</groupId>
+    <artifactId>madura-bundles</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+  </parent>
+  <groupId>nz.co.senanque</groupId>
+  <version>1.0.0</version>
+  <artifactId>madura-bundle-maven</artifactId>
+  <name>madura-bundle-maven</name>
+  <description>test bundle for maven</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>nz.co.senanque</groupId>
+  		<artifactId>madura-bundle</artifactId>
+  		<version>3.9.4-SNAPSHOT</version>
+  		<scope>provided</scope>
+  	</dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <archive>
+            <index>false</index>
+			<addMavenDescriptor>true</addMavenDescriptor>
+            <manifest>
+              <addClasspath>false</addClasspath>
+            </manifest>
+            <manifestEntries>
+	            <Built-By>${user.name}</Built-By>
+	            <Bundle-Activator>nz.co.senanque.madura.bundle.BundleRootImpl</Bundle-Activator>
+	            <Bundle-Description>Test Bundle Maven</Bundle-Description>
+	            <Bundle-Name>bundle-maven</Bundle-Name>
+	            <Bundle-Version>${project.version}</Bundle-Version>
+	            <Bundle-Context>bundle-spring.xml</Bundle-Context>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

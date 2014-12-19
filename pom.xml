@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>nz.co.senanque</groupId>
+	<artifactId>madura-bundles</artifactId>
+	<version>4.0.0-SNAPSHOT</version>
+	<name>madura-bundles</name>
+	<description>Parent project for Madura Bundles</description>
+	<packaging>pom</packaging>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	<organization>
+		<name>Prometheus Consulting</name>
+		<url>www.madurasoftware.com</url>
+	</organization>
+	<developers>
+		<developer>
+			<id>roger</id>
+			<name>Roger J Parkinson</name>
+			<email>roger.parkinson35 at gmail.com</email>
+			<timezone>GMT+12</timezone>
+			<roles>
+			</roles>
+		</developer>
+	</developers>
+	<scm>
+		<url>https://github.com/RogerParkinson/madura-bundles/trunk/</url>
+		<connection>scm:svn:https://github.com/RogerParkinson/madura-bundles/trunk/</connection>
+		<developerConnection>scm:svn:https://github.com/RogerParkinson/madura-bundles/trunk/</developerConnection>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/RogerParkinson/madura-bundles/issues</url>
+	</issueManagement>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<pdf>target/${project.artifactId}-${project.version}.pdf</pdf>
+		<spring.framework.version>3.2.6.RELEASE</spring.framework.version>
+		<aetherVersion>1.0.0.v20140518</aetherVersion>
+		<mavenVersion>3.1.0</mavenVersion>
+	</properties>
+	<modules>
+		<module>madura-bundle</module>
+		<module>madura-bundle-maven</module>
+		<module>madura-bundle-test</module>
+	</modules>
+</project>

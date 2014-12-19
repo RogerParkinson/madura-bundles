@@ -1,0 +1,687 @@
+<?xml-stylesheet type="text/xsl" href="MaduraHTML.xsl" ?>
+<doc xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://oss.sonatype.org/content/repositories/releases/nz/co/senanque/maduradocs/6.0.5/maduradocs-6.0.5.xsd">
+	<title>
+		<MainTitle>MaduraBundle</MainTitle>
+		<SubTitle>User Guide</SubTitle>
+		<Author>Roger Parkinson</Author>
+		<Revision>$Revision: 48 $</Revision>
+		<image>logo.jpg</image>
+		<references>
+			<reference t="Apache Licence 2.0" url="http://www.apache.org/licenses/LICENSE-2.0" />
+			<reference t="slf4j" url="http://www.slf4j.org" />
+			<reference t="Spring Framework" url="http://www.springframework.org" />
+			<reference t="aopalliance" url="http://aopalliance.sourceforge.net/" />
+			<reference t="OSGI" url="http://www.osgi.org" />
+            <reference t="VaadinSupport" url="https://github.com/RogerParkinson/MaduraVaadinSupport"/>
+            <reference t="pizzaOrderBundle" url="https://github.com/RogerParkinson/MaduraPizzaOrderDemo"/>
+            <reference t="maduraBundle" url="https://github.com/RogerParkinson/madura-bundles"/>
+            <reference t="perspectivesManager" url="https://github.com/RogerParkinson/MaduraPerspectivesManager"/>
+		</references>
+	</title>
+	<body>
+		<process-log/>
+		<process-references/>
+		<h1 t="Introduction">
+        <p>These are the objectives:</p>
+		<list>
+		<le>Define sub-elements of an application which are self-contained bundles, ie have their own Java classes and resources.</le>
+		<le>Dynamically load these bundles into a running application.</le>
+		<le>The sub-elements are unaware of other bundles, so no danger of naming conflicts.</le>
+		<le>Service code and resources in the main application can be accessed transparently by the bundles.</le>
+		</list>
+		<p>Here's the kind of problem we're solving. Say we have a bunch of resources and code which relates to a specific set of products and we
+		have application code which calls on the product code. We want to be able to change the products without dropping the server.</p>
+		<p>Using Madura Bundle we bundle the resources and code into a jar file. We can then arrange for that jar file to be loaded dynamically.</p>
+		<p>The application code, when it wants to access the product information and code just specifies what bundle it wants to use (of the several
+		that might be active). After that the application code doesn't know or care that it is accessing a bundle. It looks like normal
+		code and normal resources. The bundled resources and code are actually injected into the application classes using Spring, so
+		apart from selecting the bundle, the application code knows nothing about the bundles.</p>
+		<p>Yes, you can do something like this with OSGi, but not quite all of it. I found that to implement OSGi in our existing software I would have to
+		repackage all of the existing jar files and resources, including 3rd party ones. Spring <referenceLink t="Spring Framework"/> have done a lot of work making OSGi bundles
+		out of 3rd party libraries, but we also have dozens of in-house libraries that would have to be migrated to OSGi before we could start
+		using it. Not going to happen in any time frame I could set, so we cooked up this instead.</p>
+		<p>The key difference between this and OSGi is that it will let you access things on the classpath of the calling application.
+		So all our in-house jar files need <emph>no change whatsoever</emph>. To be fair to OSGi it does offer a bunch of things that
+		Madura Bundles doesn't, such as events and security. In an attempt to maintain some compatibility with OSGi the manifest details used by Madura Bundles is designed
+		to be compatible with OSGi. Migrating from Madura Bundles to OSGi has not been tested.</p>
+		<p>A second key difference between this and OSGi is that the bundles can be loaded from Maven (again, dynamically).</p>
+		<p>There are two general ways to use Madura Bundles. You can implement a bundle listener, described in <sectionLink t="Listening for Bundles"/>. In this you write a listener that will be called
+		whenever a new bundle arrives or is removed from the system. Your listener then locates the relevant beans in the bundle and puts them in some structure you define such as a list. Your application
+		then scans this list for functions. You might use this in the following situations</p>
+		<list>
+		<le>You have a list of validation operations that your application needs to call at a certain stage and you want to vary them dynamically. By deploying them in bundles with a bundle listener your
+		application can register new validation operations as they are added (and remove them if they are deleted).</le>
+		<le>You have various UI components you want to register in a container application. The components might be menu items, with the code to run if they are picked, forms to appear etc. These can be
+		delivered to the application as bundles which, as they register themselves with the application, add their various components to the UI.</le>
+		</list>
+		<p>Rather than write a bundle listener you can, in simpler cases, just query the bundle manager for beans of a given type. All beans of that type in all the current bundles will be returned.</p>
+		<p>The second way to use Madura Bundles is dynamic proxying. In this case you can inject proxied beans from the bundles into your application. You application is unaware that what was injected was
+		not the actual bean but a proxy. When it calls the bean the proxy maps to the currently selected bundle (there can be only one) transparently. Of course your application must have selected the
+		current bundle before the call takes place.</p>
+		<p>This is useful where you have a section of an application which is likely to vary over time but you want sessions that were started to keep running the same code. For example
+		if the application is order entry you might want existing orders to keep using the order entry system they started with and new orders to use the newly deployed system. So you would record
+		the bundle name when you save the order and when the order is fetched for further processing you can select the bundle it was saved with. New orders select the latest bundle.</p>
+		<p>But note that it only makes sense for only one bundle to be proxied at any one time (actually for any one thread). This restriction might make you consider the bundle listener approach.
+		However see <sectionLink t="Can I have Multiple Bundle Managers?"/></p>
+		<p>As well as these various way of <emph>using</emph> bundles there is more than one way of providing bundles:</p>
+		<list>
+		<le>The simplest way is to put the bundle into WEB-INF/bundles (in a web application). These bundles are loaded at startup time and it is a way to include initial or default bundles inside a war file. Why would
+		you do this rather than simply putting the bundle in with the other ordinary jar files? Because you might want to add more bundles and be able to select between this and the other bundles dynamically. For example
+		you might want to supersede the initial bundle with a later version.</le>
+		<le>Have the bundles in a directory and copy any new bundles into that directory. The directory will be scanned periodically and new bundles loaded.</le>
+		<le>Pull the bundles from Maven. This is similar to the directory but instead of jar files you have place holder files which describe the Maven artifact.
+		The actual jar files are published to Maven.</le>
+		</list>
+        <p>If you are the sort of person who likes to go straight to the examples then take a look at the unit tests in the source project<referenceLink t="maduraBundle"/> then,
+        for something more like an application you should look at pizzaOrderBundle<referenceLink t="pizzaOrderBundle"/> which is a working example of a bundle that
+        plugs into the perspective manager application<referenceLink t="perspectivesManager"/>. PizzaOrderBundle has a self contained UI as well as internal
+        data and logic and it uses the bundle mechanism to plug into the main application.</p>
+        <p>There are two distinct bundle managers and which one you want to use will determine how you build your bundles. In all cases, though,
+        bundles are just jar files with some extra stuff.</p>
+        </h1>
+        <h1 t="Building a Bundle">
+		<p>We deploy one jar file per bundle. The jar file contains classes and resources and one or more Spring context files. It can also specify
+		an optional class path in its manifest. The jar files specified in the classpath are loaded into the bundle with the classes and resources
+		from the bundle jar file.</p>
+		<p>The minimum jar file contains a Spring <referenceLink t="Spring Framework"/> application context file. You can add classes and resources
+		but you can also refer to classes and resources supplied by the main application. Typically there are some resources and classes
+		in the bundle as well. The context normally defines
+		a bean called bundleName which delivers the name of the current bundle. This is a small context file:</p>
+		<code><![CDATA[
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="bundleName" class="nz.co.senanque.madura.bundle.StringWrapperImpl">
+		<constructor-arg value="${bundle.name}"/>
+	</bean>
+	<bean id="TestBean" class="nz.co.senanque.madura.bundle.TestBeanImpl">
+		<property name="content" ref="bundleName"/>
+		<property name="resource" value="classpath:BundleResource.xml"/>
+	</bean>
+</beans>
+		]]></code>
+		<p>The <courier>StringWrapperImpl</courier> class just wraps a String so that we can proxy it. We would use <courier>java.lang.String</courier>
+		but it has no suitable interface. We must always define a bundleName bean so that the application can find out
+		what bundle this is. The second bean is just an example of an ordinary bean you might define.</p>
+		<p>The framework uses the manifest to discover information about the jar file.</p>
+		<h2 t="Building with Ant">
+		<code><![CDATA[
+<jar jarfile="${base}/bundles/bundle-2.0.jar">
+    <manifest>
+	      <attribute name="Built-By" value="${user.name}"/>
+	      <attribute name="Bundle-Activator" value="nz.co.senanque.madura.bundle.BundleRootImpl"/>
+	      <attribute name="Bundle-Description" value="Test Bundle"/>
+	      <attribute name="Bundle-Name" value="bundle"/>
+	      <attribute name="Bundle-Version" value="2.0"/>
+	      <attribute name="Bundle-Context" value="bundle-spring.xml"/>
+	      <attribute name="Class-Path" value="${bundle.class.path}"/>
+	</manifest>
+	<fileset dir="./bundle-2.0" includes="**/*.xml,**/*.properties,**/*.class"/>
+</jar>
+]]></code>
+		<p>That is the ant script needed to make the jar file. The vital entries are:</p>
+		<list>
+		<ll name="Bundle-Activator">The class that implements the <courier>BundleRoot</courier> interface. In practice it is always the one in the example, you don't really need to write another.</ll>
+		<ll name="Bundle-Name">The name of the bundle.</ll>
+		<ll name="Bundle-Version">The version of the bundle.</ll>
+		<ll name="Bundle-Context">The file(s) that make up the Spring context. You can specify comma lists and wildcards here, the usual Spring conventions apply.</ll>
+		<ll name="Class-Path">This is optional and is the standard manifest class path setting used when jar files are run stand-alone. In this context
+		the jar files referred to in the classpath will be added to the bundle.</ll>
+		</list>
+		<p>The name+version of the bundle must be unique and they ought to match the jar file name.</p>
+		<p>All of the manifest entries are available to Spring as place holders for example you can use ${Built-By} in the Spring file if you want.</p>
+		<p>You can use the Class-Path setting to name external jar files needed by this bundle. For example you might have a Class-Path that looks like this: </p>
+		<code>
+Class-Path: lib2/ant-optional-1.5.1.jar  lib2/antlr-2.7.6.jar lib2/aopalliance-1.0.jar lib2/asm-1.5.3.jar 
+		</code>
+		<p>This will look for a directory called ./lib2 containing the jar files named.</p>
+		<note>The lib2 directory, or equivalent must be a subdirectory of your bundles directory, ie a subdirectory of the directory the jar file ends up in. Also when loading bundles 
+		from <courier>WEB-INF/bundles</courier> you cannot use any dependencies, ie no lib2 directory. It will be ignored and no dependencies will be loaded. If you do rely on dependencies then consider pulling
+		bundles from Maven, which handles dependencies better.</note>
+		<p>That is all there is to the minimal jar file. Of course it would be more interesting if you include some .class files
+		and some resources in there too as well as wiring them into the context, but we will look at a more elaborate example later.</p>
+		</h2>
+		<h2 t="Building with Maven">
+		<p>The equivalent in Maven looks like this:</p>
+<code><![CDATA[		
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-jar-plugin</artifactId>
+	<version>2.5</version>
+	<configuration>
+		<archive>
+			<index>false</index>
+			<addMavenDescriptor>true</addMavenDescriptor>
+			<manifest>
+				<addClasspath>false</addClasspath>
+			</manifest>
+			<manifestEntries>
+				<Built-By>${user.name}</Built-By>
+				<Bundle-Activator>nz.co.senanque.madura.bundle.BundleRootImpl</Bundle-Activator>
+				<Bundle-Description>Test Bundle Maven</Bundle-Description>
+				<Bundle-Name>${project.artifactId}</Bundle-Name>
+				<Bundle-Version>${project.version}</Bundle-Version>
+				<Bundle-Context>bundle-spring.xml</Bundle-Context>
+			</manifestEntries>
+		</archive>
+	</configuration>
+</plugin>
+]]></code>
+		<p>This is the simplest Maven build. You might vary it by adding a classpath in the same way we showed with Ant. However if you are loading this bundle directly from Maven (as opposed to putting the
+		jar file in a sweep directory) then the dependencies come through automatically. It is good practice, therefore, to ensure you scope most of your dependencies as <courier>provided</courier> where they
+		can be provided by the container application. This ensures you don't get an alarmingly large memory footprint.</p>
+        </h2>
+        </h1>
+        <h1 t="Bundle Manager">
+		<p>The main application is wired like this:</p>
+		<code><![CDATA[
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:bundle="http://www.senanque.co.nz/madura/bundle"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+http://www.senanque.co.nz/madura/bundle http://www.senanque.co.nz/madura/bundle/MaduraBundle.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<bundle:manager id="bundleManager" directory="./bundles" time="1000"/>
+	<bundle:bean id="bundleName" interface="nz.co.senanque.madura.bundle.StringWrapper"/>
+	<bundle:bean id="TestBean" interface="nz.co.senanque.madura.bundle.TestBean"/>
+
+	<bean id="TestBean1" class="nz.co.senanque.madura.bundle.TestBeanImpl">
+		<property name="content" ref="bundleName"/>
+	</bean>
+</beans>		
+		]]></code>
+		<p>This is using a Spring namespace to make the definitions simpler.</p>
+		<p>The bundleManager definition has a directory to scan for jar files and a time. The time is optional. If you
+		leave it off the scan will happen only once, at startup, which might be all you need. If you add a time (in milliseconds)
+		then the directory will be rescanned over and over looking for new bundles. If it does find a new bundle file
+		it will lock the bundle collection briefly while it tidies things up. This is to ensure that bundles cannot be selected by
+		the application while the bundles are being reworked. Bundles that are already selected are not affected by this.</p>
+		<p>The bundleName bean and the TestBean are defined using <courier>&lt;bundle:bean/&gt;</courier>. They
+		are beans that must be defined in every bundle because the application expects to proxy them. You might like to think of 
+		them as a kind of interface definition of the bundle. The application knows those beans will always be there, and that they will support that interface,
+		but the implementation may vary on a bundle by bundle basis. The application, of course, does not need to care about that.</p>
+		<p>Finally TestBean1 has the bean bundleName injected into it. Notice that there is nothing special at all about
+		this. We can inject any bean defined by <courier>&lt;bundle:bean/&gt;</courier> into any of our application beans.</p>
+		<p>Naturally the beans we inject from the bundle must have interfaces and we cannot accept a concrete class as a bundled bean. This
+		is so that the beans can be proxied correctly.</p>
+		<p>The bundles directory contains either the bundle jar files you saw building in <sectionLink t="Building a Bundle"/>, or a reference to the Maven artifact. These
+		reference files must have names ending in <courier>.bundle</courier> and their contents just specify the Maven artifact for example:</p>
+		<code><![CDATA[
+Bundle-Artifact=nz.co.senanque:madura-bundle-maven:0.0.1-SNAPSHOT
+		]]></code>
+		<p>You would probably name a file like this <courier>madura-bundle-maven-0.0.1-SNAPSHOT.bundle</courier> or similar, but the name is not used. The value defined by the 
+		Bundle-Artifact entry is used to pull the jar file and its dependencies from Maven. It is added to the bundle classpath the same way as a jar file.
+		To add bundles dynamically you just copy a bundle file into the bundles directory. You might also use LATEST for the version and, when you publish a
+		new version of the bundle to Maven, just <courier>touch</courier> the relevant bundle file.</p>
+		<p>If you want you can add extra values to the bundle file. These are added to the properties in the bundle so they can be used in the Spring configuration and
+		elsewhere.</p>
+		<p>There are two system properties you can specify to tell Maven where to find its repositories, but they default to sensible values so you may not need them.</p>
+		<list>
+		<ll name="madura.maven.local.repo">Defaults to <courier>${user.home}/.m2/repository</courier></ll>
+		<ll name="madura.maven.remote.repo">Defaults to <courier>central,default,http://repo1.maven.org/maven2/</courier>. You can specify
+		multiple remote libraries. Each entry needs a name, type, url (all comma separated) and the library entries are also comma separated.</ll>
+		</list>
+		</h1>
+		<h1 t="Selecting the Bundle">
+		<p>Before the application code can use the beans in the bundle it needs to pick which bundle. It does this
+		by calling the bundleManager bean.</p>
+		<p>The methods you need to know about on the bundleManager are:</p>
+		<list>
+		<ll name="setBundle(String bundleName)">Set the current bundle to the one named, pick the highest version number.</ll>
+		<ll name="setBundle(String bundleName, String version)">Set the current bundle to the one named, using the name and version given.</ll>
+		</list>
+		<p>You can set the bundle just by its name and then the latest version will be selected. Or you can specify a specific bundle and version. 
+		You can switch the bundle at any time and the bundle selected will be used for the current thread, so other threads can continue working
+		with their own bundles. If you pick a version that is not there it will pick the next version up if there is one.</p>
+		<p>When do you need to set the bundle?</p>
+		<list>
+		<le>In a web application some time early on when processing a request. Requests are always assigned a thread for their processing.</le>
+		<le>In a stand-alone application some time soon after the application starts.</le>
+		<le>In a multi-threaded application you will need to manage the threads more aggressively, ensuring that each thread picks the correct bundle
+		before it starts processing.</le>
+		</list>
+		<p>If no bundle is set you will probably see a null pointer exception because the beans you thought were injecting into your code will not be
+		injected and you will find nulls.</p>
+		<p>In a collection of bundles how do you know which one you want?</p>
+		<p>If you are using dynamic proying then in the simplest case you have one kind of bundle and you want the latest version. The older versions
+		are just lying around doing nothing, or maybe supporting some long running operation that started
+		before they were superseded. So when you are starting a new process (for example a new customer order)
+		you want to pick the latest bundle. Assuming your bundles are called <courier>xyz-001.00,xyz-002.00</courier> and so on then
+		you can just say <courier>setBundle("xyz")</courier> and you will get <courier>xyz-002.00</courier>
+		because that is the latest. If you say <courier>setBundle("xyz-001.00")</courier> you will get that bundle.</p>
+		<p>Sometimes you might want to make this more interesting. You can, if you want, add extra information into
+		the manifest of the jar file and all of this information is available to you by querying the bundle manager.</p>
+		<p>For example say you wanted to have several bundles covering different date ranges. You could put a
+		from-date and a to-date field in the manifest. Remember you can put arbitrarily named fields in there.</p>
+		<p>Here is what you do in Ant:</p>
+		<code><![CDATA[
+<jar jarfile="${base}/bundles/bundle-2.0.jar">
+    <manifest>
+	      <attribute name="Built-By" value="${user.name}"/>
+	      <attribute name="Bundle-Activator" value="nz.co.senanque.madura.bundle.BundleRootImpl"/>
+	      <attribute name="Bundle-Description" value="Test Bundle"/>
+	      <attribute name="Bundle-Name" value="mybundle"/>
+	      <attribute name="Bundle-Version" value="2.0"/>
+	      <attribute name="Bundle-Context" value="bundle-spring.xml"/>
+	      <attribute name="from-date" value="01-Jan-2011"/>
+	      <attribute name="to-date" value="01-Jul-2011"/>
+	</manifest>
+</jar>
+		]]></code>
+		<p>For Maven you would do this:</p>
+		<code><![CDATA[
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-jar-plugin</artifactId>
+	<version>2.5</version>
+	<configuration>
+		<archive>
+			<index>false</index>
+			<addMavenDescriptor>true</addMavenDescriptor>
+			<manifest>
+				<addClasspath>false</addClasspath>
+			</manifest>
+			<manifestEntries>
+				<Built-By>${user.name}</Built-By>
+				<Bundle-Activator>nz.co.senanque.madura.bundle.BundleRootImpl</Bundle-Activator>
+				<Bundle-Description>Test Bundle Maven</Bundle-Description>
+				<Bundle-Name>${project.artifactId}</Bundle-Name>
+				<Bundle-Version>${project.version}</Bundle-Version>
+				<Bundle-Context>bundle-spring.xml</Bundle-Context>
+				<from-date>01-Jan-2011</from-date>
+				<to-date>01-Jul-2011</to-date>
+			</manifestEntries>
+		</archive>
+	</configuration>
+</plugin>
+		]]></code>
+		<p>If you are loading your bundles from Maven you can add the entries to your <courier>.bundles</courier> file like this:</p>
+		<code><![CDATA[
+Bundle-Artifact=nz.co.senanque:madura-bundle-maven:0.0.1-SNAPSHOT
+from-date=01-Jan-2011
+to-date=01-Jul-2011
+		]]></code>
+		<p>Now you can examine the bundles from your application:</p>
+		<code><![CDATA[
+for (BundleRoot br:bm.getAvailableBundles())
+{
+	String fromDate = br.getProperties().getProperty("from-date");
+	String toDate = br.getProperties().getProperty("to-date");
+	String bundleName = br.getProperties().getProperty("bundle.name");
+	if (some test to decide if this is the bundle you want)
+	{
+		bm.setBundle(bundleName);
+		break;
+	}
+}
+		]]></code>
+		<p>The <courier>bundle.name</courier> (note: case sensitive) property is automatically added by the bundle manager
+		and is the bundle name with the version, for example <courier>madura-bundle-maven-0.0.1-SNAPSHOT</courier></p>
+		<p>For proxying if you don't pick a bundle it will default to the last bundle that registered with the bundle manager.
+		That is probably the latest one and probably the one you want. It is good practice to explicitly set the bundle though.</p>
+		<p>The bundle pick is stored in the ThreadLocal and in a multi-threaded application, such as a web server, you usually
+		have a session consisting of multiple requests. Each request is run on a thread assigned by the application server, and
+		you cannot assume it is the same thread. So each request must pick the bundle every time.</p>
+		<p>But once you have picked a bundle for a session (consisting of multiple requests) you probably want to stic with it.
+		If a new bundle is deployed part way through a session it makes sense for that session to stick with the bundle
+		they already had. So the application code should store the picked bundle name in some kind of session storage and
+		pick the stored name on each request.</p>
+		<p>If you are not using dynamic proxying you can query for the beans and select the one you want like this:</p>
+		<code><![CDATA[
+MyBean useThisBean = null;
+Map<MyBean,BundleRoot> map = bm.getBeansOfType(MyBean.class);
+for (Entry<MyBean,BundleRoot> entry:map.entrySet())
+{
+	BundleRoot br = entry.getValue();
+	String fromDate = br.getProperties().getProperty("from-date");
+	String toDate = br.getProperties().getProperty("to-date");
+	if (some test to decide if this is the bundle you want)
+	{
+		useThisBean = entry.getKey();
+		break;
+	}
+} 
+		]]></code>
+		<p>The <courier>BundleManager.getBeansOfType(Class)</courier> method will search all the bundles available to this bundle manager
+		for a bean with the class specified.</p>
+		<p>This loop assumes you have only one bean of type MyBean in each bundle so you can safely store the selection criteria in the bundle
+		properties (held in the manifest). If you want to hold multiple beans of type MyBean in the same bundle then you cannot use
+		the manifest properties because they will be the same for all beans of type MyBean in that bundle. The simplest solution is to write a criteria bean to
+		hold the selection criteria. You inject the dates or whatever into your criteria bean and you also inject your functional bean (eg MyBean)
+		into the criteria bean. Then your code goes looking for all the criteria beans, selects the one that applies and calls through it to
+		the functional bean.</p>		
+		</h1>
+		<h1 t="Advanced Topics">
+		<h2 t="Alternate Bundle Location">
+		<p>For building demos it is sometimes useful to avoid specifying the directory. For example CloudFoundry demos are better off
+		not requiring local disk space. This may seem to eliminate the whole point of using bundles but it does allow you to demo
+		your bundle-dependent applications without reversing out that bundle dependency.</p>
+		<p>Assuming your demo is actually a JEE application all you need to do is add a <courier>WEB-INF/bundles</courier> directory to
+		your war file and copy your bundles to there. Those bundles will be loaded during application startup.</p>
+		</h2>
+		<h2 t="Alternate Timer configurations">
+		<p>You may want to use an external scheduler to trigger the scans. This is easy to
+		configure in Spring:</p>
+		<code><![CDATA[
+<task:scheduler id="myScheduler" pool-size="10" />
+<task:scheduled-tasks scheduler="myScheduler">
+    <task:scheduled ref="bundleManager" method="scan"
+        fixed-delay="10000" />
+</task:scheduled-tasks>
+		]]></code>
+		<p>There are many options for timers in Spring and this is a simple example that works well enough. If you have specialised requirements
+		you should be able to find what you want using some variant of this.</p>
+		</h2>
+		<h2 t="Exported Beans">
+		<p>Sometimes you want to define beans in the application and inject them into your bundled beans. These
+		are typically things that work with transactions. You start the transaction in your application
+		and you want all the beans, including the bundled ones, to participate in that transaction rather
+		that start their own.</p>
+		<p>This is quite simple. Just define your BundleManager like this:</p>
+		<code><![CDATA[
+<bundle:manager id="bundleManager" directory="./bundles" time="1000" 
+	export="sessionFactory,lockFactory"/>
+		]]></code>
+		<p>In this case we have two beans we are exporting to the bundle. The bundle just refers to those
+		beans as usual, no special namespace is needed there. If the bundle does not need those beans it
+		is free to ignore them. All we are saying is that the bean definition, and the instantiated copy of
+		the bean, is available at the bundle level.</p>
+		<p>If you are not using the name space it looks like this:</p>
+		<code><![CDATA[
+<bean id="bundleManager" class="nz.co.senanque.madura.bundle.BundleManagerImpl">
+	<property name="directory" value="./target/bundles"/>
+	<property name="inheritableBeans">
+		<map>
+			<entry key="parentBean" value-ref="parentBeanExample"/>
+		</map>
+	</property>
+</bean>
+
+<bean id="parentBeanExample" class="java.lang.String">
+	<constructor-arg value="example of a parent bean"/>
+</bean>
+		]]></code>
+		<p>In this case the container application refers to the exported bean as <courier>parentBeanExample</courier> and the bundles refer to it as
+		<courier>parentBean</courier>.</p>
+		</h2>
+		<h2 t="Listening for Bundles">
+		<p>You can optionally listen for bundles being added or deleted. This is useful if you need your application
+		to do something interesting like register a bundle for use in certain circumstances. You can always
+		just query for the bundles that are there but then you would have to poll for bundles which is dull.</p>
+		<p>To listen for bundles just implement the <courier>nz.co.senanque.madura.bundle.BundleListener</courier>
+		interface and define your class as a bean in the application. The bundle manager will find it so there
+		is no need to inject it anywhere.</p>
+		</h2>
+		<h2 t="Can I have Multiple Bundle Managers?">
+		<p>Yes, you can, but be careful. If you are not using dynamic proxying there seems little point in defining muliple bundle managers.
+		Just have your bundle listener(s), you can have several, identify the different beans and register them in in your application in the
+		different ways they fit. For example some beans will go into one list, other beans will go into another. It's your application, you
+		decide this.</p>
+		<p>If you are using dynamic proxying you might want to use multiple bundle managers. There are some restrictions though.</p>
+		<p>First, you won't be able to use the namespace in your Spring context file. The namespace assumes just one bundle manager.
+		This is not a major restriction, but it makes your Spring file a little more complex.</p>
+		<p>The second thing is that you need to select a bundle <emph>for each bundle manager</emph> so that the proxies are all set up.
+		Possibly you can avoid this when you know that only one bundle will be used at a time, for example in this web request we know
+		we are using a bundle of type A but not a bundle of type B. So we may be able to avoid selecting a bundle of type B. In that case we tell
+		the bundle A bundle manager what bundle we want and leave the bundle B manager unselected. It is probably safer to set both, though, because
+		someone will change your code later and not realise this, and the resulting problem might be obscure.</p>
+		<p>Finally each bundle manager should point at a different sweep directory so that the bundles are not being loaded more than once.</p>
+		<p>Can you have bundles within bundles, ie one bundle refers to another bundle? This should work, though we haven't tried it
+		ourselves. The second bundle would, of course, need to have its own bundle manager defined in the first bundle
+		with its own sweep directory etc. If you are
+		using proxies then you'd need to ensure the first bundle picked the second bundle before it called it. Remember this has to 
+		happen for each thread.</p>
+		<p>If you are not using proxies you need to go find the bundle using <courier>BundleManager.getBeansOfType(Class)</courier>
+		or you can use the <courier>BundleListener</courier> approach.</p>
+		</h2>
+        <h2 t="Managing Session Beans inside Bundles">
+        <p>There's an interesting problem that can come up when you need to define a Spring session bean inside a bundle. It relates
+        to the way bundles are loaded and the way Spring handles session beans. As such it gets a little complex but the good news
+        is this hardly ever comes up, so don't sweat too much over it.</p>
+        <p>Spring's session beans always assume there is a web session available but bundles are loaded <emph>outside</emph> the web session, 
+        and if we add the session scope to them Spring tells us that it doesn't have a session and dies.</p>
+        <p>But, actually it is not quite that simple. Spring defers the instantiation of the session beans until it has to. So it only
+        dies if the bundle forces that bean to be instantiated up front. So the trick is to do two things:</p>
+        <list>
+        <le>Make sure that every reference to the bean is scoped as session, that way Spring will know they are all references to the same bean.</le>
+        <le>Make sure the bean is not instantiated until there is a web session available. That can be in the AppFactory.createApp(Blackboard) method which
+        is not invoked until the bundle is bound by the application, and that doesn't normally hapen until there is a session.</le>
+        </list>
+        <p>So you can declare session beans anywhere. In practice there are three distinct xml files that define Spring beans in a normal web application.</p>
+        <list>
+        <le>The bundle's own xml file.</le>
+        <le>The applicationContext.xml file loaded by Spring's ContextLoaderListener.</le>
+        <le>The session level application file loaded by one of the Vaadin application's init methods (assuming you are using the VaadinSupport approach).</le>
+        </list>
+        <p>You can define session beans in any of these like so:</p>
+        <code><![CDATA[
+<bean id="permissionManager" class="nz.co.senanque.vaadinsupport.permissionmanager.PermissionManagerImpl" scope="session"/>
+<bean id="fieldFactory" class="nz.co.senanque.vaadinsupport.FieldFactory" scope="session"/>
+<bean id="hints" class="nz.co.senanque.vaadinsupport.HintsImpl" scope="session"/>
+        ]]></code>
+        <p>These are three session beans defined in the session level application file. In this file every bean is effectively a
+        session bean, but Spring doesn't know it and doesn't actually tie them to the http session in the same way. For these particular beans, though, we
+        really want Spring to know they are session beans so we scope them.</p>
+        <p>The session level application file is never loaded until there is a web session so Spring will be fine with this.</p>
+        <p>Now, in our bundle context file we have this:</p>
+        <code><![CDATA[
+<bean id="permissionManager" class="nz.co.senanque.vaadinsupport.permissionmanager.PermissionManagerImpl" scope="session"/>
+<bean id="fieldFactory" class="nz.co.senanque.vaadinsupport.FieldFactory" scope="session"/>
+<bean id="hints" class="nz.co.senanque.vaadinsupport.HintsImpl" scope="session"/>
+        ]]></code>
+        <p>Same thing, right? Yes, but because these are explicitly Session scoped Spring will deliver the same bean. So multiple sessions talking to the
+        same bundle will see different instances of the bean, ie their own instance. And they will reuse the instance defined in the session level
+        application file.</p>
+        <p>At the bundle level these three beans are injected into this bean:</p>
+        <code><![CDATA[
+<bean id="maduraSessionManager" class="nz.co.senanque.vaadinsupport.application.MaduraSessionManager" scope="session"/>
+        ]]></code>
+        <p>This is another session scoped bean. The bean is instantiated when the following is executed:</p>
+        <code><![CDATA[
+m_maduraSessionManager = m_beanFactory.getBean("maduraSessionManager",MaduraSessionManager.class);
+        ]]></code>
+        <p>That code is from AppFactory.createApp(Blackboard) in the bundle. So Spring will defer instantiation until
+        then, at which point it will instantiate and auto wire the dependent beans. But by then, of course, it has a web session underway
+        and the session scope requirements are fulfilled, no problem.</p>
+        <p>Because these beans were defined as session scoped beans in the session level file Spring will find them and reuse them in the bundle,
+        except for maduraSessionManager which it will create for this session.</p>
+        </h2>
+        </h1>
+		<a1 t="License">
+			<p>The code specific to MaduraBundle is licensed under the Apache License 2.0 <referenceLink t="Apache Licence 2.0"/>.</p>
+			<p>The dependent products have compatible licenses specified in their pom files.</p>
+		</a1>
+		<a1 t="Eclipse Setup">
+		<p>Eclipse will show some of the test XML configuration files to be in error because it fails to find the XSD file
+		they depend on. This is easily fixed. Use the XML Catalog setting in Eclipse (Window->preferences->XML->XML Catalog)
+		and create a schema location entry for key: http://www.senanque.co.nz/madura/bundle/MaduraBundle.xsd that points to
+		MaduraBundle/src/main/resources/nz/co/senanque/madura/bundle/spring/MaduraBundle.xsd</p>
+		</a1>
+		<a1 t="Release Notes">
+		<table width="12cm">
+			<tw>12cm</tw>
+        <tr>
+            <th>4.0.0</th>
+        </tr>
+        <tr>
+            <td>Added Maven loading mechanism.</td>
+        </tr>
+        <tr>
+            <td>Restructured application to allow Maven testing, specifically added the madura-bundles parent project, madura-bundle-maven 
+            and the maven-bundle-test project.</td>
+        </tr>
+        <tr>
+            <th>3.9.3</th>
+        </tr>
+        <tr>
+            <td>Fixed a problem with variable case in bundle names. Bundle names are now case insensitives.</td>
+        </tr>
+        <tr>
+            <td>Changed the behaviour of bundle deletions so that the bundle remains in memory, but is flagged as shut down.
+            Actually removing the bundle caused issues when a session remained bound to the deleted bundle.</td>
+        </tr>
+        <tr>
+            <td>Added loading bundles from WEB-INF/bundles, useful for demos.</td>
+        </tr>
+        <tr>
+            <td>Reworked the bundle map to make finding which bundle is required more explicit.</td>
+        </tr>
+        <tr>
+            <td>Store bundle classloader in a threadlocal so we can use it in class.forName().</td>
+        </tr>
+        <tr>
+            <td>Local classpath failed to find the jar files: fixed.</td>
+        </tr>
+        <tr>
+            <td>Upgraded Spring and slf4j versions.</td>
+        </tr>
+        <tr>
+            <th>3.9.2</th>
+        </tr>
+        <tr>
+            <td>Removed benign XSD errors reported by Eclipse.</td>
+        </tr>
+        <tr>
+            <th>3.9.1</th>
+        </tr>
+        <tr>
+            <td>Moved build to maven.</td>
+        </tr>
+        <tr>
+            <th>3.9</th>
+        </tr>
+        <tr>
+            <td>Added maven pom file</td>
+        </tr>
+        <tr>
+            <th>3.8</th>
+        </tr>
+        <tr>
+            <td>Built for Java 1.7</td>
+        </tr>
+        <tr>
+            <th>3.7</th>
+        </tr>
+        <tr>
+            <td>Found and fixed several inconsistencies in classpath handling. The std bundle manager
+            now uses BundleClassLoader exclusively and ChildFirstURLClassLoader is now deprecated.</td>
+        </tr>
+        <tr>
+            <td>Improved documentation on how to handle session beans.</td>
+        </tr>
+		<tr>
+			<td>Added FixedUrlsBundleManager, a bundle manager which accepts a fixed list of bundles
+			used to provide demos where switching the bundles is not critical.</td>
+		</tr>
+		<tr>
+			<th>3.6</th>
+		</tr>
+		<tr>
+			<td>Fixed problem with log out.</td>
+		</tr>
+		<tr>
+			<th>3.5</th>
+		</tr>
+		<tr>
+			<td>Fixed non display of source in Eclipse.</td>
+		</tr>
+		<tr>
+			<td>Improved the docs to describe handling multiple bundles.</td>
+		</tr>
+		<tr>
+			<td>Upgraded dependency on MaduraDocs to latest version.</td>
+		</tr>
+		<tr>
+			<td>Modified the ChildFirstURLClassLoader to try resources both with and without the leading slash in attempting to
+			find one.</td>
+		</tr>
+		<tr>
+			<th>3.4</th>
+		</tr>
+		<tr>
+			<td>Added a way to propagate the session scope from the owner beanfactory to the bundle beanfactory, so
+			you can define session scope beans in the bundle.</td>
+		</tr>
+		<tr>
+			<th>3.3</th>
+		</tr>
+		<tr>
+			<td>Just rearranging the dependencies.</td>
+		</tr>
+		<tr>
+			<th>3.2</th>
+		</tr>
+		<tr>
+			<td>Added default bundle, always the last bundle loaded.</td>
+		</tr>
+		<tr>
+			<td>Added getBeansOfType method to bundle manager. This fetches all beans of the given class type
+			and returns a map containing the bean and the bundle name it was found inside.</td>
+		</tr>
+		<tr>
+			<td>Fixed an NPE that happens if we can't open the bundles directory.</td>
+		</tr>
+		<tr>
+			<th>3.1</th>
+		</tr>
+		<tr>
+			<td>Added child first classpath and made that the default. Not completely
+			convinced this is working right, but if there is no conflict with the parent you definitely
+			get what is in the bundle.</td>
+		</tr>
+		<tr>
+			<td>Added bundle listener interface and trivial sample implementation.</td>
+		</tr>
+		<tr>
+			<td>Added access to bundle properties.</td>
+		</tr>
+		<tr>
+			<td>Added export of application beans.</td>
+		</tr>
+		<tr>
+			<th>3.0</th>
+		</tr>
+		<tr>
+			<td>Added the timer.</td>
+		</tr>
+		<tr>
+			<td>Removed the need for explicit init.</td>
+		</tr>
+		<tr>
+			<td>Simplified the docs.</td>
+		</tr>
+		<tr>
+			<td>Reworked some of the sample code.</td>
+		</tr>
+		<tr>
+			<th>2.1</th>
+		</tr>
+		<tr>
+			<td>Tidying the build</td>
+		</tr>
+		<tr>
+			<th>2.0</th>
+		</tr>
+		<tr>
+			<td>Added classpath handling on the bundles. This is so you can specify a list of external
+			jar files in the bundle jar and these will be loaded in the bundle's class loader.</td>
+		</tr>
+		<tr>
+			<th>1.0</th>
+		</tr>
+		<tr>
+			<td>Initial version</td>
+		</tr>
+		</table>
+		</a1>
+	</body>
+	
+</doc>
