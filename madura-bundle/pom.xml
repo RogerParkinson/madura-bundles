@@ -309,7 +309,7 @@
 				<plugin>
 					<groupId>nz.co.senanque</groupId>
 					<artifactId>maduradocs</artifactId>
-					<version>6.0.5</version>
+					<version>6.0.6</version>
 					<executions>
 						<execution>
 							<goals>
@@ -317,6 +317,9 @@
 							</goals>
 						</execution>
 					</executions>
+					<configuration>
+						<subprojectDir>madura-bundle</subprojectDir>
+					</configuration>
 				</plugin>
 
 				<plugin>
