@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nz.co.senanque</groupId>
 	<artifactId>madura-bundles</artifactId>
@@ -27,9 +26,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<url>https://github.com/RogerParkinson/madura-bundles/trunk/</url>
-		<connection>scm:svn:https://github.com/RogerParkinson/madura-bundles/trunk/</connection>
-		<developerConnection>scm:svn:https://github.com/RogerParkinson/madura-bundles/trunk/</developerConnection>
+		<url>https://github.com/RogerParkinson/madura-bundles/tags/madura-bundles-4.0.0</url>
+		<connection>scm:svn:https://github.com/RogerParkinson/madura-bundles/tags/madura-bundles-4.0.0</connection>
+		<developerConnection>scm:svn:https://github.com/RogerParkinson/madura-bundles/tags/madura-bundles-4.0.0</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>
