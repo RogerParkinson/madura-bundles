@@ -26,9 +26,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<url>https://github.com/RogerParkinson/madura-bundles/tags/madura-bundles-4.0.0</url>
-		<connection>scm:svn:https://github.com/RogerParkinson/madura-bundles/tags/madura-bundles-4.0.0</connection>
-		<developerConnection>scm:svn:https://github.com/RogerParkinson/madura-bundles/tags/madura-bundles-4.0.0</developerConnection>
+		<url>http://github.com/RogerParkinson/madura-bundles</url>
+		<connection>scm:git:git@github.com:RogerParkinson/madura-bundles.git</connection>
+		<developerConnection>scm:git:git@github.com:RogerParkinson/madura-bundles.git</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>
