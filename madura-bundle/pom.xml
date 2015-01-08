@@ -8,6 +8,10 @@
 	<artifactId>madura-bundle</artifactId>
 	<name>madura-bundle</name>
 	<description>Provides a simple way to componentize an application. It is like a very cut down OSGi and easier to implement.</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<!-- 		<drools.version>6.2.0.Beta1</drools.version> -->
+	</properties>
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
