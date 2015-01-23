@@ -68,7 +68,8 @@
 		<list>
 		<le>The simplest way is to put the bundle into WEB-INF/bundles (in a web application). These bundles are loaded at startup time and it is a way to include initial or default bundles inside a war file. Why would
 		you do this rather than simply putting the bundle in with the other ordinary jar files? Because you might want to add more bundles and be able to select between this and the other bundles dynamically. For example
-		you might want to supersede the initial bundle with a later version.</le>
+		you might want to supersede the initial bundle with a later version. There is one restriction with this approach. If you want to refer to a Spring resource as <courier>classpath:myfile.xml</courier>
+		it will fail to find it. Placing the same file in an external directory (the next option) works just fine.</le>
 		<le>Have the bundles in a directory and copy any new bundles into that directory. The directory will be scanned periodically and new bundles loaded.</le>
 		<le>Pull the bundles from Maven. This is similar to the directory but instead of jar files you have place holder files which describe the Maven artifact.
 		The actual jar files are published to Maven.</le>
@@ -508,6 +509,15 @@ m_maduraSessionManager = m_beanFactory.getBean("maduraSessionManager",MaduraSess
 		<a1 t="Release Notes">
 		<table width="12cm">
 			<tw>12cm</tw>
+        <tr>
+            <th>4.0.1</th>
+        </tr>
+        <tr>
+            <td>Allow for missing WEB-INF/bundles.</td>
+        </tr>
+        <tr>
+            <td>Publish the xsd file</td>
+        </tr>
         <tr>
             <th>4.0.0</th>
         </tr>
