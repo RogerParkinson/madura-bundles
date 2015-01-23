@@ -83,25 +83,27 @@ public class BundleManagerImpl extends AbstractBundleManager
         	return;
         }
         Set<String> bundles = m_servletContext.getResourcePaths("/WEB-INF/bundles");
-        for (String fileName : bundles) {
-        	int i = fileName.lastIndexOf('.');
-        	if (i <= 0) {
-        		continue;
-        	}
-        	BundleManagerDelegate bundleManagerDelegate = getBundleManagerDelegate(fileName.substring(i));
-        	if (bundleManagerDelegate != null) {
-            	int j = fileName.lastIndexOf('/');
-            	int j1 = fileName.lastIndexOf('-');
-            	String bundleName = fileName.substring(j+1,j1);
-            	InputStream is = m_servletContext.getResourceAsStream(fileName);
-            	bundleManagerDelegate.addBundle(bundleName,is);
-            	try {
-    				is.close();
-    			} catch (IOException e) {
-    				m_logger.warn("{} {}",fileName,e.getMessage());
-    			}
-            	continue;
-        	}
+        if (bundles != null) {
+	        for (String fileName : bundles) {
+	        	int i = fileName.lastIndexOf('.');
+	        	if (i <= 0) {
+	        		continue;
+	        	}
+	        	BundleManagerDelegate bundleManagerDelegate = getBundleManagerDelegate(fileName.substring(i));
+	        	if (bundleManagerDelegate != null) {
+	            	int j = fileName.lastIndexOf('/');
+	            	int j1 = fileName.lastIndexOf('-');
+	            	String bundleName = fileName.substring(j+1,j1);
+	            	InputStream is = m_servletContext.getResourceAsStream(fileName);
+	            	bundleManagerDelegate.addBundle(bundleName,is);
+	            	try {
+	    				is.close();
+	    			} catch (IOException e) {
+	    				m_logger.warn("{} {}",fileName,e.getMessage());
+	    			}
+	            	continue;
+	        	}
+	        }
         }
     }
     private BundleManagerDelegate getBundleManagerDelegate(String extension) {
