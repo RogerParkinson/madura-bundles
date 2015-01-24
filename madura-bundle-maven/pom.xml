@@ -6,7 +6,6 @@
     <version>4.0.1-SNAPSHOT</version>
   </parent>
   <groupId>nz.co.senanque</groupId>
-  <version>1.0.1-SNAPSHOT</version>
   <artifactId>madura-bundle-maven</artifactId>
   <name>madura-bundle-maven</name>
   <description>test bundle for maven</description>
@@ -14,7 +13,7 @@
   	<dependency>
   		<groupId>nz.co.senanque</groupId>
   		<artifactId>madura-bundle</artifactId>
-  		<version>3.9.4-SNAPSHOT</version>
+  		<version>${project.version}</version>
   		<scope>provided</scope>
   	</dependency>
   </dependencies>
