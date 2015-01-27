@@ -3,11 +3,11 @@
   <parent>
     <groupId>nz.co.senanque</groupId>
     <artifactId>madura-bundles</artifactId>
-    <version>4.0.2</version>
+    <version>4.0.3-SNAPSHOT</version>
   </parent>
   <groupId>nz.co.senanque</groupId>
   <artifactId>madura-bundle-maven</artifactId>
-  <version>4.0.1</version>
+  <version>4.0.2-SNAPSHOT</version>
   <name>madura-bundle-maven</name>
   <description>test bundle for maven</description>
   <dependencies>
