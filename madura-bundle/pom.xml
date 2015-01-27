@@ -3,9 +3,10 @@
 	<parent>
 		<groupId>nz.co.senanque</groupId>
 		<artifactId>madura-bundles</artifactId>
-		<version>4.0.1-SNAPSHOT</version>
+		<version>4.0.2</version>
 	</parent>
 	<artifactId>madura-bundle</artifactId>
+  <version>4.0.1</version>
 	<name>madura-bundle</name>
 	<description>Provides a simple way to componentize an application. It is like a very cut down OSGi and easier to implement.</description>
 	<properties>
