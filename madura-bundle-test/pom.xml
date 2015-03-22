@@ -7,7 +7,6 @@
 	</parent>
 	<groupId>nz.co.senanque</groupId>
 	<artifactId>madura-bundle-test</artifactId>
-  <version>4.0.2-SNAPSHOT</version>
 	<name>madura-bundle-test</name>
 	<description>Project that tests the maven bundles</description>
 	<dependencies>
