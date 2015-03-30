@@ -510,6 +510,12 @@ m_maduraSessionManager = m_beanFactory.getBean("maduraSessionManager",MaduraSess
 		<table width="12cm">
 			<tw>12cm</tw>
         <tr>
+            <th>4.0.3</th>
+        </tr>
+        <tr>
+            <td>Clean release.</td>
+        </tr>
+        <tr>
             <th>4.0.2</th>
         </tr>
         <tr>
