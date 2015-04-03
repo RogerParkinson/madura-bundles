@@ -268,7 +268,7 @@ Bundle-Artifact=nz.co.senanque:madura-bundle-maven:0.0.1-SNAPSHOT
 		</list>
 		<p>You can set the bundle just by its name and then the latest version will be selected. Or you can specify a specific bundle and version. 
 		You can switch the bundle at any time and the bundle selected will be used for the current thread, so other threads can continue working
-		with their own bundles. If you pick a version that is not there it will pick the next version up if there is one.</p>
+		with their own bundles. If you pick a version that is not there it will throw an exception.</p>
 		<p>When do you need to set the bundle?</p>
 		<list>
 		<le>In a web application some time early on when processing a request. Requests are always assigned a thread for their processing.</le>
@@ -385,7 +385,11 @@ for (Entry<MyBean,BundleRoot> entry:map.entrySet())
 		the manifest properties because they will be the same for all beans of type MyBean in that bundle. The simplest solution is to write a criteria bean to
 		hold the selection criteria. You inject the dates or whatever into your criteria bean and you also inject your functional bean (eg MyBean)
 		into the criteria bean. Then your code goes looking for all the criteria beans, selects the one that applies and calls through it to
-		the functional bean.</p>		
+		the functional bean.</p>
+		<p>When you have finished with the bundle it is prudent to release it using the bundleManager method releaseBundle(). 
+		This will release the current bundle. It doesn't actually remove the bundle, but if you subsequently delete the bundle jar file then
+		it will garbage collect the bundle if it is not in use and careful releasing of bundles ensures we can keep track of what bundle is in 
+		use and what bundle is not.</p>		
 		</h1>
 		<h1 t="Advanced Topics">
 		<h2 t="Alternate Bundle Location">
