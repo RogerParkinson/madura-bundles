@@ -24,12 +24,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
-import org.junit.AfterClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -51,13 +49,13 @@ public class BundleManagerTest
     @Autowired BundleManager bundleManager;
     private static BundleManager s_bundleManager;
 
-    @PostConstruct
+    @Before
     public void init() {
-    	s_bundleManager = bundleManager;
+//    	s_bundleManager = bundleManager;
     }
-	@AfterClass
-	public static void destroy() {
-		s_bundleManager.shutdown();
+	@After
+	public void destroy() {
+		bundleManager.shutdown();
 	}
     @Test
     public void testInit()
