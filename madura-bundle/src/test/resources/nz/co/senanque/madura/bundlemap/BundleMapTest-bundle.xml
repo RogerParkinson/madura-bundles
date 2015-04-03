@@ -31,22 +31,25 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 				<entry key="bundle1">
 					<list>
 						<bean class="nz.co.senanque.madura.bundlemap.BundleVersion">
-							<constructor-arg index="0" value="bundle1"/>
-							<constructor-arg index="1" value="1.0.0"/>
+							<constructor-arg index="0" value="bundle1-2.1.0"/>
+							<constructor-arg index="1" value="bundle1"/>
+							<constructor-arg index="2" value="2.1.0"/>
 							<property name="root">
 								<bean class="nz.co.senanque.madura.bundlemap.BundleRootMock"/>
 							</property>
 						</bean>
 						<bean class="nz.co.senanque.madura.bundlemap.BundleVersion">
-							<constructor-arg index="0" value="bundle1"/>
-							<constructor-arg index="1" value="1.1.0"/>
+							<constructor-arg index="0" value="bundle1-1.1.0"/>
+							<constructor-arg index="1" value="bundle1"/>
+							<constructor-arg index="2" value="1.1.0"/>
 							<property name="root">
 								<bean class="nz.co.senanque.madura.bundlemap.BundleRootMock"/>
 							</property>
 						</bean>
 						<bean class="nz.co.senanque.madura.bundlemap.BundleVersion">
-							<constructor-arg index="0" value="bundle1"/>
-							<constructor-arg index="1" value="2.1.0"/>
+							<constructor-arg index="0" value="bundle1-1.0.0"/>
+							<constructor-arg index="1" value="bundle1"/>
+							<constructor-arg index="2" value="1.0.0"/>
 							<property name="root">
 								<bean class="nz.co.senanque.madura.bundlemap.BundleRootMock"/>
 							</property>
@@ -56,22 +59,25 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 				<entry key="bundle2">
 					<list>
 						<bean class="nz.co.senanque.madura.bundlemap.BundleVersion">
-							<constructor-arg index="0" value="bundle1"/>
-							<constructor-arg index="1" value="1.0.0"/>
+							<constructor-arg index="0" value="bundle2-2.1.0"/>
+							<constructor-arg index="1" value="bundle2"/>
+							<constructor-arg index="2" value="2.1.0"/>
 							<property name="root">
 								<bean class="nz.co.senanque.madura.bundlemap.BundleRootMock"/>
 							</property>
 						</bean>
 						<bean class="nz.co.senanque.madura.bundlemap.BundleVersion">
-							<constructor-arg index="0" value="bundle1"/>
-							<constructor-arg index="1" value="1.1.0"/>
+							<constructor-arg index="0" value="bundle2-1.2.0"/>
+							<constructor-arg index="1" value="bundle2"/>
+							<constructor-arg index="2" value="1.2.0"/>
 							<property name="root">
 								<bean class="nz.co.senanque.madura.bundlemap.BundleRootMock"/>
 							</property>
 						</bean>
 						<bean class="nz.co.senanque.madura.bundlemap.BundleVersion">
-							<constructor-arg index="0" value="bundle1"/>
-							<constructor-arg index="1" value="2.1.0"/>
+							<constructor-arg index="0" value="bundle2-1.1.0"/>
+							<constructor-arg index="1" value="bundle2"/>
+							<constructor-arg index="2" value="1.1.0"/>
 							<property name="root">
 								<bean class="nz.co.senanque.madura.bundlemap.BundleRootMock"/>
 							</property>

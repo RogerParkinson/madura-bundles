@@ -63,7 +63,7 @@ public class BundleManagerTest
     public void testInit()
     {
         BundleManager bm = getBundleManager();
-        bm.setBundle("bundle-1.0");
+        bm.setBundle("bundle","1.0");
         testBundleName(bm, "bundle-1.0");
         testBundleFile(bm, "bundle-1.0");
         Object o=null;
@@ -73,7 +73,7 @@ public class BundleManagerTest
 			o=null;
 		}
         assertNull(o);
-        bm.setBundle("bundle-2.0");
+        bm.setBundle("bundle","2.0");
         testBundleName(bm, "bundle-2.0");
         for (BundleRoot br:bm.getAvailableBundleRoots())
         {

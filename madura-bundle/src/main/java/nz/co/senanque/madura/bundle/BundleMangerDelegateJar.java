@@ -4,6 +4,8 @@
 package nz.co.senanque.madura.bundle;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,9 +16,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+
+import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,36 +31,62 @@ import org.springframework.util.StringUtils;
  */
 public class BundleMangerDelegateJar extends BundleManagerDelegateAbstract {
 
-    private Logger m_logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger m_logger = LoggerFactory.getLogger(this.getClass());
+    private final File m_file;
+    private final URL m_url;
+    private final String m_name;
 
-    protected BundleMangerDelegateJar(BundleManagerImpl bundleManagerImpl) {
+    protected BundleMangerDelegateJar(BundleManagerImpl bundleManagerImpl, File file, URL url) {
 		super(bundleManagerImpl);
+		m_file = file;
+		m_url = url;
+		m_name = m_file.getName();
 	}
 
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * nz.co.senanque.madura.bundle.BundleManagerDelegate#addBundle(java.lang
-	 * .String, java.io.InputStream)
-	 */
+    protected BundleMangerDelegateJar(BundleManagerImpl bundleManagerImpl,String name, URL url) {
+		super(bundleManagerImpl);
+		m_file = null;
+		m_url = url;
+		m_name = name;
+	}
+
 	@Override
-	public void addBundle(String bundleName, InputStream inputStream) {
+	public BundleVersion addBundle() {
+		try {
+			return addBundle(m_name,new FileInputStream(m_file),m_url);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public BundleVersion addBundle(InputStream is) {
+		return addBundle(m_name,is,m_url);
+	}
+
+	@Override
+	public BundleVersion addBundle(String bundleName, InputStream inputStream, URL url) {
+		BundleVersion bundleVersion = null;
 		try {
 			JarInputStream jarInputStream = new JarInputStream(inputStream);
 			Manifest mf = jarInputStream.getManifest();
 			Attributes attributes = mf.getMainAttributes();
 			Properties properties = getProperties(attributes);
-			properties.setProperty("bundle.file",
-					properties.getProperty("bundle.name"));
+			properties.setProperty("bundle.file",bundleName);
 			String className = attributes.getValue("Bundle-Activator");
             String classPath = attributes.getValue("Class-Path");
 			List<URL> urls = new ArrayList<URL>();
             if (!StringUtils.isEmpty(classPath)) {
             	addJarsToClasspath(classPath,urls);
             }
-			createClassLoader(urls, properties, bundleName, className, 0L,
-					new JarInputStream[] { jarInputStream });
+    		bundleVersion = new BundleVersion(
+    				properties.getProperty("bundle.file"), 
+    				properties.getProperty("Bundle-Name"), 
+    				properties.getProperty("Bundle-Version")
+    				);
+    		ClassLoader classLoader = createClassLoader(urls, properties, bundleName, className, 0L,
+					new JarInputStream[] { jarInputStream }, url);
+			cleanup(classLoader, className, properties, bundleVersion);
 			m_logger.info("Added bundle: {}", bundleName);
 		} catch (Exception e) {
 			if (m_logger.isDebugEnabled()) {
@@ -65,6 +94,7 @@ public class BundleMangerDelegateJar extends BundleManagerDelegateAbstract {
 			}
 			m_logger.warn("{} {}", bundleName, e.getMessage());
 		}
+		return bundleVersion;
 	}
 	
 	private void addJarsToClasspath(String classPath, List<URL> urls) throws MalformedURLException {
@@ -105,20 +135,19 @@ public class BundleMangerDelegateJar extends BundleManagerDelegateAbstract {
             bundle += "-"+version;
         return bundle;
     }
-	private void createClassLoader(List<URL> urls, Properties properties,
+	private ClassLoader createClassLoader(List<URL> urls, Properties properties,
 			String bundleName, String className, long lastModified,
-			JarInputStream[] jarClasspath) throws InstantiationException,
+			JarInputStream[] jarClasspath, URL url) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
 		URL[] urlArray = urls.toArray(new URL[] {});
 		ClassLoader cl = this.getClass().getClassLoader();
 		ClassLoader classLoader;
 		if (m_bundleManagerImpl.isChildFirst()) {
-			classLoader = new BundleClassLoader(true, urlArray, jarClasspath,
-					cl);
+			classLoader = new BundleClassLoader(true, urlArray, jarClasspath, cl, url);
 		} else {
 			classLoader = new URLClassLoader(urlArray, cl); // parent first
 		}
-		cleanup(classLoader, className, lastModified, properties);
+		return classLoader;
 	}
 
 }

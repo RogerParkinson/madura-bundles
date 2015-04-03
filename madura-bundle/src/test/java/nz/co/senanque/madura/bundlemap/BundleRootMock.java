@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 public class BundleRootMock implements BundleRoot {
 	
 	private boolean m_shutdown = false;
+	String m_name;
 
 	/* (non-Javadoc)
 	 * @see nz.co.senanque.madura.bundle.BundleRoot#shutdown()
@@ -60,24 +61,6 @@ public class BundleRootMock implements BundleRoot {
 	}
 
 	/* (non-Javadoc)
-	 * @see nz.co.senanque.madura.bundle.BundleRoot#setDate(long)
-	 */
-	@Override
-	public void setDate(long lastModified) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see nz.co.senanque.madura.bundle.BundleRoot#getDate()
-	 */
-	@Override
-	public long getDate() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/* (non-Javadoc)
 	 * @see nz.co.senanque.madura.bundle.BundleRoot#getProperties()
 	 */
 	@Override
@@ -100,8 +83,7 @@ public class BundleRootMock implements BundleRoot {
 	 */
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_name;
 	}
 
 	/* (non-Javadoc)
@@ -109,13 +91,16 @@ public class BundleRootMock implements BundleRoot {
 	 */
 	@Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
-
+		m_name = name;
 	}
 
 	@Override
 	public boolean isShutdown() {
 		return m_shutdown;
+	}
+	
+	public String toString() {
+		return m_name;
 	}
 
 }

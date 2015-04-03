@@ -30,10 +30,6 @@ public interface BundleRoot
 
     public abstract ApplicationContext getApplicationContext();
 
-    public abstract void setDate(long lastModified);
-
-    public abstract long getDate();
-
     public abstract Properties getProperties();
 
 	public ClassLoader getBundleClassLoader();

@@ -20,8 +20,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -55,22 +57,26 @@ public class BundleClassLoader extends URLClassLoader {
     private HashMap<String,byte[]> others = new HashMap<String,byte[]>();
     private boolean m_childFirst;
     private ClassLoader system;
+//    private File m_file;
+    private final URL m_url;
 
-    public BundleClassLoader(boolean childFirst, URL[] urlClasspath, JarInputStream[] jarClasspath, ClassLoader parent) {
+    public BundleClassLoader(boolean childFirst, URL[] urlClasspath, JarInputStream[] jarClasspath, ClassLoader parent, URL url2) {
 		super(urlClasspath, parent);
-         m_childFirst = childFirst;
+		m_url = url2;
+        m_childFirst = childFirst;
         system = getSystemClassLoader();
         for (URL url: urlClasspath)
         {
-//        	if ("file".equals(url.getProtocol()) && url.getPath().toLowerCase().endsWith(".jar"))
-        	{
-        		// we have a jar file
-        		try {
-					addJar(new JarInputStream(url.openStream()));
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-        	}
+//        	if (m_file == null && "file".equals(url.getProtocol()) && url.getPath().toLowerCase().endsWith(".jar"))
+//        	{
+//        		// we have a jar file
+//        		m_file = new File(url.getFile());
+//        	}
+    		try {
+				addJar(new JarInputStream(url.openStream()));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
         }
 		if (jarClasspath != null) {
 			for (JarInputStream jarInputStream : jarClasspath) {
@@ -166,6 +172,19 @@ public class BundleClassLoader extends URLClassLoader {
     }
     private URL getLocalResource(String name)
     {
+    	if (m_url != null) {
+    		URL url = null;
+    		try {
+    			url = new URL("jar:"+m_url.toExternalForm()+"!/"+name);
+    			URLConnection connection = url.openConnection();
+    			connection.connect();
+    			return url;
+			} catch (MalformedURLException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				m_logger.debug("Failed to open {}, continuing",url);
+			}
+    	}
         URL url = findResource(name);
         if (url == null && name.startsWith("/"))
         {
@@ -305,5 +324,9 @@ public class BundleClassLoader extends URLClassLoader {
     private static String getClassName(String fileName) {
         return fileName.substring(0, fileName.length()-6).replace('/','.');
     }
+
+//	public File getFile() {
+//		return m_file;
+//	}
 
 }

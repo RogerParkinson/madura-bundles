@@ -35,7 +35,7 @@ public class BundleManagerXSD2Test
     public void testInit()
     {
         BundleManagerImpl bm = (BundleManagerImpl)this.applicationContext.getBean("bundleManager");
-        bm.setBundle("bundle-2.0");
+        bm.setBundle("bundle","2.0");
         testBundleName(bm, "bundle-2.0");
     }
     private void testBundleName(BundleManagerImpl bm, String bundleName)

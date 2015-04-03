@@ -25,11 +25,14 @@ public class BundleVersion implements Comparable<BundleVersion> {
 	
 	private final String m_name;
 	private final String m_version;
+	private final String m_id;
 	private BundleRoot m_root;
+	private int inuse;
 	
-	protected BundleVersion(String name, String version) {
+	public BundleVersion(String id, String name, String version) {
 		m_name = name;
 		m_version = version;
+		m_id = id;
 	}
 
 	public String getName() {
@@ -48,17 +51,34 @@ public class BundleVersion implements Comparable<BundleVersion> {
 		return m_root;
 	}
 
-	public void setRoot(BundleRoot root) {
-		m_root = root;
-	}
 
 	@Override
 	public int compareTo(BundleVersion bundleVersion) {
 		
-		return getFullVersion().compareTo(bundleVersion.getFullVersion());
+		return getId().compareTo(bundleVersion.getId());
 	}
 	public String toString() {
 		return getFullVersion();
+	}
+
+	public String getId() {
+		return m_id;
+	}
+
+	public void setRoot(BundleRoot root) {
+		m_root = root;
+	}
+
+	public void increment() {
+		inuse++;
+	}
+
+	public void decrement() {
+		inuse--;
+	}
+
+	public boolean isInUse() {
+		return inuse==0;
 	}
 
 }

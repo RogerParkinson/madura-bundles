@@ -109,6 +109,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 		what bundle this is. The second bean is just an example of an ordinary bean you might define.</p>
 		<p>The framework uses the manifest to discover information about the jar file.</p>
 		<h2 t="Building with Ant">
+		<p>You need to compile your java files as usual and pack them into a jar file, but you also need to include a
+		copy of BundleRootImpl.class from the madura-bundle.jar. This is easier to do in maven, but can be done in ant in various ways.</p>
 		<code><![CDATA[
 <jar jarfile="${base}/bundles/bundle-2.0.jar">
     <manifest>
@@ -174,6 +176,31 @@ Class-Path: lib2/ant-optional-1.5.1.jar  lib2/antlr-2.7.6.jar lib2/aopalliance-1
 		<p>This is the simplest Maven build. You might vary it by adding a classpath in the same way we showed with Ant. However if you are loading this bundle directly from Maven (as opposed to putting the
 		jar file in a sweep directory) then the dependencies come through automatically. It is good practice, therefore, to ensure you scope most of your dependencies as <courier>provided</courier> where they
 		can be provided by the container application. This ensures you don't get an alarmingly large memory footprint.</p>
+		<p>You also need to include a copy of the BundleRootImpl.class file in your project somehow. It must be the <emph>actual</emph>
+		BundleRootImpl. An extension of that class with nothing in it will not do. The important thing is that the code running in the BundleRootImpl must
+		have been loaded by the bundle class loader not the application class loader.</p>
+		<p>You can easily do this by adding the following to your pom file:</p>
+<code><![CDATA[		
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-dependency-plugin</artifactId>
+	<executions>
+		<execution>
+			<id>unpack-dependencies</id>
+			<phase>compile</phase>
+			<goals>
+				<goal>unpack-dependencies</goal>
+			</goals>
+			<configuration>
+				<includes>**/BundleRootImpl.class</includes>
+				<outputDirectory>${project.build.directory}/classes</outputDirectory>
+				<overWriteReleases>true</overWriteReleases>
+				<overWriteSnapshots>true</overWriteSnapshots>
+			</configuration>
+		</execution>
+	</executions>
+</plugin>
+]]></code>	
         </h2>
         </h1>
         <h1 t="Bundle Manager">
@@ -236,7 +263,7 @@ Bundle-Artifact=nz.co.senanque:madura-bundle-maven:0.0.1-SNAPSHOT
 		by calling the bundleManager bean.</p>
 		<p>The methods you need to know about on the bundleManager are:</p>
 		<list>
-		<ll name="setBundle(String bundleName)">Set the current bundle to the one named, pick the highest version number.</ll>
+		<ll name="setBundle(String bundleName)">Set the current bundle to the one named and pick the highest version number.</ll>
 		<ll name="setBundle(String bundleName, String version)">Set the current bundle to the one named, using the name and version given.</ll>
 		</list>
 		<p>You can set the bundle just by its name and then the latest version will be selected. Or you can specify a specific bundle and version. 
@@ -366,7 +393,8 @@ for (Entry<MyBean,BundleRoot> entry:map.entrySet())
 		not requiring local disk space. This may seem to eliminate the whole point of using bundles but it does allow you to demo
 		your bundle-dependent applications without reversing out that bundle dependency.</p>
 		<p>Assuming your demo is actually a JEE application all you need to do is add a <courier>WEB-INF/bundles</courier> directory to
-		your war file and copy your bundles to there. Those bundles will be loaded during application startup.</p>
+		your war file and copy your bundles to there. Those bundles will be loaded during application startup. Use the BundleManagerWeb rather than
+		the BundleManagerImpl as your bundle manager.</p>
 		</h2>
 		<h2 t="Alternate Timer configurations">
 		<p>You may want to use an external scheduler to trigger the scans. This is easy to
@@ -509,6 +537,18 @@ m_maduraSessionManager = m_beanFactory.getBean("maduraSessionManager",MaduraSess
 		<a1 t="Release Notes">
 		<table width="12cm">
 			<tw>12cm</tw>
+        <tr>
+            <th>4.0.4</th>
+        </tr>
+        <tr>
+            <td>Reworked the bundle mapping because there were holes in the code. This means theat deleting a bundle
+            from the directory now works. Also moved the BundleManager code that handles the servlet context into its own
+            class.</td>
+        </tr>
+        <tr>
+            <td>Reworked the URL calculation. Previous versions were innacurate, often returning null on a request for a URL
+            rather than a jar:file:... style URL.</td>
+        </tr>
         <tr>
             <th>4.0.3</th>
         </tr>

@@ -15,8 +15,9 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -34,14 +35,19 @@ public class BundleClassLoaderTest {
 	@Test
 	public void test() throws Exception {
 		JarInputStream is = new JarInputStream(new FileInputStream("target/bundles/bundle-1.0.jar"));
+		File file = new File("target/bundles/bundle-1.0.jar");
+		URL url1 = new URL("file://"+file.getAbsolutePath());
         ClassLoader cl = this.getClass().getClassLoader();
-        ClassLoader classLoader = new BundleClassLoader(true, new URL[]{}, new JarInputStream[]{is}, cl);
+        BundleClassLoader classLoader = new BundleClassLoader(true, new URL[]{}, new JarInputStream[]{is}, cl, url1);
         is.close();
         Class<BundleRoot> clazz = (Class<BundleRoot>)classLoader.loadClass("nz.co.senanque.madura.bundle.BundleRootImpl");
         ClassLoader actual = clazz.getClassLoader();
         assertEquals(actual,classLoader);
         BundleRoot root = (BundleRoot)clazz.newInstance();
-        URL url = classLoader.getResource("BundleResource.xml");
+        URL url = classLoader.getResource("BundleResource.txt");
+        assertNotNull(url);
+        InputStream is2 = url.openStream();
+        is2.close();
         InputStream is1 = classLoader.getResourceAsStream("BundleResource.txt");
         byte[] bytes = new byte[10]; // this size trims the last \n byte.
         int i = is1.read(bytes);
@@ -53,6 +59,8 @@ public class BundleClassLoaderTest {
         	url = e.nextElement();
         	url.toString();
         }
+		URL url4 = classLoader.getResource("mistake.txt");
+		assertNull(url4);
 	}
 
 }

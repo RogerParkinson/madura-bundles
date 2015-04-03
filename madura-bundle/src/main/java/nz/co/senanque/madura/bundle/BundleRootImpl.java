@@ -66,6 +66,7 @@ public class BundleRootImpl implements BundleRoot
     public void shutdown()
     {
     	m_shutdown = true;
+    	m_applicationContext.close();
 //        m_applicationContext.stop();
     }
 

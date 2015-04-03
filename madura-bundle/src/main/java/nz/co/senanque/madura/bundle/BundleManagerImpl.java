@@ -16,18 +16,11 @@
 package nz.co.senanque.madura.bundle;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.servlet.ServletContext;
 
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
@@ -52,12 +45,10 @@ public class BundleManagerImpl extends AbstractBundleManager
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     private String m_directory;
     private long m_time = -1; // optional scan timer
-	private ServletContext m_servletContext;
     
     @Override
     public void init() {
     	super.init();
-        scanServletContext();
         if (getTime() != -1)
         {
             // we have a timer so launch it now
@@ -76,42 +67,25 @@ public class BundleManagerImpl extends AbstractBundleManager
             scan();
         }
     }
-    public void scanServletContext()
-    {
-        m_logger.debug("Scanning files");
-        if (m_servletContext == null) {
-        	return;
-        }
-        Set<String> bundles = m_servletContext.getResourcePaths("/WEB-INF/bundles");
-        if (bundles != null) {
-	        for (String fileName : bundles) {
-	        	int i = fileName.lastIndexOf('.');
-	        	if (i <= 0) {
-	        		continue;
-	        	}
-	        	BundleManagerDelegate bundleManagerDelegate = getBundleManagerDelegate(fileName.substring(i));
-	        	if (bundleManagerDelegate != null) {
-	            	int j = fileName.lastIndexOf('/');
-	            	int j1 = fileName.lastIndexOf('-');
-	            	String bundleName = fileName.substring(j+1,j1);
-	            	InputStream is = m_servletContext.getResourceAsStream(fileName);
-	            	bundleManagerDelegate.addBundle(bundleName,is);
-	            	try {
-	    				is.close();
-	    			} catch (IOException e) {
-	    				m_logger.warn("{} {}",fileName,e.getMessage());
-	    			}
-	            	continue;
-	        	}
-	        }
-        }
-    }
-    private BundleManagerDelegate getBundleManagerDelegate(String extension) {
-		if (".jar".equals(extension)) {
-			return new BundleMangerDelegateJar(this);
+    private BundleManagerDelegate getBundleManagerDelegate(File file) {
+    	String fileName = file.getName().toLowerCase();
+    	int i = fileName.lastIndexOf('.');
+    	if (i <= 0) {
+    		return null;
+    	}
+        URL url;
+		try {
+			url = new URL("file://"+file.getAbsolutePath());
+		} catch (MalformedURLException e1) {
+			m_logger.warn("Failed to get a URL for {}",file.getAbsolutePath());
+			return null;
+		}
+    	String extension = fileName.substring(i);
+    	if (".jar".equals(extension)) {
+			return new BundleMangerDelegateJar(this, file, url);
 		}
 		if (".bundle".equals(extension)) {
-			return new BundleMangerDelegateMaven(this);
+			return new BundleMangerDelegateMaven(this, file, url);
 		}
 		return null;
 	}
@@ -121,69 +95,66 @@ public class BundleManagerImpl extends AbstractBundleManager
         if (m_directory == null) {
         	return;
         }
+        
+        // Find all the relevant files that are not already loaded.
         File dir = new File(m_directory);
         File[] files = dir.listFiles(new FilenameFilter(){
 
             public boolean accept(File arg0, String arg1)
             {
-                if (arg1.toUpperCase().endsWith("JAR")) return true;
-                if (arg1.toUpperCase().endsWith("BUNDLE")) return true;
+            	// extension is 'bundle' or 'jar'
+                if (arg1.toUpperCase().endsWith("JAR") || arg1.toUpperCase().endsWith("BUNDLE")) {
+                	// is it already loaded?
+                	if (m_bundleMap.findById(arg1) == null) {
+                		return true;
+                	}
+                }
                 return false;
             }});
         if (files==null)
         {
             throw new RuntimeException("Could not access directory: "+m_directory);
         }
-        
-        // Put all the names in the list of delete candidates
-        // we will remove the ones we want to keep
-        List<String> deleteCandidates = new ArrayList<String>();
-        for (BundleVersion bv: m_bundleMap.getAvailableBundles()) {
-        	deleteCandidates.add(bv.getFullVersion());
-        }
+        File[] allFiles = dir.listFiles(new FilenameFilter(){
+
+            public boolean accept(File arg0, String arg1)
+            {
+            	// extension is 'bundle' or 'jar'
+                if (arg1.toUpperCase().endsWith("JAR") || arg1.toUpperCase().endsWith("BUNDLE")) {
+                		return true;
+                	}
+                return false;
+            }});
         
         m_lock = Thread.currentThread();
         // Scan all the files in the directory
         for (File file:files)
         {
-        	String fileName = file.getName().toLowerCase();
-        	int i = fileName.lastIndexOf('.');
-        	if (i <= 0) {
-        		continue;
-        	}
-        	BundleManagerDelegate bundleManagerDelegate = getBundleManagerDelegate(fileName.substring(i));
+        	BundleManagerDelegate bundleManagerDelegate = getBundleManagerDelegate(file);
         	if (bundleManagerDelegate == null) continue;
 
-            String bundleName = fileName.substring(0,i);
-            BundleRoot root = m_bundleMap.getBundleRoot(bundleName);
-            long lastModified = file.lastModified();
-            if (root == null)
-            {
-                // This is a new one so add it
-            	try {
-					bundleManagerDelegate.addBundle(bundleName, new FileInputStream(file));
-				} catch (FileNotFoundException e) {
-					m_logger.warn("Failed to open {}",file.getAbsolutePath());
-				}
-            }
-            else
-            {
-                // Make sure we don't delete (shutdown) this
-                deleteCandidates.remove(bundleName);
-                if (root.getDate() != lastModified)
-                {
-                    m_bundleMap.deleteBundle(bundleName);
-                    try {
-						bundleManagerDelegate.addBundle(bundleName, new FileInputStream(file));
-					} catch (FileNotFoundException e) {
-						m_logger.warn("Failed to open {}",file.getAbsolutePath());
-					}
-                }
-            }
+            // This is a new one so add it
+        	try {
+				bundleManagerDelegate.addBundle();
+			} catch (Exception e) {
+				m_logger.warn("Failed to open {}",file.getAbsolutePath());
+			}
         }
-        for (String bundleName:deleteCandidates)
-        {
-        	m_bundleMap.deleteBundle(bundleName);
+        for (BundleVersion bundleVersion: m_bundleMap.getAvailableBundles()) {
+        	if (bundleVersion.isInUse()) {
+        		continue;
+        	}
+        	boolean found = false;
+        	for (File file: allFiles) {
+        		if (bundleVersion.getId().equals(file.getName())) {
+        			found = true;
+        			break;
+        		}
+        	}
+        	if (!found) {
+        		// delete the bundle
+        		m_bundleMap.shutdown(bundleVersion);
+        	}
         }
         m_lock = null;
     }
@@ -212,7 +183,4 @@ public class BundleManagerImpl extends AbstractBundleManager
     {
         m_time = time;
     }
-	public void setServletContext(ServletContext arg0) {
-		m_servletContext = arg0;
-	}
 }

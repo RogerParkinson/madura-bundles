@@ -32,12 +32,12 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     protected BundleMap m_bundleMap = new BundleMap();
-    private ThreadLocal<String> m_currentBundle = new ThreadLocal<String>();
+    private ThreadLocal<BundleVersion> m_currentBundle = new ThreadLocal<>();
     protected Thread m_lock = null;
     protected Map<String,Object> m_inheritableBeans = new HashMap<String,Object>();
     private DefaultListableBeanFactory m_beanFactory;
     private String m_export;
-    protected String m_defaultBundle;
+    protected BundleVersion m_defaultBundle;
     public Set<BundleListener> m_bundleListeners = new HashSet<BundleListener>();
     private boolean m_childFirst = true;
 
@@ -71,14 +71,28 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
     public void setBundle(String bundleName, String version)
     {
     	BundleVersion bv = m_bundleMap.selectBestBundle(bundleName, version);
-        m_currentBundle.set(bv.getFullVersion());
+        m_currentBundle.set(bv);
         m_logger.debug("set bundle: {}",bv);
+        if (bv != null) {
+        	bv.increment();
+        }
     }
     public void setBundle(String bundleName)
     {
     	BundleVersion bv = m_bundleMap.selectBestBundle(bundleName);
-        m_currentBundle.set(bv.getFullVersion());
+        m_currentBundle.set(bv);
         m_logger.debug("set bundle: {}",bv);
+        if (bv != null) {
+        	bv.increment();
+        }
+    }
+    public void releaseBundle()
+    {
+    	BundleVersion bv = m_currentBundle.get();
+        m_logger.debug("release bundle: {}",bv);
+        if (bv != null) {
+        	bv.decrement();
+        }
     }
     public void afterPropertiesSet()
     {
@@ -104,16 +118,16 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
             {
             }
         }
-        String bundleName = m_currentBundle.get();
-        if (bundleName == null)
+        BundleVersion bundleVersion = m_currentBundle.get();
+        if (bundleVersion == null)
         {
-            bundleName = m_defaultBundle;
+        	bundleVersion = m_defaultBundle;
         }
-        if (bundleName == null)
+        if (bundleVersion == null)
         {
             throw new NoBundleSelectedException("No bundle selected and default bundle is not set");
         }
-        return m_bundleMap.findBundleVersion(bundleName).getRoot();
+        return bundleVersion.getRoot();
     }
     public Map<String, Object> getInheritableBeans()
     {

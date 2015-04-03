@@ -27,6 +27,7 @@ public interface BundleManager
     public abstract void init();
 
     public abstract void setBundle(String bundleName);
+    public abstract void setBundle(String bundleName, String version);
     
     public abstract BundleRoot getBundle();
     public Collection<BundleRoot> getAvailableBundleRoots();

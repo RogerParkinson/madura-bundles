@@ -44,33 +44,17 @@ public class BundleMapTest {
 		assertEquals(6,roots.size());
 		Collection<BundleVersion> bundleVersions = m_bundleMap.getAvailableBundles();
 		assertEquals(6,bundleVersions.size());
-		BundleVersion bv = m_bundleMap.getBundleVersion("bundle1");
-		assertEquals("bundle1",bv.getName());
-		assertNull(bv.getVersion());
-		bv = m_bundleMap.getBundleVersion("bundle1-1.0.0");
-		assertEquals("1.0.0",bv.getVersion());
-		bv = m_bundleMap.getBundleVersion("bundle1-2.0.0");
-		assertEquals("2.0.0",bv.getVersion());
-		
-		bv = m_bundleMap.selectBestBundle("bundle1");
+		BundleVersion bv = m_bundleMap.selectBestBundle("bundle1");
 		assertEquals("2.1.0",bv.getVersion());
-		bv = m_bundleMap.selectBestBundle("bundle1-1.0.0");
+		bv = m_bundleMap.selectBestBundle("bundle1","1.0.0");
 		assertEquals("1.0.0",bv.getVersion());
-		bv = m_bundleMap.selectBestBundle("bundle1-2.0.0");
-		assertEquals("2.1.0",bv.getVersion());
-
-		m_bundleMap.deleteBundle("bundle1-1.0.0");
+		exception = false;
 		try {
-			bv = m_bundleMap.findBundleVersion("bundle1-1.0.0");
+			bv = m_bundleMap.selectBestBundle("bundle1","2.0.0");
 		} catch (Exception e) {
 			exception = true;
 		}
-		assertFalse(exception);
-		assertTrue(bv.getRoot().isShutdown());
-		bv = m_bundleMap.selectBestBundle("bundle1-1.0.0");
-		assertEquals("1.1.0",bv.getVersion());
-		BundleRoot root = m_bundleMap.getBundleRoot("bundle1-1.1.0");
-		assertNotNull(root);
+		assertTrue(exception);
 	}
 
 }
