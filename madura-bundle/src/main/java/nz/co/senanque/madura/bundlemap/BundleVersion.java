@@ -78,7 +78,7 @@ public class BundleVersion implements Comparable<BundleVersion> {
 	}
 
 	public boolean isInUse() {
-		return inuse==0;
+		return inuse!=0;
 	}
 
 }

@@ -83,6 +83,10 @@ public class BundleManagerWeb extends BundleManagerImpl implements ServletContex
 			throw new RuntimeException(e1);
 		}
     	String extension = fileName.substring(i);
+    	i = fileName.lastIndexOf('/');
+    	if (i >= -1) {
+    		fileName = fileName.substring(i+1);
+    	}
     	if (".jar".equals(extension)) {
 			return new BundleMangerDelegateJar(this, fileName, url);
 		}

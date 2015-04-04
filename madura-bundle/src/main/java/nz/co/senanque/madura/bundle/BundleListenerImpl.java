@@ -15,6 +15,8 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import nz.co.senanque.madura.bundlemap.BundleVersion;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +34,14 @@ public class BundleListenerImpl implements BundleListener
     /* (non-Javadoc)
      * @see nz.co.senanque.madura.bundle.BundleListener#add(java.lang.String, nz.co.senanque.madura.bundle.BundleRoot)
      */
-    public void add(String bundleName, BundleRoot root)
+    public void add(BundleVersion bundleVersion)
     {
-        m_logger.debug("added bundle {}",root.getProperties().get("bundle.name"));        
+        m_logger.debug("added bundle {}",bundleVersion.getId());        
     }
 
-    public void remove(String bundleName, BundleRoot root)
+    public void remove(BundleVersion bundleVersion)
     {
-        m_logger.debug("removed bundle {}",root.getProperties().get("bundle.name"));        
+        m_logger.debug("removed bundle {}",bundleVersion.getId());        
     }
 
 }

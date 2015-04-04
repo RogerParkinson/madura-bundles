@@ -107,8 +107,10 @@ public class BundleMap {
 	}
 	public void shutdown(BundleVersion bundleVersion) {
 		bundleVersion.getRoot().shutdown();
-		Set<BundleVersion> ret = m_map.get(bundleVersion.getId());
-		ret.remove(bundleVersion);
+		Set<BundleVersion> ret = m_map.get(bundleVersion.getName());
+		if (ret != null) {
+			ret.remove(bundleVersion);
+		}
 	}
 	private Set<BundleVersion> find(String key) {
 		Set<BundleVersion> ret = m_map.get(key);

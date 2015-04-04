@@ -146,7 +146,8 @@ public class BundleManagerImpl extends AbstractBundleManager
         	}
         	boolean found = false;
         	for (File file: allFiles) {
-        		if (bundleVersion.getId().equals(file.getName())) {
+        		String fileName = file.getName();
+        		if (bundleVersion.getId().equals(fileName)) {
         			found = true;
         			break;
         		}
@@ -154,6 +155,10 @@ public class BundleManagerImpl extends AbstractBundleManager
         	if (!found) {
         		// delete the bundle
         		m_bundleMap.shutdown(bundleVersion);
+        		for (BundleListener bundleListener : m_bundleListeners) {
+        			bundleListener.remove(bundleVersion);
+        		}
+         		m_logger.info("Shutdown bundle: {}", bundleVersion.getId());
         	}
         }
         m_lock = null;

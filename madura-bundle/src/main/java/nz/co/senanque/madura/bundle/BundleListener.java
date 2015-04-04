@@ -15,6 +15,8 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import nz.co.senanque.madura.bundlemap.BundleVersion;
+
 /**
  * 
  * Describes listeners for bundle events
@@ -28,6 +30,6 @@ public interface BundleListener
      * @param bundleName
      * @param root
      */
-    void add(String bundleName, BundleRoot root);
-    void remove(String bundleName, BundleRoot root);
+    void add(BundleVersion bundleVersion);
+    void remove(BundleVersion bundleVersion);
 }

@@ -32,8 +32,8 @@ abstract class BundleManagerDelegateAbstract implements BundleManagerDelegate {
 		m_bundleManagerImpl.m_defaultBundle = bundleVersion;
 		root.setName(fullBundleName);
 		for (BundleListener bundleListener : m_bundleManagerImpl.m_bundleListeners) {
-			bundleListener.add(bundleVersion.getFullVersion(), root);
+			bundleListener.add(bundleVersion);
 		}
 	}
-
+	
 }

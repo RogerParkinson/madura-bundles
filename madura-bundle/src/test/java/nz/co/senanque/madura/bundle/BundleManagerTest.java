@@ -47,7 +47,6 @@ public class BundleManagerTest
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     @Autowired ApplicationContext applicationContext;
     @Autowired BundleManager bundleManager;
-    private static BundleManager s_bundleManager;
 
     @Before
     public void init() {
