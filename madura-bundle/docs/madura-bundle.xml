@@ -352,13 +352,13 @@ for (BundleRoot br:bm.getAvailableBundles())
 }
 		]]></code>
 		<p>The <courier>bundle.name</courier> (note: case sensitive) property is automatically added by the bundle manager
-		and is the bundle name with the version, for example <courier>madura-bundle-maven-0.0.1-SNAPSHOT</courier></p>
-		<p>For proxying if you don't pick a bundle it will default to the last bundle that registered with the bundle manager.
-		That is probably the latest one and probably the one you want. It is good practice to explicitly set the bundle though.</p>
+		and is the bundle name, for example <courier>madura-bundle-maven</courier></p>
+		<p>For proxying if you don't pick a bundle it will default to the latest version of that bundle registered with the bundle manager.
+		That is probably the one you want. It is good practice to explicitly set the bundle though.</p>
 		<p>The bundle pick is stored in the ThreadLocal and in a multi-threaded application, such as a web server, you usually
 		have a session consisting of multiple requests. Each request is run on a thread assigned by the application server, and
 		you cannot assume it is the same thread. So each request must pick the bundle every time.</p>
-		<p>But once you have picked a bundle for a session (consisting of multiple requests) you probably want to stic with it.
+		<p>But once you have picked a bundle for a session (consisting of multiple requests) you probably want to stick with it.
 		If a new bundle is deployed part way through a session it makes sense for that session to stick with the bundle
 		they already had. So the application code should store the picked bundle name in some kind of session storage and
 		pick the stored name on each request.</p>
@@ -388,7 +388,7 @@ for (Entry<MyBean,BundleRoot> entry:map.entrySet())
 		the functional bean.</p>
 		<p>When you have finished with the bundle it is prudent to release it using the bundleManager method releaseBundle(). 
 		This will release the current bundle. It doesn't actually remove the bundle, but if you subsequently delete the bundle jar file then
-		it will garbage collect the bundle if it is not in use and careful releasing of bundles ensures we can keep track of what bundle is in 
+		it will garbage collect the bundle if it is not in use by anyone else. Careful releasing of bundles ensures we can keep track of what bundle is in 
 		use and what bundle is not.</p>		
 		</h1>
 		<h1 t="Advanced Topics">
@@ -531,12 +531,6 @@ m_maduraSessionManager = m_beanFactory.getBean("maduraSessionManager",MaduraSess
 		<a1 t="License">
 			<p>The code specific to MaduraBundle is licensed under the Apache License 2.0 <referenceLink t="Apache Licence 2.0"/>.</p>
 			<p>The dependent products have compatible licenses specified in their pom files.</p>
-		</a1>
-		<a1 t="Eclipse Setup">
-		<p>Eclipse will show some of the test XML configuration files to be in error because it fails to find the XSD file
-		they depend on. This is easily fixed. Use the XML Catalog setting in Eclipse (Window->preferences->XML->XML Catalog)
-		and create a schema location entry for key: http://www.senanque.co.nz/madura/bundle/MaduraBundle.xsd that points to
-		MaduraBundle/src/main/resources/nz/co/senanque/madura/bundle/spring/MaduraBundle.xsd</p>
 		</a1>
 		<a1 t="Release Notes">
 		<table width="12cm">
