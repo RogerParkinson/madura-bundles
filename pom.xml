@@ -26,9 +26,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:ssh://git@github.com:RogerParkinson/madura-bundles.git</connection>
-		<developerConnection>scm:git:https://github.com/RogerParkinson/madura-bundles.git</developerConnection>
-		<url>https://github.com/RogerParkinson/madura-bundles/</url>
+		<connection>scm:git:git@github.com:RogerParkinson/madura-bundles.git</connection>
+		<developerConnection>scm:git:git@github.com:RogerParkinson/RogerParkinson/madura-bundles.git</developerConnection>
+		<url>scm:git:git@github.com:RogerParkinson/RogerParkinson/madura-bundles.git</url>
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>
