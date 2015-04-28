@@ -34,8 +34,6 @@ import org.springframework.context.support.AbstractApplicationContext;
  * There is an injected directory that is scanned on startup and at other times for jar files.
  * Any new bundles found are loaded. Any that were found earlier and are gone are shut down.
  * When the manager is shut down all bundles are shut down as well.
- * Bundles may be loaded at startup time from the WEB-INF/bundles dir if there are any, and you can combine the two, or
- * omit wiring the directory in and just get the ones from WEB-INF/bundles, or vv.
  * 
  * @author Roger Parkinson
  * @version $Revision: 1.5 $

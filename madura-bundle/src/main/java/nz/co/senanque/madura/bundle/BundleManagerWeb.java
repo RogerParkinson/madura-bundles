@@ -28,6 +28,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ServletContextAware;
 
 /**
+ * This bundle manager loads bundles from WEB-INF/bundles at startup time if there are any.
+ * You can have a scanned directory in as well if you want but this extension is intended to
+ * allow bundles to live inside a war file which is useful for on-line demos, but rather makes
+ * the idea of bundles a bit redundant. But it does simplify setting up a demo.
+ * 
  * @author Roger Parkinson
  *
  */
