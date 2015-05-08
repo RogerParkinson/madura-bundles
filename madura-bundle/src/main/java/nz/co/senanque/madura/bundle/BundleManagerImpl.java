@@ -22,11 +22,14 @@ import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.servlet.http.HttpSessionEvent;
+
 import nz.co.senanque.madura.bundle.spring.BundleScope;
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 
 /**

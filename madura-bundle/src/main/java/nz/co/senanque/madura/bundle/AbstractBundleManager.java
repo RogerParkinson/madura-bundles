@@ -21,6 +21,9 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.security.web.session.HttpSessionDestroyedEvent;
 import org.springframework.util.StringUtils;
 
 /**
@@ -29,7 +32,7 @@ import org.springframework.util.StringUtils;
  * @author Roger Parkinson
  *
  */
-public abstract class AbstractBundleManager implements BundleManager, InitializingBean, BeanFactoryAware {
+public abstract class AbstractBundleManager implements BundleManager, InitializingBean, BeanFactoryAware, ApplicationListener<ApplicationEvent> {
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     protected BundleMap m_bundleMap = new BundleMap();
@@ -191,5 +194,13 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
 	public BundleScope getScope() {
 		return m_bundleScope;
 	}
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		if (event instanceof HttpSessionDestroyedEvent) {
+			HttpSessionDestroyedEvent httpEvent = (HttpSessionDestroyedEvent)event;
+			m_bundleScope.sessionDestroyed(httpEvent.getSession().getId());
+		}
+	}
+
 
 }
