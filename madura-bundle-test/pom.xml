@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>nz.co.senanque</groupId>
 		<artifactId>madura-bundles</artifactId>
-		<version>4.0.5-SNAPSHOT</version>
+		<version>4.0.5.1-SNAPSHOT</version>
 	</parent>
 	<groupId>nz.co.senanque</groupId>
 	<artifactId>madura-bundle-test</artifactId>

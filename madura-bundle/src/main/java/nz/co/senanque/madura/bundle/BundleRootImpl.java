@@ -20,6 +20,8 @@ import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Properties;
 
+import nz.co.senanque.madura.bundle.spring.BundleScope;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -77,6 +79,8 @@ public class BundleRootImpl implements BundleRoot
     {
         m_properties = properties;
         m_inheritableBeans = inheritableBeans;
+        BundleManager bundleManager = ownerBeanFactory.getBean(BundleManager.class);
+        BundleScope bundleScope = bundleManager.getScope();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(cl);
         m_classLoader = cl;
@@ -104,6 +108,10 @@ public class BundleRootImpl implements BundleRoot
         if (scope != null)
         {
         	ctx.getBeanFactory().registerScope("session", scope);
+        }
+        if (bundleScope != null)
+        {
+        	ctx.getBeanFactory().registerScope("bundle", bundleScope);
         }
         ctx.refresh();
         m_applicationContext = ctx;
@@ -171,4 +179,5 @@ public class BundleRootImpl implements BundleRoot
 	public boolean isShutdown() {
 		return m_shutdown;
 	}
+
 }

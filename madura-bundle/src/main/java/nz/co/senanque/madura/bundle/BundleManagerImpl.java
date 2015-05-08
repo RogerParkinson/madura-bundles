@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import nz.co.senanque.madura.bundle.spring.BundleScope;
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;

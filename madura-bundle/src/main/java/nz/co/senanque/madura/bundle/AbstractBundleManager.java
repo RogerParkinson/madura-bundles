@@ -7,10 +7,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nz.co.senanque.madura.bundle.spring.BundleScope;
 import nz.co.senanque.madura.bundlemap.BundleMap;
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
@@ -41,6 +41,7 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
     protected BundleVersion m_defaultBundle;
     public Set<BundleListener> m_bundleListeners = new HashSet<BundleListener>();
     private boolean m_childFirst = true;
+    private BundleScope m_bundleScope = new BundleScope();
 
 
     /* (non-Javadoc)
@@ -67,6 +68,7 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
         {
             m_bundleListeners.add(bundleListener);
         }
+    	m_bundleScope.setBundleManager(this);
     }
 
     public void setBundle(String bundleName, String version)
@@ -184,6 +186,10 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
 
 	public DefaultListableBeanFactory getBeanFactory() {
 		return m_beanFactory;
+	}
+	@Override
+	public BundleScope getScope() {
+		return m_bundleScope;
 	}
 
 }

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import nz.co.senanque.madura.bundle.spring.BundleScope;
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 
@@ -35,5 +36,7 @@ public interface BundleManager
     public abstract BundleRoot getBundle();
     public Collection<BundleRoot> getAvailableBundleRoots();
     public Map<?,BundleRoot> getBeansOfType(Class<?> clazz);
+
+	public abstract BundleScope getScope();
 
 }
