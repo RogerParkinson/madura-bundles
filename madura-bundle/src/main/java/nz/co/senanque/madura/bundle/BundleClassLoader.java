@@ -24,11 +24,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -53,7 +57,7 @@ public class BundleClassLoader extends URLClassLoader {
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     private final static int BUFFER_SIZE = 1024;
-    private HashMap<String,byte[]> classes = new HashMap<String,byte[]>();
+    private HashMap<String,byte[]> bclasses = new HashMap<String,byte[]>();
     private HashMap<String,byte[]> others = new HashMap<String,byte[]>();
     private boolean m_childFirst;
     private ClassLoader system;
@@ -204,6 +208,31 @@ public class BundleClassLoader extends URLClassLoader {
         return null;
     }
 
+    public Enumeration<URL> findResources(final String name)
+            throws IOException
+        {
+    	final List<URL> urls = new ArrayList<URL>();
+    	for (Map.Entry<String, byte[]> resource: others.entrySet()) {
+    		if (resource.getKey().startsWith(name)) {
+    			urls.add(new URL("jar:"+m_url.toExternalForm()+"!/"+resource.getKey()));
+    		}
+    	}
+    	for (Map.Entry<String, byte[]> resource: bclasses.entrySet()) {
+    		if (resource.getKey().startsWith(name)) {
+    			urls.add(new URL("jar:"+m_url.toExternalForm()+"!/"+resource.getKey()));
+    		}
+    	}
+        return new Enumeration<URL>() {
+            Iterator<URL> iter = urls.iterator();
+
+            public boolean hasMoreElements() {
+                return iter.hasNext(); 
+            }
+            public URL nextElement() {
+                return iter.next();
+            }
+        };
+        }
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
         /**
@@ -292,7 +321,7 @@ public class BundleClassLoader extends URLClassLoader {
         }
     }
     private byte[] findClassData(String name) {
-        return (byte[])classes.remove(name);
+        return (byte[])bclasses.remove(name);
     }
     public void addJar(JarInputStream stream) {
         byte[] buf = new byte[BUFFER_SIZE];
@@ -311,7 +340,7 @@ public class BundleClassLoader extends URLClassLoader {
                     out.write(buf, 0, count);
                 out.close();
                 if(name.endsWith(".class")) {
-                    classes.put(getClassName(name), out.toByteArray());
+                    bclasses.put(getClassName(name), out.toByteArray());
                 } else {
                     others.put(name, out.toByteArray());
                 }
