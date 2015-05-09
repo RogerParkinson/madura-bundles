@@ -475,57 +475,23 @@ for (Entry<MyBean,BundleRoot> entry:map.entrySet())
 		<p>If you are not using proxies you need to go find the bundle using <courier>BundleManager.getBeansOfType(Class)</courier>
 		or you can use the <courier>BundleListener</courier> approach.</p>
 		</h2>
-        <h2 t="Managing Session Beans inside Bundles">
-        <p>There's an interesting problem that can come up when you need to define a Spring session bean inside a bundle. It relates
-        to the way bundles are loaded and the way Spring handles session beans. As such it gets a little complex but the good news
-        is this hardly ever comes up, so don't sweat too much over it.</p>
-        <p>Spring's session beans always assume there is a web session available but bundles are loaded <emph>outside</emph> the web session, 
-        and if we add the session scope to them Spring tells us that it doesn't have a session and dies.</p>
-        <p>But, actually it is not quite that simple. Spring defers the instantiation of the session beans until it has to. So it only
-        dies if the bundle forces that bean to be instantiated up front. So the trick is to do two things:</p>
-        <list>
-        <le>Make sure that every reference to the bean is scoped as session, that way Spring will know they are all references to the same bean.</le>
-        <le>Make sure the bean is not instantiated until there is a web session available. That can be in the AppFactory.createApp(Blackboard) method which
-        is not invoked until the bundle is bound by the application, and that doesn't normally hapen until there is a session.</le>
-        </list>
-        <p>So you can declare session beans anywhere. In practice there are three distinct xml files that define Spring beans in a normal web application.</p>
-        <list>
-        <le>The bundle's own xml file.</le>
-        <le>The applicationContext.xml file loaded by Spring's ContextLoaderListener.</le>
-        <le>The session level application file loaded by one of the Vaadin application's init methods (assuming you are using the VaadinSupport approach).</le>
-        </list>
-        <p>You can define session beans in any of these like so:</p>
+        <h2 t="Scoped Beans">
+        <p>Spring allows you to define beans as session scoped like this:</p>
         <code><![CDATA[
-<bean id="permissionManager" class="nz.co.senanque.vaadinsupport.permissionmanager.PermissionManagerImpl" scope="session"/>
-<bean id="fieldFactory" class="nz.co.senanque.vaadinsupport.FieldFactory" scope="session"/>
-<bean id="hints" class="nz.co.senanque.vaadinsupport.HintsImpl" scope="session"/>
+<bean id="myBean" class="com.mycompany.MyBeanImpl" scope="session"/>
         ]]></code>
-        <p>These are three session beans defined in the session level application file. In this file every bean is effectively a
-        session bean, but Spring doesn't know it and doesn't actually tie them to the http session in the same way. For these particular beans, though, we
-        really want Spring to know they are session beans so we scope them.</p>
-        <p>The session level application file is never loaded until there is a web session so Spring will be fine with this.</p>
-        <p>Now, in our bundle context file we have this:</p>
+        <p>In a web application Spring will arrange for one of these beans to be created per session, and a proxy injected where necesary. This means
+        that each different session sees its own bean, it does not share it with the other sessions, though the code calling the bean (through the proxy)
+        is unaware of this. Spring manages mapping the right beans to each request based on its session identifier.</p>
+        <p>But when using bundles you have applications that may switch between several bundles and each of those bundles may define a copy of 
+        <courier>myBean</courier> that needs to be a session bean. But you do not want one bean per session. You want one bean per session <emph>per bundle</emph>.</p>
+        <p>To achieve this we have a special scope named 'bundle' and you use it like this:</p>
         <code><![CDATA[
-<bean id="permissionManager" class="nz.co.senanque.vaadinsupport.permissionmanager.PermissionManagerImpl" scope="session"/>
-<bean id="fieldFactory" class="nz.co.senanque.vaadinsupport.FieldFactory" scope="session"/>
-<bean id="hints" class="nz.co.senanque.vaadinsupport.HintsImpl" scope="session"/>
+<bean id="myBean" class="com.mycompany.MyBeanImpl" scope="bundle"/>
         ]]></code>
-        <p>Same thing, right? Yes, but because these are explicitly Session scoped Spring will deliver the same bean. So multiple sessions talking to the
-        same bundle will see different instances of the bean, ie their own instance. And they will reuse the instance defined in the session level
-        application file.</p>
-        <p>At the bundle level these three beans are injected into this bean:</p>
-        <code><![CDATA[
-<bean id="maduraSessionManager" class="nz.co.senanque.vaadinsupport.application.MaduraSessionManager" scope="session"/>
-        ]]></code>
-        <p>This is another session scoped bean. The bean is instantiated when the following is executed:</p>
-        <code><![CDATA[
-m_maduraSessionManager = m_beanFactory.getBean("maduraSessionManager",MaduraSessionManager.class);
-        ]]></code>
-        <p>That code is from AppFactory.createApp(Blackboard) in the bundle. So Spring will defer instantiation until
-        then, at which point it will instantiate and auto wire the dependent beans. But by then, of course, it has a web session underway
-        and the session scope requirements are fulfilled, no problem.</p>
-        <p>Because these beans were defined as session scoped beans in the session level file Spring will find them and reuse them in the bundle,
-        except for maduraSessionManager which it will create for this session.</p>
+        <p>The scope is set up automatically by the bundle manager so there isn't anything else you have to do. Naturally this is only valid for
+        beans defined inside bundles, not elsewhere. It will work just fine when there is no web session, falling back to an internal dummy session,
+        though we can't think of a situation you would need that.</p>
         </h2>
         </h1>
 		<a1 t="License">
@@ -535,6 +501,15 @@ m_maduraSessionManager = m_beanFactory.getBean("maduraSessionManager",MaduraSess
 		<a1 t="Release Notes">
 		<table width="12cm">
 			<tw>12cm</tw>
+        <tr>
+            <th>4.1.0</th>
+        </tr>
+        <tr>
+            <td>Added scope 'bundle', a custom Spring scope to manage session beans that are specific to a bundle.</td>
+        </tr>
+        <tr>
+            <td>Fixed a bug in the classloader which prevented scanning for classes in a package.</td>
+        </tr>
         <tr>
             <th>4.0.4</th>
         </tr>
