@@ -492,6 +492,10 @@ for (Entry<MyBean,BundleRoot> entry:map.entrySet())
         <p>The scope is set up automatically by the bundle manager so there isn't anything else you have to do. Naturally this is only valid for
         beans defined inside bundles, not elsewhere. It will work just fine when there is no web session, falling back to an internal dummy session,
         though we can't think of a situation you would need that.</p>
+        <p>When you do want a session bean to share across all bundles define it in the main application as well as in the bundles and make sure it
+        has session scope on each definition. Spring defers instantiation of session beans until they are asked for because it needs a web session to
+        store them against and there isn't one at startup. So be careful you don't force the session bean to be created, for example by injecting it into
+        some bean that uses it in an initialisation method.</p>
         </h2>
         </h1>
 		<a1 t="License">
