@@ -26,7 +26,7 @@ public interface BundleRoot
 
     public abstract void shutdown();
 
-    public abstract void init(DefaultListableBeanFactory ownerBeanFactory, Properties properties, ClassLoader cl, Map<String, Object> inheritableBeans);
+    public abstract void init(DefaultListableBeanFactory ownerBeanFactory, Properties properties, ClassLoader cl, Map<String, Object> exportedBeans);
 
     public abstract ApplicationContext getApplicationContext();
 

@@ -49,7 +49,7 @@ public class BundleRootImpl implements BundleRoot
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     private long m_lastModified;
     private Properties m_properties;
-    private static Map<String, Object> m_inheritableBeans;
+    private static Map<String, Object> m_exportedBeans;
     private ClassLoader m_classLoader;
     private String m_name;
     private boolean m_shutdown = false;
@@ -78,7 +78,7 @@ public class BundleRootImpl implements BundleRoot
     public void init(DefaultListableBeanFactory ownerBeanFactory, Properties properties, ClassLoader cl, Map<String, Object> inheritableBeans)
     {
         m_properties = properties;
-        m_inheritableBeans = inheritableBeans;
+        m_exportedBeans = inheritableBeans;
         BundleManager bundleManager = ownerBeanFactory.getBean(BundleManager.class);
         BundleScope bundleScope = bundleManager.getScope();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -154,9 +154,9 @@ public class BundleRootImpl implements BundleRoot
         return m_lastModified;
     }
 
-    public static Map<String, Object> getInheritedBeans()
+    public static Map<String, Object> getExportedBeans()
     {
-        return m_inheritableBeans;
+        return m_exportedBeans;
     }
 
     public Properties getProperties()

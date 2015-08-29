@@ -203,7 +203,10 @@ Class-Path: lib2/ant-optional-1.5.1.jar  lib2/antlr-2.7.6.jar lib2/aopalliance-1
 ]]></code>	
         </h2>
         </h1>
-        <h1 t="Bundle Manager">
+        <h1 t="Configuring Your Application">
+        <h2 t="XML">
+        <p>Bundles make use of Spring for configuration and Spring can be configured several ways. The basic approach is with XML, but
+        this is also the longest and most boring. It does show you everything that is going on though so it is a good place to start.</p>
 		<p>The main application is wired like this:</p>
 		<code><![CDATA[
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -257,6 +260,51 @@ Bundle-Artifact=nz.co.senanque:madura-bundle-maven:0.0.1-SNAPSHOT
 		<ll name="madura.maven.remote.repo">Defaults to <courier>central,default,http://repo1.maven.org/maven2/</courier>. You can specify
 		multiple remote libraries. Each entry needs a name, type, url (all comma separated) and the library entries are also comma separated.</ll>
 		</list>
+		</h2>
+		<h2 t="Annotations">
+		<p>But we can make all this more concise by using annotations. Apart from the header all we really need in the XML file is this:</p>
+		<code><![CDATA[
+<context:annotation-config/>
+<context:component-scan base-package="nz.co.senanque.madura.bundle"/>
+<bundle:component-scan base-package="nz.co.senanque.madura.bundle"/>
+<bean id="propertyConfigurer"
+	class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+	<property name="location" value="classpath:config.properties"/>
+</bean>
+		]]></code>
+		<p>This activates the annotation processing in Spring including the property injection from a properties file. Let's look at that
+		first. The config.properties file looks something like this:</p>
+		<code><![CDATA[
+nz.co.senanque.madura.bundle.spring.BundleManagerFactory.type=impl
+nz.co.senanque.madura.bundle.spring.BundleManagerFactory.time=-1
+nz.co.senanque.madura.bundle.spring.BundleManagerFactory.directory=./target/bundles
+		]]></code>
+		<p>The values shown here are actually the defaults, except for the directory which defaults to a null string.</p>
+		<p>You might recognise two of those from the XML example. The directory holds your bundles and the time specifies (in milliseconds) how often
+		to check for changes there (-1 means once only). The first parameter, type, specifies the type of BundleManager to use. There are two different types: impl and web.
+		The first is just the ordinary bundle manager and the web version allows you to put bundles into the WEB-INF/bundles directory in
+		your war file. This is scanned just once at startup. You might wonder what possible use this is because if you have embedded a bundle
+		in your war file you might as well have used a normal jar file dependency right? Yes, indeed. But it does come up sometimes
+		when you want to put together a simple demo and not have to worry about deploying the bundles in a separate directory.</p>
+		<p>The context component-scan tells Spring to scan that package to find the bundle manager and other annotated beans needed
+		by the bundle manager. You should also add any other packages you have beans annotated with @Component<footnote>Spring provide a number of variations on the @Component
+		annotation and for brevity we just refer to @Component because any of the variations will do the same job in this case.</footnote>, of course. The second
+		component-scan is looking for something else.</p>
+		<p>When you configure this way you don't use</p>
+		<code><![CDATA[
+<bundle:bean id="TestBean" interface="nz.co.senanque.madura.bundle.TestBean"/>
+		]]></code>
+		<p>Instead you annotate the interface like this:</p>
+		<code><![CDATA[
+@BundleInterface("TestBean")
+public interface TestBean
+{
+...
+}		
+		]]></code>
+		<p>This is more concise. You have to have the interface for both this and for XML, and rather than specify each interface in the XML
+		just annotate the interfaces and let the scan find them.</p>
+		</h2>				
 		</h1>
 		<h1 t="Selecting the Bundle">
 		<p>Before the application code can use the beans in the bundle it needs to pick which bundle. It does this
@@ -444,6 +492,15 @@ for (Entry<MyBean,BundleRoot> entry:map.entrySet())
 		]]></code>
 		<p>In this case the container application refers to the exported bean as <courier>exportBeanExample</courier> and the bundles refer to it as
 		<courier>exportBean</courier>.</p>
+		<p>When you use annotations instead of XML just make sure you have the export bean annotated with @Component and also add
+		the @BundleExport annotation like this:</p>
+		<code><![CDATA[
+@Component("exportBean")
+@BundleExport
+public class TestExportBean {
+....
+		]]></code>
+		<p>The scanner will identify the export beans and tell the bundle manager about them.</p>
 		</h2>
 		<h2 t="Listening for Bundles">
 		<p>You can optionally listen for bundles being added or deleted. This is useful if you need your application
