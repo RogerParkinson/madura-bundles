@@ -31,7 +31,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="TestBean" class="nz.co.senanque.madura.bundle.TestBeanImpl">
 		<property name="content" ref="bundleName"/>
 		<property name="resource" value="classpath:BundleResource2.txt"/>
-		<property name="sampleParent" ref="parentBean"/>
+		<property name="sampleExport" ref="exportBean"/>
 	</bean>
 	<!-- this is to verify that the external jar was properly placed in the classpath for this bundle -->
 	<bean id="JDOMFactory" class="org.jdom.DefaultJDOMFactory"/>

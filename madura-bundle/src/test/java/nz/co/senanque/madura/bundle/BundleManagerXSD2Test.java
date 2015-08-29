@@ -15,7 +15,7 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +44,7 @@ public class BundleManagerXSD2Test
         assertTrue(n.toString().equals(bundleName));
         TestBean tb = (TestBean)this.applicationContext.getBean("TestBean");
         assertTrue(tb.getContent().toString().equals(bundleName));
-        assertTrue(tb.getSampleParent().toString().equals("example of a parent bean"));
+        assertEquals("this is a test export",tb.getSampleExport().toString());
         TestBean tb1 = (TestBean)this.applicationContext.getBean("TestBean1");
         assertTrue(tb1.getContent().toString().equals(bundleName));
     }

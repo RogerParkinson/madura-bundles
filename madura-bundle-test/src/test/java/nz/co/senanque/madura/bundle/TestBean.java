@@ -17,6 +17,7 @@ package nz.co.senanque.madura.bundle;
 
 import org.springframework.core.io.Resource;
 
+@BundleInterface("TestBean")
 public interface TestBean
 {
 
@@ -28,6 +29,6 @@ public interface TestBean
 
     public abstract Resource getResource();
     
-    public abstract String getSampleParent();
+    public abstract Object getSampleExport();
 
 }

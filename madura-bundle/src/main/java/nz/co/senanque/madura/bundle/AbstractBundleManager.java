@@ -38,7 +38,7 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
     protected BundleMap m_bundleMap = new BundleMap();
     private ThreadLocal<BundleVersion> m_currentBundle = new ThreadLocal<>();
     protected Thread m_lock = null;
-    protected Map<String,Object> m_inheritableBeans = new HashMap<String,Object>();
+    protected Map<String,Object> m_exportedBeans = new HashMap<String,Object>();
     private DefaultListableBeanFactory m_beanFactory;
     private String m_export;
     protected BundleVersion m_defaultBundle;
@@ -64,7 +64,7 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
         {
             for (String beanName: StringUtils.commaDelimitedListToSet(m_export))
             {
-               m_inheritableBeans.put(beanName,m_beanFactory.getBean(beanName));
+               m_exportedBeans.put(beanName,m_beanFactory.getBean(beanName));
             }
         }
         for (BundleListener bundleListener:m_beanFactory.getBeansOfType(BundleListener.class).values())
@@ -135,13 +135,13 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
         }
         return bundleVersion.getRoot();
     }
-    public Map<String, Object> getInheritableBeans()
+    public Map<String, Object> getExportedBeans()
     {
-        return m_inheritableBeans;
+        return m_exportedBeans;
     }
-    public void setInheritableBeans(Map<String, Object> inheritableBeans)
+    public void setExportedBeans(Map<String, Object> inheritableBeans)
     {
-        m_inheritableBeans = inheritableBeans;
+        m_exportedBeans = inheritableBeans;
     }
 
 	/* (non-Javadoc)

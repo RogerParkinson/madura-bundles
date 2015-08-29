@@ -27,7 +27,7 @@ public class TestBeanImpl implements TestBean
 {
     private StringWrapper m_content;
     private Resource m_resource;
-    private String m_sampleParent;
+    private Object m_sampleExport;
 
     /* (non-Javadoc)
      * @see nz.co.senanque.madura.bundle.TestBean#getContent()
@@ -55,14 +55,14 @@ public class TestBeanImpl implements TestBean
         m_resource = resource;
     }
 
-    public String getSampleParent()
+    public Object getSampleExport()
     {
-        return m_sampleParent;
+        return m_sampleExport;
     }
 
-    public void setSampleParent(String sampleParent)
+    public void setSampleExport(Object sampleExport)
     {
-        m_sampleParent = sampleParent;
+        m_sampleExport = sampleExport;
     }
     
 

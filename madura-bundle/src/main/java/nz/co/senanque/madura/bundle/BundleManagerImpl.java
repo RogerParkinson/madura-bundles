@@ -22,15 +22,15 @@ import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.servlet.http.HttpSessionEvent;
+import javax.annotation.PostConstruct;
 
-import nz.co.senanque.madura.bundle.spring.BundleScope;
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEvent;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.stereotype.Component;
 
 /**
  * This class manages multiple bundles. Each bundle is a jar file loaded under a different classloader.
@@ -42,16 +42,19 @@ import org.springframework.context.support.AbstractApplicationContext;
  * @author Roger Parkinson
  * @version $Revision: 1.5 $
  */
+//@Component("bundleManager")
 public class BundleManagerImpl extends AbstractBundleManager
 {
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
+//    @Value("${nz.co.senanque.madura.bundle.BundleManagerImpl.directory:}")
     private String m_directory;
-    private long m_time = -1; // optional scan timer
+//    @Value("${nz.co.senanque.madura.bundle.BundleManagerImpl.time:-1}")
+    private long m_time; // optional scan timer
     
-    @Override
+    @PostConstruct
     public void init() {
     	super.init();
-        if (getTime() != -1)
+        if (getTime() > 0)
         {
             // we have a timer so launch it now
             TimerTask t = new TimerTask(){

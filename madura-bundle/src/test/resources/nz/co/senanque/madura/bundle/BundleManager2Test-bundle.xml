@@ -19,36 +19,37 @@ limitations under the License.
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:bundle="http://www.madurasoftware.com/madura-bundle"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
 http://www.madurasoftware.com/madura-bundle http://www.madurasoftware.com/madura-bundle.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	<bean id="bundleManager" class="nz.co.senanque.madura.bundle.BundleManagerImpl">
-		<property name="directory" value="./target/bundles"/>
-		<property name="childFirst" value="true"/>
-		<property name="exportedBeans">
-			<map>
-				<entry key="exportBean" value-ref="exportBeanExample"/>
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="exportBeanExample" class="nz.co.senanque.madura.bundle.TestExportBeanImpl"/>
-	
-	<bean id="bundleName" class="nz.co.senanque.madura.bundle.BundledSpringFactoryBean">
-		<property name="bundleManager" ref="bundleManager"/>
-		<property name="interface" value="nz.co.senanque.madura.bundle.StringWrapper"/>
+	<context:annotation-config/>
+	<context:component-scan base-package="nz.co.senanque.madura.bundle"/>
+	<bundle:component-scan base-package="nz.co.senanque.madura.bundle"/>
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+		<property name="location" value="classpath:config.properties"/>
 	</bean>
 
-	<bean id="TestBean" class="nz.co.senanque.madura.bundle.BundledSpringFactoryBean">
-		<property name="bundleManager" ref="bundleManager"/>
-		<property name="interface" value="nz.co.senanque.madura.bundle.TestBean"/>
+	<bundle:bean id="bundleFile" interface="nz.co.senanque.madura.bundle.StringWrapper"/>
+	<bundle:bean id="bundleName" interface="nz.co.senanque.madura.bundle.StringWrapper"/>
+	<bean id="TestBean1" class="nz.co.senanque.madura.bundle.TestBeanImpl">
+		<property name="content" ref="bundleName"/>
 	</bean>
+<!--	<bundle:manager id="bundleManager" export="parentBean" directory="./target/bundles" />
+
+ 
+	<bundle:bean id="bundleFile" interface="nz.co.senanque.madura.bundle.StringWrapper"/>
+	<bundle:bean id="TestBean" interface="nz.co.senanque.madura.bundle.TestBean"/>
 
 	<bean id="TestBean1" class="nz.co.senanque.madura.bundle.TestBeanImpl">
 		<property name="content" ref="bundleName"/>
 	</bean>
+ -->	
+<!-- 	<bean id="bundleListener" class="nz.co.senanque.madura.bundle.BundleListenerImpl"/> -->
 
 </beans>

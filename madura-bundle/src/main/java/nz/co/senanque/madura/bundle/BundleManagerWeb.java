@@ -19,12 +19,14 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -36,6 +38,7 @@ import org.springframework.web.context.ServletContextAware;
  * @author Roger Parkinson
  *
  */
+//@Component("bundleManagerWeb")
 public class BundleManagerWeb extends BundleManagerImpl implements ServletContextAware{
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
@@ -44,7 +47,7 @@ public class BundleManagerWeb extends BundleManagerImpl implements ServletContex
 		// TODO Auto-generated constructor stub
 	}
 
-    @Override
+	@PostConstruct
     public void init() {
     	super.init();
     	scanServletContext();

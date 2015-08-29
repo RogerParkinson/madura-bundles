@@ -7,6 +7,7 @@
 	
 	<logger name="nz.co.senanque" level="warn"/>
 	<logger name="nz.co.senanque.madura.bundlemap.BundleMap" level="debug"/>
+	<logger name="nz.co.senanque.madura.bundle.BundleMangerDelegateJar" level="debug"/>
   <root level="warn">
     <appender-ref ref="STDOUT" />
   </root>

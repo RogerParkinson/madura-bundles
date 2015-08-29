@@ -1,6 +1,6 @@
 <?xml-stylesheet type="text/xsl" href="MaduraHTML.xsl" ?>
 <doc xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://oss.sonatype.org/content/repositories/releases/nz/co/senanque/maduradocs/6.0.5/maduradocs-6.0.5.xsd">
+	xsi:noNamespaceSchemaLocation="http://www.madurasoftware.com/maduradocs.xsd">
 	<title>
 		<MainTitle>MaduraBundle</MainTitle>
 		<SubTitle>User Guide</SubTitle>
@@ -210,11 +210,11 @@ Class-Path: lib2/ant-optional-1.5.1.jar  lib2/antlr-2.7.6.jar lib2/aopalliance-1
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:bundle="http://www.senanque.co.nz/madura/bundle"
+	xmlns:bundle="http://www.madurasoftware.com/madura-bundle"
 	xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-http://www.senanque.co.nz/madura/bundle http://www.senanque.co.nz/madura/bundle/MaduraBundle.xsd
+http://www.madurasoftware.com/madura-bundle http://www.madurasoftware.com/madura-bundle.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<bundle:manager id="bundleManager" directory="./bundles" time="1000"/>
@@ -433,17 +433,17 @@ for (Entry<MyBean,BundleRoot> entry:map.entrySet())
 	<property name="directory" value="./target/bundles"/>
 	<property name="inheritableBeans">
 		<map>
-			<entry key="parentBean" value-ref="parentBeanExample"/>
+			<entry key="exportBean" value-ref="exportBeanExample"/>
 		</map>
 	</property>
 </bean>
 
-<bean id="parentBeanExample" class="java.lang.String">
+<bean id="exportBeanExample" class="java.lang.String">
 	<constructor-arg value="example of a parent bean"/>
 </bean>
 		]]></code>
-		<p>In this case the container application refers to the exported bean as <courier>parentBeanExample</courier> and the bundles refer to it as
-		<courier>parentBean</courier>.</p>
+		<p>In this case the container application refers to the exported bean as <courier>exportBeanExample</courier> and the bundles refer to it as
+		<courier>exportBean</courier>.</p>
 		</h2>
 		<h2 t="Listening for Bundles">
 		<p>You can optionally listen for bundles being added or deleted. This is useful if you need your application

@@ -9,7 +9,7 @@
 	<name>madura-bundle</name>
 	<description>Provides a simple way to componentize an application. It is like a very cut down OSGi and easier to implement.</description>
 	<properties>
-		<schema>src/main/resources/nz/co/senanque/madura/bundle/spring/MaduraBundle.xsd</schema>
+		<schema>src/main/resources/nz/co/senanque/madura/bundle/spring/madura-bundle.xsd</schema>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>

@@ -31,12 +31,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="TestBean" class="nz.co.senanque.madura.bundle.TestBeanImpl">
 		<property name="content" ref="bundleName"/>
 		<property name="resource" value="classpath:BundleResource3.txt"/>
-		<!-- 
-		<property name="sampleParent" ref="parentBean"/>
-		 -->
-		<property name="sampleParent" ref="parentBeanExamplex"/>
-	</bean>
-	<bean id="parentBeanExamplex" class="java.lang.String">
-		<constructor-arg value="example of a parent bean"/>
+		<property name="sampleExport" ref="exportBean"/>
 	</bean>
 </beans>

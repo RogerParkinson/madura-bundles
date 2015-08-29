@@ -15,11 +15,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <xsd:schema 
-	xmlns="http://www.senanque.co.nz/madura/bundle"
+	xmlns="http://www.madurasoftware.com/madura-bundle"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:beans="http://www.springframework.org/schema/beans"
-	targetNamespace="http://www.senanque.co.nz/madura/bundle"
+	targetNamespace="http://www.madurasoftware.com/madura-bundle"
 	elementFormDefault="qualified"
 	attributeFormDefault="unqualified">
 	
@@ -42,6 +42,15 @@ limitations under the License.
 					<xsd:attribute name="time" type="xsd:long"/>
 					<xsd:attribute name="export" type="xsd:string"/>
 					<xsd:attribute name="childFirst" type="xsd:boolean"/>
+				</xsd:extension> 
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="component-scan">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="beans:identifiedType">
+					<xsd:attribute name="base-package" type="xsd:string" use="required"/>
 				</xsd:extension> 
 			</xsd:complexContent>
 		</xsd:complexType>

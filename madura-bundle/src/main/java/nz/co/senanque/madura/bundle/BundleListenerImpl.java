@@ -19,6 +19,7 @@ import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
  * @author Roger Parkinson
  * @version $Revision:$
  */
+@Component
 public class BundleListenerImpl implements BundleListener
 {
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());

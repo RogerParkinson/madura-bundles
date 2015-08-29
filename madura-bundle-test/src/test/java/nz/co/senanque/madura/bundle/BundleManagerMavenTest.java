@@ -15,8 +15,11 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Properties;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,13 +42,15 @@ public class BundleManagerMavenTest {
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     @Autowired ApplicationContext applicationContext;
     @Autowired BundleManager bundleManager;
-
+    @Autowired Properties b;
+    
     @Test
     public void testInit()
     {
+    	String currentVersion = b.getProperty("current.version");
     	BundleManager bm = (BundleManager)this.applicationContext.getBean("bundleManager");
-        bm.setBundle("madura-bundle-maven-1.0.0");
-        testBundleName(bm, "madura-bundle-maven-1.0.0");
+        bm.setBundle("madura-bundle-maven-"+currentVersion);
+        testBundleName(bm, "madura-bundle-maven-"+currentVersion);
     }
     private void testBundleName(BundleManager bm, String bundleName)
     {
@@ -53,7 +58,7 @@ public class BundleManagerMavenTest {
         assertTrue(n.toString().equals(bundleName));
         TestBean tb = (TestBean)this.applicationContext.getBean("TestBean");
         assertTrue(tb.getContent().toString().equals(bundleName));
-        assertTrue(tb.getSampleParent().toString().equals("example of a parent bean"));
+        assertEquals("this is a test export",tb.getSampleExport().toString());
         Resource resource = tb.getResource();
         assertNotNull(resource);
     }

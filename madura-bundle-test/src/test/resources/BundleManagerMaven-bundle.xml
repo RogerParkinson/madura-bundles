@@ -29,19 +29,20 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 	<context:property-placeholder/>
 	
-	<bean id="bundleManager" class="nz.co.senanque.madura.bundle.BundleManagerImpl">
-		<property name="directory" value="."/>
+		<util:properties id="b" 
+		     location="classpath:madura-bundle-maven-vvv.bundle" />
+     
+     	<bean id="bundleManager" class="nz.co.senanque.madura.bundle.BundleManagerImpl">
+		<property name="directory" value="./target/classes"/>
 		<property name="childFirst" value="true"/>
-		<property name="inheritableBeans">
+		<property name="exportedBeans">
 			<map>
-				<entry key="parentBean" value-ref="parentBeanExample"/>
+				<entry key="exportBean" value-ref="exportBeanExample"/>
 			</map>
 		</property>
 	</bean>
 	
-	<bean id="parentBeanExample" class="java.lang.String">
-		<constructor-arg value="example of a parent bean"/>
-	</bean>
+	<bean id="exportBeanExample" class="nz.co.senanque.madura.bundle.TestExportBeanImpl"/>
 	<bean id="bundleName" class="nz.co.senanque.madura.bundle.BundledSpringFactoryBean">
 		<property name="bundleManager" ref="bundleManager"/>
 		<property name="interface" value="nz.co.senanque.madura.bundle.StringWrapper"/>
