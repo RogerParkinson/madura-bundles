@@ -303,7 +303,16 @@ public interface TestBean
 }		
 		]]></code>
 		<p>This is more concise. You have to have the interface for both this and for XML, and rather than specify each interface in the XML
-		just annotate the interfaces and let the scan find them.</p>
+		just annotate the interfaces and let the scan find them. You also get a small bonus with this approach. The bundle:component-scan
+		automatically arranges for an interface bean named bundleRoot to be created and this maps to the bundle root of the current bundle. 
+		That means you can inject it into your code and examin it like this:</p>
+		<code><![CDATA[
+@Autowired BundleRoot bundleRoot;
+...
+String currentBundleName = bundleRoot.getName();
+...
+		]]></code>
+		<p>If you are using XML instead you can do something similar but it is more complicated.</p>
 		</h2>				
 		</h1>
 		<h1 t="Selecting the Bundle">
@@ -562,6 +571,15 @@ public class TestExportBean {
 		<a1 t="Release Notes">
 		<table width="12cm">
 			<tw>12cm</tw>
+        <tr>
+            <th>4.1.1</th>
+        </tr>
+        <tr>
+            <td>Implemented annotation-based configuration.</td>
+        </tr>
+        <tr>
+            <td>Added automatic bundleRoot bean (when using annotation-based configuration).</td>
+        </tr>
         <tr>
             <th>4.1.0</th>
         </tr>

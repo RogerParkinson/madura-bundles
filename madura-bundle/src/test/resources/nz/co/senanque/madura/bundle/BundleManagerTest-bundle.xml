@@ -26,7 +26,8 @@ http://www.madurasoftware.com/madura-bundle http://www.madurasoftware.com/madura
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<bean id="exportBean" class="nz.co.senanque.madura.bundle.TestExportBeanImpl"/>
-	<bundle:manager id="bundleManager" export="exportBean" directory="./target/bundles" /><!-- export="parentBean" -->
+	<bundle:manager id="bundleManager" export="exportBean" directory="./target/bundles" />
+	<bundle:bean id="bundleRoot" interface="nz.co.senanque.madura.bundle.BundleRoot"/>
 	<bundle:bean id="bundleName" interface="nz.co.senanque.madura.bundle.StringWrapper"/>
 	<bundle:bean id="bundleFile" interface="nz.co.senanque.madura.bundle.StringWrapper"/>
 	<bundle:bean id="TestBean" interface="nz.co.senanque.madura.bundle.TestBean"/>

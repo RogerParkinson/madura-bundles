@@ -57,6 +57,7 @@ public class BundleManager2Test
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     @Autowired ApplicationContext applicationContext;
     @Autowired BundleManager bundleManager;
+    @Autowired BundleRoot bundleRoot;
 
     @Before
     public void init() {
@@ -98,10 +99,9 @@ public class BundleManager2Test
     }
     private void testBundleName(BundleManager bm, String bundleName)
     {
-        StringWrapper n = (StringWrapper)this.applicationContext.getBean("bundleName");
-        assertTrue(n.toString().equals(bundleName));
+        assertEquals(bundleName,bundleRoot.getName());
         TestBean tb = (TestBean)this.applicationContext.getBean("TestBean");
-        assertTrue(tb.getContent().toString().equals(bundleName));
+        assertEquals(bundleName,tb.getContent().toString());
         try
         {
         	Resource resource = tb.getResource();
@@ -117,7 +117,7 @@ public class BundleManager2Test
             throw new RuntimeException(e);
         }
         TestBean tb1 = (TestBean)this.applicationContext.getBean("TestBean1");
-        assertTrue(tb1.getContent().toString().equals(bundleName));
+        assertEquals(bundleName,tb1.getContent().toString());
     }
     private void testBundleFile(BundleManager bm, String bundleFile)
     {

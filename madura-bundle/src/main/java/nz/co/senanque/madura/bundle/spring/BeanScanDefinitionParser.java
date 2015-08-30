@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import nz.co.senanque.madura.bundle.BundleInterface;
+import nz.co.senanque.madura.bundle.BundleRoot;
 import nz.co.senanque.madura.bundle.BundledSpringFactoryBean;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -81,19 +82,20 @@ public class BeanScanDefinitionParser implements BeanDefinitionParser
 							if (StringUtils.isEmpty(beanName)) {
 								beanName = className;
 							}
-				        	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(BundledSpringFactoryBean.class);
-				        	beanDefinitionBuilder.addPropertyReference("bundleManager", "bundleManager"); // TODO: maybe more flexible?
-				        	beanDefinitionBuilder.addPropertyValue("interface", className);
-				        	
-
-							BeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
-							BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(beanDefinition, beanName);
-							registerBeanDefinition(definitionHolder, parserContext.getRegistry());
-							if (shouldFireEvents()) {
-								BeanComponentDefinition componentDefinition = new BeanComponentDefinition(definitionHolder);
-								postProcessComponentDefinition(componentDefinition);
-								parserContext.registerComponent(componentDefinition);
-							}
+//				        	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(BundledSpringFactoryBean.class);
+//				        	beanDefinitionBuilder.addPropertyReference("bundleManager", "bundleManager"); // TODO: maybe more flexible?
+//				        	beanDefinitionBuilder.addPropertyValue("interface", className);
+//				        	
+//
+//							BeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
+//							BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(beanDefinition, beanName);
+//							registerBeanDefinition(definitionHolder, parserContext.getRegistry());
+//							if (shouldFireEvents()) {
+//								BeanComponentDefinition componentDefinition = new BeanComponentDefinition(definitionHolder);
+//								postProcessComponentDefinition(componentDefinition);
+//								parserContext.registerComponent(componentDefinition);
+//							}
+							BeanDefinitionHolder definitionHolder = createBeanDefinition(className, beanName, parserContext);
 							beanDefinitions.add(definitionHolder);
 						}
 					}
@@ -102,9 +104,26 @@ public class BeanScanDefinitionParser implements BeanDefinitionParser
 				throw new RuntimeException(e);
 			}
 		}
+		beanDefinitions.add(createBeanDefinition(BundleRoot.class.getName(), "bundleRoot", parserContext));
 //		registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
 
 		return null;
+	}
+	private BeanDefinitionHolder createBeanDefinition(String className, String beanName,ParserContext parserContext) {
+    	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(BundledSpringFactoryBean.class);
+    	beanDefinitionBuilder.addPropertyReference("bundleManager", "bundleManager"); // TODO: maybe more flexible?
+    	beanDefinitionBuilder.addPropertyValue("interface", className);
+    	
+
+		BeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
+		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(beanDefinition, beanName);
+		registerBeanDefinition(definitionHolder, parserContext.getRegistry());
+		if (shouldFireEvents()) {
+			BeanComponentDefinition componentDefinition = new BeanComponentDefinition(definitionHolder);
+			postProcessComponentDefinition(componentDefinition);
+			parserContext.registerComponent(componentDefinition);
+		}
+		return definitionHolder;
 	}
 	protected boolean shouldFireEvents() {
 		return true;

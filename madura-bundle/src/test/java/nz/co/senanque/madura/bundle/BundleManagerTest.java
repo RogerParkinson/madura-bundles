@@ -47,6 +47,7 @@ public class BundleManagerTest
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     @Autowired ApplicationContext applicationContext;
     @Autowired BundleManager bundleManager;
+    @Autowired BundleRoot bundleRoot;
 
     @Before
     public void init() {
@@ -63,6 +64,7 @@ public class BundleManagerTest
         bm.setBundle("bundle","1.0");
         testBundleName(bm, "bundle-1.0");
         testBundleFile(bm, "bundle-1.0");
+        String bundleName = bundleRoot.getName();
         Object o=null;
 		try {
 			o = bm.getBundle().getApplicationContext().getBean("JDOMFactory");

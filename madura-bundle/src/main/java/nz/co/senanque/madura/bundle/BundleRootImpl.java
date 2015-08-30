@@ -17,6 +17,7 @@ package nz.co.senanque.madura.bundle;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
@@ -75,10 +76,10 @@ public class BundleRootImpl implements BundleRoot
     /* (non-Javadoc)
      * @see nz.co.senanque.madura.bundle.BundleRootI#init()
      */
-    public void init(DefaultListableBeanFactory ownerBeanFactory, Properties properties, ClassLoader cl, Map<String, Object> inheritableBeans)
+    public void init(DefaultListableBeanFactory ownerBeanFactory, Properties properties, ClassLoader cl, Map<String, Object> exportedBeans)
     {
         m_properties = properties;
-        m_exportedBeans = inheritableBeans;
+        m_exportedBeans = exportedBeans;
         BundleManager bundleManager = ownerBeanFactory.getBean(BundleManager.class);
         BundleScope bundleScope = bundleManager.getScope();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -97,13 +98,19 @@ public class BundleRootImpl implements BundleRoot
         {
             dumpClassLoader(cl);
         }
-        for (Map.Entry<String, Object> entry: inheritableBeans.entrySet())
+        for (Map.Entry<String, Object> entry: exportedBeans.entrySet())
         {
         	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(InnerBundleFactory.class);
         	beanDefinitionBuilder.addPropertyValue("key", entry.getKey());
-        	beanDefinitionBuilder.addPropertyValue("object", inheritableBeans.get(entry.getKey()));
+        	beanDefinitionBuilder.addPropertyValue("object", exportedBeans.get(entry.getKey()));
             ctx.registerBeanDefinition(entry.getKey(), beanDefinitionBuilder.getBeanDefinition());
         }
+        // Registers the bundleroot (ie this) as a bean
+    	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(InnerBundleFactory.class);
+    	beanDefinitionBuilder.addPropertyValue("key", "bundleRoot");
+    	beanDefinitionBuilder.addPropertyValue("object", this);
+        ctx.registerBeanDefinition("bundleRoot", beanDefinitionBuilder.getBeanDefinition());
+    	
         Scope scope = ownerBeanFactory.getRegisteredScope("session");
         if (scope != null)
         {
@@ -161,7 +168,9 @@ public class BundleRootImpl implements BundleRoot
 
     public Properties getProperties()
     {
-        return m_properties;
+    	Properties ret = new Properties();
+    	ret.putAll(m_properties);
+        return ret;
     }
 
 	public ClassLoader getBundleClassLoader() {
