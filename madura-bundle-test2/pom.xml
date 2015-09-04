@@ -5,34 +5,73 @@
 		<artifactId>madura-bundles</artifactId>
 		<version>4.1.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>madura-bundle-test</artifactId>
-	<name>madura-bundle-test</name>
-	<description>Project that tests the maven bundles</description>
+	<groupId>nz.co.senanque</groupId>
+	<artifactId>madura-bundle-test2</artifactId>
+	<name>madura-bundle-test2</name>
+	<description>Project that tests the maven2 bundle</description>
 	<dependencies>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>nz.co.senanque</groupId>
 			<artifactId>madura-bundle</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+	  	<dependency>
+	  		<groupId>nz.co.senanque</groupId>
+	  		<artifactId>madura-bundle-common-test-beans</artifactId>
+	  		<version>${project.version}</version>
+	  		<scope>compile</scope>
+	  	</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

@@ -25,8 +25,7 @@ abstract class BundleManagerDelegateAbstract implements BundleManagerDelegate {
 		BundleRoot root = (BundleRoot) clazz.newInstance();
 		root.init(m_bundleManagerImpl.getBeanFactory(), properties,
 				classLoader, m_bundleManagerImpl.m_exportedBeans);
-		String fullBundleName = properties.getProperty("bundle.name")
-				.toLowerCase();
+		String fullBundleName = properties.getProperty("bundle.name");
 		
 		m_bundleManagerImpl.m_bundleMap.addBundle(bundleVersion, root);
 		m_bundleManagerImpl.m_defaultBundle = bundleVersion;

@@ -5,13 +5,19 @@
     <artifactId>madura-bundles</artifactId>
     <version>4.1.1-SNAPSHOT</version>
   </parent>
-  <artifactId>madura-bundle-maven</artifactId>
-  <name>madura-bundle-maven</name>
-  <description>test bundle for maven</description>
+  <artifactId>madura-bundle-maven2</artifactId>
+  <name>madura-bundle-maven2</name>
+  <description>second test bundle for maven: uses a configuration class rather than xml</description>
   <dependencies>
   	<dependency>
   		<groupId>nz.co.senanque</groupId>
   		<artifactId>madura-bundle</artifactId>
+  		<version>${project.version}</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>nz.co.senanque</groupId>
+  		<artifactId>madura-bundle-common-test-beans</artifactId>
   		<version>${project.version}</version>
   		<scope>provided</scope>
   	</dependency>
@@ -31,11 +37,10 @@
             </manifest>
             <manifestEntries>
 	            <Built-By>${user.name}</Built-By>
-	            <Bundle-Activator>nz.co.senanque.madura.bundle.BundleRootImpl</Bundle-Activator>
-	            <Bundle-Description>Test Bundle Maven</Bundle-Description>
-	            <Bundle-Name>bundle-maven</Bundle-Name>
+	            <Bundle-Activator>nz.co.senanque.madura.bundle.BundleRoot4Impl</Bundle-Activator>
+	            <Bundle-Description>Test Bundle Maven2</Bundle-Description>
+	            <Bundle-Name>bundle-maven2</Bundle-Name>
 	            <Bundle-Version>${project.version}</Bundle-Version>
-	            <Bundle-Context>bundle-spring.xml</Bundle-Context>
             </manifestEntries>
           </archive>
         </configuration>
