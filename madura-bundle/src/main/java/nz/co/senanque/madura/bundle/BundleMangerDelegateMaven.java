@@ -6,11 +6,16 @@ package nz.co.senanque.madura.bundle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 
 import nz.co.senanque.madura.bundle.aether.AetherHelper;
 import nz.co.senanque.madura.bundlemap.BundleVersion;
@@ -81,8 +86,11 @@ public class BundleMangerDelegateMaven extends BundleManagerDelegateAbstract {
 					properties.getProperty("bundle.name"), 
 					properties.getProperty("Bundle-Version")
 					);
+			
 			ClassLoader classLoader = createClassLoader(urls, properties, realBundleName, className, 0L, url1);
-			cleanup(classLoader, className, properties, bundleVersion);
+			Properties p0 = getPropertiesFromJar(urls.get(0));
+			p0.putAll(properties);
+			cleanup(classLoader, className, p0, bundleVersion);
 			m_logger.info("Added bundle: {}", bundleName);
 		} catch (Exception e) {
 			if (m_logger.isDebugEnabled()) {
@@ -91,6 +99,15 @@ public class BundleMangerDelegateMaven extends BundleManagerDelegateAbstract {
 			m_logger.warn("{} {}", bundleName, e.getMessage());
 		}
 		return bundleVersion;
+	}
+	
+	private Properties getPropertiesFromJar(URL url) throws IOException {
+		URLConnection connection = url.openConnection();
+		JarInputStream jarInputStream = new JarInputStream(connection.getInputStream());
+		Manifest mf = jarInputStream.getManifest();
+		Attributes attributes = mf.getMainAttributes();
+		Properties properties = getProperties(attributes);
+		return properties;
 	}
 
 	private ClassLoader createClassLoader(List<URL> urls, Properties properties,

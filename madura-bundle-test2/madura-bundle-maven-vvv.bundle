@@ -2,4 +2,4 @@ Bundle-Artifact=nz.co.senanque:madura-bundle-maven2:${project.version}
 current.version=${project.version}
 #Bundle-Context=bundle-spring.xml
 #Bundle-Description=Test bundle from Maven
-Bundle-Activator=nz.co.senanque.madura.bundle.BundleRoot4Impl
+#Bundle-Activator=nz.co.senanque.madura.bundle.BundleRoot4Impl

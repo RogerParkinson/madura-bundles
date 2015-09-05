@@ -114,27 +114,6 @@ public class BundleMangerDelegateJar extends BundleManagerDelegateAbstract {
         }
 	}
 
-    protected Properties getProperties(Attributes attributes) {
-        Properties properties = new Properties();
-        for (Map.Entry<Object,Object> a :attributes.entrySet())
-        {
-            Object key = a.getKey();
-            Object value = a.getValue();
-            properties.setProperty(key.toString(), value.toString());
-            m_logger.debug("Property: {} value {}",key.toString(), value.toString());
-        }
-        properties.setProperty("bundle.name", 
-                figureBundleName(
-                        String.valueOf(properties.get("Bundle-Name")),
-                        String.valueOf(properties.get("Bundle-Version"))));
-        return properties;
-    }
-    protected String figureBundleName(String bundle, String version)
-    {
-        if (version != null)
-            bundle += "-"+version;
-        return bundle;
-    }
 	private ClassLoader createClassLoader(List<URL> urls, Properties properties,
 			String bundleName, String className, long lastModified,
 			JarInputStream[] jarClasspath, URL url) throws InstantiationException,

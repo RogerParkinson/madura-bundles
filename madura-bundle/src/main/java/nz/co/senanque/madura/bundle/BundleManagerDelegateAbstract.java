@@ -3,7 +3,12 @@
  */
 package nz.co.senanque.madura.bundle;
 
+import java.util.Map;
 import java.util.Properties;
+import java.util.jar.Attributes;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
@@ -13,6 +18,7 @@ import nz.co.senanque.madura.bundlemap.BundleVersion;
  */
 abstract class BundleManagerDelegateAbstract implements BundleManagerDelegate {
 
+    private final Logger m_logger = LoggerFactory.getLogger(this.getClass());
 	protected BundleManagerImpl m_bundleManagerImpl;
 
 	protected BundleManagerDelegateAbstract(BundleManagerImpl bundleManagerImpl) {
@@ -34,5 +40,26 @@ abstract class BundleManagerDelegateAbstract implements BundleManagerDelegate {
 			bundleListener.add(bundleVersion);
 		}
 	}
+    protected Properties getProperties(Attributes attributes) {
+        Properties properties = new Properties();
+        for (Map.Entry<Object,Object> a :attributes.entrySet())
+        {
+            Object key = a.getKey();
+            Object value = a.getValue();
+            properties.setProperty(key.toString(), value.toString());
+            m_logger.debug("Property: {} value {}",key.toString(), value.toString());
+        }
+        properties.setProperty("bundle.name", 
+                figureBundleName(
+                        String.valueOf(properties.get("Bundle-Name")),
+                        String.valueOf(properties.get("Bundle-Version"))));
+        return properties;
+    }
+    protected String figureBundleName(String bundle, String version)
+    {
+        if (version != null)
+            bundle += "-"+version;
+        return bundle;
+    }
 	
 }

@@ -17,7 +17,6 @@ package nz.co.senanque.madura.bundle;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
@@ -31,6 +30,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
@@ -85,12 +85,26 @@ public class BundleRootImpl implements BundleRoot
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(cl);
         m_classLoader = cl;
-        GenericApplicationContext ctx = new GenericApplicationContext();
-        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(ctx);
-        String contextPath = properties.getProperty("Bundle-Context","/bundle-spring.xml");
-        m_logger.debug("loading context: {}",contextPath);
-        ClassPathResource classPathResource = new ClassPathResource(contextPath,cl);
-        xmlReader.loadBeanDefinitions(classPathResource);
+        GenericApplicationContext ctx = null;
+		try {
+			String contextClassName = properties.getProperty("Bundle-Class");
+			if (contextClassName != null) {
+				Class<?> contextClass = Class.forName(contextClassName, true, cl);
+				m_logger.debug("loading context: {}",contextClassName);
+				ctx = new AnnotationConfigApplicationContext();
+				((AnnotationConfigApplicationContext)ctx).register(contextClass);
+			}
+		} catch (Exception e) {
+			throw new FailedToLoadBundleContextException(e);
+		}
+        if (ctx == null) {
+	        ctx = new GenericApplicationContext();
+	        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(ctx);
+	        String contextPath = properties.getProperty("Bundle-Context","/bundle-spring.xml");
+	        m_logger.debug("loading context: {}",contextPath);
+	        ClassPathResource classPathResource = new ClassPathResource(contextPath,cl);
+	        xmlReader.loadBeanDefinitions(classPathResource);
+        }
         PropertyPlaceholderConfigurer p = new PropertyPlaceholderConfigurer();
         p.setProperties(properties);
         ctx.addBeanFactoryPostProcessor(p);
@@ -123,6 +137,11 @@ public class BundleRootImpl implements BundleRoot
         ctx.refresh();
         m_applicationContext = ctx;
         Thread.currentThread().setContextClassLoader(classLoader);
+    }
+    
+    private GenericApplicationContext getContext(Class<?> contextClass) {
+    	GenericApplicationContext ret = new AnnotationConfigApplicationContext(contextClass);
+    	return ret;
     }
     
     private void dumpClassLoader(ClassLoader sysClassLoader)

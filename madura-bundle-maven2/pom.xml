@@ -37,8 +37,8 @@
             </manifest>
             <manifestEntries>
 	            <Built-By>${user.name}</Built-By>
-	            <Bundle-Activator>nz.co.senanque.madura.bundle.BundleRoot4Impl</Bundle-Activator>
 	            <Bundle-Description>Test Bundle Maven2</Bundle-Description>
+	            <Bundle-Class>nz.co.senanque.madura.bundle.Config</Bundle-Class>
 	            <Bundle-Name>bundle-maven2</Bundle-Name>
 	            <Bundle-Version>${project.version}</Bundle-Version>
             </manifestEntries>

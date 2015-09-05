@@ -27,12 +27,14 @@ import org.springframework.core.io.ClassPathResource;
  */
 
 @Configuration
-public class BundleRoot4Impl  extends BundleRootImpl {
+public class Config {
 	
 	@Autowired
     Environment env;
+	
+	@Autowired TestExportBeanImpl exportBean;
 
-	public BundleRoot4Impl() {
+	public Config() {
 		"".toString();
 	}
 	@Bean(name="bundleFile")
@@ -47,8 +49,10 @@ public class BundleRoot4Impl  extends BundleRootImpl {
 	}
 	@Bean(name="TestBean")
 	public TestBean testBean() {
-		TestBean ret = new TestBeanImpl();
+		TestBeanImpl ret = new TestBeanImpl();
 		ret.setResource(new ClassPathResource("classpath:BundleResource4.txt"));
+		ret.setContent(new StringWrapperImpl("TestBean"));
+		ret.setSampleExport(exportBean);
 		return ret;
 	}
 

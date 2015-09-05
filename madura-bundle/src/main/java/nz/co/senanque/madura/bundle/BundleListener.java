@@ -27,9 +27,11 @@ import nz.co.senanque.madura.bundlemap.BundleVersion;
 public interface BundleListener
 {
     /**
-     * @param bundleName
-     * @param root
+     * @param bundleVersion
      */
     void add(BundleVersion bundleVersion);
+    /**
+     * @param bundleVersion
+     */
     void remove(BundleVersion bundleVersion);
 }

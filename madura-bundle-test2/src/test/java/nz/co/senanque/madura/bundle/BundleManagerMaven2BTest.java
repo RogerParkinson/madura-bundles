@@ -17,44 +17,41 @@ package nz.co.senanque.madura.bundle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Properties;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author Roger Parkinson
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/BundleManagerMaven2-bundle.xml"})
-public class BundleManagerMaven2Test {
+public class BundleManagerMaven2BTest {
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     @Autowired ApplicationContext applicationContext;
     @Autowired BundleManager bundleManager;
     @Autowired Properties b;
     
-    @Test
+    @Test @Ignore
     public void testInit()
     {
-    	BundleManager bm = (BundleManager)this.applicationContext.getBean("bundleManager");
+    	applicationContext = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+    	bundleManager = (BundleManager)this.applicationContext.getBean("bundleManager");
     	String targetBundle = null;
-    	for (BundleRoot br: bm.getAvailableBundleRoots()) {
+    	for (BundleRoot br: bundleManager.getAvailableBundleRoots()) {
     		targetBundle = br.getName();
     	}
     	assertNotNull(targetBundle);
-        bm.setBundle(targetBundle);
-        testBundleName(bm, targetBundle);
+    	bundleManager.setBundle(targetBundle);
+        testBundleName(bundleManager, targetBundle);
     }
     private void testBundleName(BundleManager bm, String bundleName)
     {

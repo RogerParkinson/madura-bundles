@@ -15,6 +15,7 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+
 /**
  * Used to wrap strings. We need this so that we can put an interface around a String and
  * an implementation class (this is the implementation). We need to do this when we want to

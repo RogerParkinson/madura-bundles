@@ -18,6 +18,7 @@ package nz.co.senanque.madura.bundle;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Roger Parkinson
  * @version $Revision:$
  */
+@Component
 public class InnerBundleFactory implements FactoryBean<Object>, BeanNameAware, InitializingBean
 {
     private String m_key;
