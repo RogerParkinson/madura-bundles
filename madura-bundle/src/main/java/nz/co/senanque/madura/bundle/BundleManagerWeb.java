@@ -26,7 +26,6 @@ import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -38,7 +37,6 @@ import org.springframework.web.context.ServletContextAware;
  * @author Roger Parkinson
  *
  */
-//@Component("bundleManagerWeb")
 public class BundleManagerWeb extends BundleManagerImpl implements ServletContextAware{
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());

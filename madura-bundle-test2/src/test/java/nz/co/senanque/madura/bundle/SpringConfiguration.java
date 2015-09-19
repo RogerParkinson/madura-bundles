@@ -15,13 +15,16 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import nz.co.senanque.madura.bundle.spring.BundledInterfaceRegistrar;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author Roger Parkinson
@@ -29,8 +32,10 @@ import org.springframework.core.io.ClassPathResource;
  */
 
 @Configuration
+@Import(BundledInterfaceRegistrar.class)
 @ComponentScan(basePackages = {
 		"nz.co.senanque.madura.bundle"})
+@PropertySource("classpath:config.properties")
 public class SpringConfiguration {
 	
 	@Autowired
@@ -40,11 +45,15 @@ public class SpringConfiguration {
 	public SpringConfiguration() {
 		"".toString();
 	}
+//	@Bean
+//	public PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
+//		PropertyPlaceholderConfigurer ret = new PropertyPlaceholderConfigurer();
+//		ret.setLocation(new ClassPathResource("config.properties"));
+//		return ret;
+//	}
 	@Bean
-	public PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
-		PropertyPlaceholderConfigurer ret = new PropertyPlaceholderConfigurer();
-		ret.setLocation(new ClassPathResource("config.properties"));
-		return ret;
+	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
+		return new PropertySourcesPlaceholderConfigurer();
 	}
 	public BundleManager getBundleManager() {
 		return m_bundleManager;

@@ -28,9 +28,7 @@ import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.stereotype.Component;
 
 /**
  * This class manages multiple bundles. Each bundle is a jar file loaded under a different classloader.
@@ -42,13 +40,10 @@ import org.springframework.stereotype.Component;
  * @author Roger Parkinson
  * @version $Revision: 1.5 $
  */
-//@Component("bundleManager")
 public class BundleManagerImpl extends AbstractBundleManager
 {
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
-//    @Value("${nz.co.senanque.madura.bundle.BundleManagerImpl.directory:}")
     private String m_directory;
-//    @Value("${nz.co.senanque.madura.bundle.BundleManagerImpl.time:-1}")
     private long m_time; // optional scan timer
     
     @PostConstruct

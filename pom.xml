@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nz.co.senanque</groupId>
 	<artifactId>madura-bundles</artifactId>
-	<version>4.1.1-SNAPSHOT</version>
+	<version>4.2.0-SNAPSHOT</version>
 	<name>madura-bundles</name>
 	<description>Parent project for Madura Bundles</description>
 	<packaging>pom</packaging>
@@ -50,6 +50,11 @@
 				<artifactId>jboss-servlet-api_3.0_spec</artifactId>
 				<version>1.0.2.Final</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-config</artifactId>
+				<version>${spring.framework.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -103,6 +108,7 @@
 		<module>madura-bundle</module>
 		<module>madura-bundle-maven</module>
 		<module>madura-bundle-test</module>
+		<module>madura-bundle-common-test-beans</module>
 		<module>madura-bundle-maven2</module>
 		<module>madura-bundle-test2</module>
 	</modules>
