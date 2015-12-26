@@ -25,7 +25,7 @@ import org.springframework.beans.factory.FactoryBean;
  * @author Roger Parkinson
  * @version $Revision: 1.5 $
  */
-public class BundledSpringFactoryBean implements FactoryBean, BeanNameAware
+public class BundledSpringFactoryBean implements FactoryBean<Object>, BeanNameAware
 {
     private BundleManager m_bundleManager;
     private String m_beanName;

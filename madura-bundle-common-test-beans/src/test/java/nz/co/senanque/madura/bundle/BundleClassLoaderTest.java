@@ -40,17 +40,18 @@ public class BundleClassLoaderTest {
         ClassLoader cl = this.getClass().getClassLoader();
         BundleClassLoader classLoader = new BundleClassLoader(true, new URL[]{}, new JarInputStream[]{is}, cl, url1);
         is.close();
-        Class<BundleRoot> clazz = (Class<BundleRoot>)classLoader.loadClass("nz.co.senanque.madura.bundle.BundleRootImpl");
+        @SuppressWarnings("unchecked")
+		Class<BundleRoot> clazz = (Class<BundleRoot>)classLoader.loadClass("nz.co.senanque.madura.bundle.BundleRootImpl");
         ClassLoader actual = clazz.getClassLoader();
         assertEquals(actual,classLoader);
-        BundleRoot root = (BundleRoot)clazz.newInstance();
+//        BundleRoot root = (BundleRoot)clazz.newInstance();
         URL url = classLoader.getResource("BundleResource.txt");
         assertNotNull(url);
         InputStream is2 = url.openStream();
         is2.close();
         InputStream is1 = classLoader.getResourceAsStream("BundleResource.txt");
         byte[] bytes = new byte[10]; // this size trims the last \n byte.
-        int i = is1.read(bytes);
+        is1.read(bytes);
         String bundleResource = new String(bytes);
         assertEquals("bundle-1.0",bundleResource);
         Enumeration<URL> e = classLoader.getResources("BundleResource.txt");

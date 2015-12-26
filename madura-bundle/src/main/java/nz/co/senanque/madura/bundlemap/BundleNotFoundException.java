@@ -2,6 +2,8 @@ package nz.co.senanque.madura.bundlemap;
 
 public class BundleNotFoundException extends RuntimeException {
 
+	private static final long serialVersionUID = 1L;
+
 	public BundleNotFoundException() {
 	}
 

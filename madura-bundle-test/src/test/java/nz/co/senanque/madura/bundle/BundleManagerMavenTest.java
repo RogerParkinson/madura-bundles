@@ -23,8 +23,6 @@ import java.util.Properties;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -39,7 +37,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations={"/BundleManagerMaven-bundle.xml"})
 public class BundleManagerMavenTest {
 
-    private Logger m_logger = LoggerFactory.getLogger(this.getClass());
+//    private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     @Autowired ApplicationContext applicationContext;
     @Autowired BundleManager bundleManager;
     @Autowired Properties b;

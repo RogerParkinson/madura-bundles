@@ -22,6 +22,8 @@ package nz.co.senanque.madura.bundle;
  */
 public class FailedToLoadBundleContextException extends RuntimeException {
 
+	private static final long serialVersionUID = 1L;
+
 	public FailedToLoadBundleContextException() {
 		// TODO Auto-generated constructor stub
 	}

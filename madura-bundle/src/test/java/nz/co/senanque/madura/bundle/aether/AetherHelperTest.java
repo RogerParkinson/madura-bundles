@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -21,8 +20,6 @@ public class AetherHelperTest {
 	@Test @Ignore
 	public void extractURLClassPathTest() throws DependencyCollectionException, DependencyResolutionException {
 
-		Properties properties = System.getProperties();
-//		properties.list(System.out);
         List<URL> urls = AetherHelper.extractURLClassPath("org.apache.maven:maven-profile:2.2.1");
         assertEquals(7,urls.size());
         File file = new File(urls.get(0).getFile());
@@ -41,7 +38,7 @@ public class AetherHelperTest {
 	public void artifactTest() throws DependencyCollectionException, DependencyResolutionException {
 
 		Artifact artifact = new DefaultArtifact("nz.co.senanque:order-workflow:1.0.0-SNAPSHOT.jar");
-		String baseVersion = artifact.getBaseVersion();
+//		String baseVersion = artifact.getBaseVersion();
 		String version = artifact.getVersion();
 		version.toString();
 	}

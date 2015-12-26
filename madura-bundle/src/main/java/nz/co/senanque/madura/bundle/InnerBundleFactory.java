@@ -72,4 +72,8 @@ public class InnerBundleFactory implements FactoryBean<Object>, BeanNameAware, I
     public void afterPropertiesSet() throws Exception
     {
     }
+
+	public String getBeanName() {
+		return m_beanName;
+	}
 }

@@ -22,6 +22,8 @@ package nz.co.senanque.madura.bundle;
  */
 public class NoBundleSelectedException extends RuntimeException {
 
+	private static final long serialVersionUID = 1L;
+
 	public NoBundleSelectedException() {
 		// TODO Auto-generated constructor stub
 	}
