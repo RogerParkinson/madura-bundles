@@ -64,6 +64,8 @@ public class BundleClassLoaderTest {
         }
 		URL url4 = classLoader.getResource("mistake.txt");
 		assertNull(url4);
+		InputStream iis = classLoader.getResourceAsStream("nz/co/senanque/madura/bundle/BundleRootImpl.class");
+		assertNotNull(iis);
 	}
 
 }

@@ -478,6 +478,9 @@ public class MyBeanImpl {
             <th>4.2.0</th>
         </tr>
         <tr>
+            <td>Fixed problem with getting classes as resources from the class loader.</td>
+        </tr>
+        <tr>
             <td>Implemented annotation-based configuration.</td>
         </tr>
         <tr>

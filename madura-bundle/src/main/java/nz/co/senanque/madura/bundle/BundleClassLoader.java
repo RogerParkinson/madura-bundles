@@ -299,6 +299,10 @@ public class BundleClassLoader extends URLClassLoader {
     private InputStream getLocalResourceAsStream(String name) {
     	InputStream stream = null;
     	byte[] buf = (byte[])others.get(name);
+    	if (buf == null) {
+    		String s = getClassName(name);
+    		buf = (byte[])bclasses.get(s);
+    	}
         if(buf != null) {
             stream = new ByteArrayInputStream(buf);
         }

@@ -15,6 +15,7 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;

@@ -45,12 +45,6 @@ public class SpringConfiguration {
 	public SpringConfiguration() {
 		"".toString();
 	}
-//	@Bean
-//	public PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
-//		PropertyPlaceholderConfigurer ret = new PropertyPlaceholderConfigurer();
-//		ret.setLocation(new ClassPathResource("config.properties"));
-//		return ret;
-//	}
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
 		return new PropertySourcesPlaceholderConfigurer();
