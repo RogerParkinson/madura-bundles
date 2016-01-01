@@ -30,5 +30,8 @@ public interface TestBean
     public abstract Resource getResource();
     
     public abstract Object getSampleExport();
+    
+    public abstract String getValue();
+
 
 }

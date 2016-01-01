@@ -44,10 +44,10 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 	<bean id="TestBean" class="nz.co.senanque.madura.bundle.BundledSpringFactoryBean">
 		<property name="bundleManager" ref="bundleManager"/>
-		<property name="interface" value="nz.co.senanque.madura.bundle.TestBean"/>
+		<property name="interface" value="nz.co.senanque.madura.bundle0.TestBean"/>
 	</bean>
 
-	<bean id="TestBean1" class="nz.co.senanque.madura.bundle.TestBeanImpl">
+	<bean id="TestBean1" class="nz.co.senanque.madura.bundle0.TestBeanImpl">
 		<property name="content" ref="bundleName"/>
 	</bean>
 

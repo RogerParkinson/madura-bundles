@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Set;
 
+import nz.co.senanque.madura.bundle0.TestBean;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +69,6 @@ public class BundleManager2Test
     @Test
     public void testInit()
     {
-    	int i =  (1 << 0) | (0 << 1) | (1 << 2);
     	Object bean = applicationContext.getBean("TestBean");
         BundleManager bm = getBundleManager();
         bm.setBundle("bundle","3.0");

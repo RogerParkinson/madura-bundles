@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Properties;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -64,5 +65,8 @@ public class BundleManagerMaven2Test {
         assertEquals("this is a test export",tb.getSampleExport().toString());
         Resource resource = tb.getResource();
         assertNotNull(resource);
+        ValueInjectedBean valueInjectedBean = this.applicationContext.getBean(ValueInjectedBean.class);
+        String value = valueInjectedBean.getValue();
+        assertEquals("value from configb.properties",value);
     }
 }

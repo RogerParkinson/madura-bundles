@@ -61,5 +61,8 @@ public class BundleManagerMaven2BTest {
         assertEquals("this is a test export",tb.getSampleExport().toString());
         Resource resource = tb.getResource();
         assertNotNull(resource);
+        ValueInjectedBean valueInjectedBean = this.applicationContext.getBean(ValueInjectedBean.class);
+        String value = valueInjectedBean.getValue();
+        assertEquals("value from configb.properties",value);
     }
 }

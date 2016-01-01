@@ -253,9 +253,9 @@
 	</build>
 	<modules>
 		<module>madura-bundle</module>
+		<module>madura-bundle-common-test-beans</module>
 		<module>madura-bundle-maven</module>
 		<module>madura-bundle-test</module>
-		<module>madura-bundle-common-test-beans</module>
 		<module>madura-bundle-maven2</module>
 		<module>madura-bundle-test2</module>
 	</modules>

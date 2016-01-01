@@ -21,6 +21,7 @@
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+	<bean id="PropertySourcesPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"/>
 
 	<bean id="bundleName" class="nz.co.senanque.madura.bundle.StringWrapperImpl">
 		<constructor-arg value="${bundle.name}"/>
@@ -28,7 +29,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="bundleFile" class="nz.co.senanque.madura.bundle.StringWrapperImpl">
 		<constructor-arg value="${bundle.file}"/>
 	</bean>
-	<bean id="TestBean" class="nz.co.senanque.madura.bundle.TestBeanImpl">
+	<bean id="TestBean" class="nz.co.senanque.madura.bundle0.TestBeanImpl">
 		<property name="content" ref="bundleName"/>
 		<property name="resource" value="classpath:BundleResource3.txt"/>
 		<property name="sampleExport" ref="exportBean"/>

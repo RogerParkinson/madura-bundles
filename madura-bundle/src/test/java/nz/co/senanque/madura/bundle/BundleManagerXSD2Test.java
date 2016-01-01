@@ -16,6 +16,7 @@
 package nz.co.senanque.madura.bundle;
 
 import static org.junit.Assert.*;
+import nz.co.senanque.madura.bundle0.TestBean;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

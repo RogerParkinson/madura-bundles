@@ -15,7 +15,6 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
@@ -33,6 +32,9 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -106,9 +108,9 @@ public class BundleRootImpl implements BundleRoot
 	        ClassPathResource classPathResource = new ClassPathResource(contextPath,cl);
 	        xmlReader.loadBeanDefinitions(classPathResource);
         }
-        PropertyPlaceholderConfigurer p = new PropertyPlaceholderConfigurer();
-        p.setProperties(properties);
-        ctx.addBeanFactoryPostProcessor(p);
+        MutablePropertySources mps = ctx.getEnvironment().getPropertySources();
+        PropertySource<?> propertySource = new PropertiesPropertySource("bundle",properties);
+        mps.addFirst(propertySource);
         if (m_logger.isDebugEnabled())
         {
             dumpClassLoader(cl);
@@ -140,10 +142,10 @@ public class BundleRootImpl implements BundleRoot
         Thread.currentThread().setContextClassLoader(classLoader);
     }
     
-    private GenericApplicationContext getContext(Class<?> contextClass) {
-    	GenericApplicationContext ret = new AnnotationConfigApplicationContext(contextClass);
-    	return ret;
-    }
+//    private GenericApplicationContext getContext(Class<?> contextClass) {
+//    	GenericApplicationContext ret = new AnnotationConfigApplicationContext(contextClass);
+//    	return ret;
+//    }
     
     private void dumpClassLoader(ClassLoader sysClassLoader)
     {

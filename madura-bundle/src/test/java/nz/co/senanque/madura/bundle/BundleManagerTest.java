@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
+import nz.co.senanque.madura.bundle0.TestBean;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

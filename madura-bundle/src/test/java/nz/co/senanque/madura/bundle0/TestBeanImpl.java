@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package nz.co.senanque.madura.bundle;
+package nz.co.senanque.madura.bundle0;
+
+import nz.co.senanque.madura.bundle.StringWrapper;
 
 import org.springframework.core.io.Resource;
 
@@ -30,7 +32,7 @@ public class TestBeanImpl implements TestBean
     private Object m_sampleExport;
 
     /* (non-Javadoc)
-     * @see nz.co.senanque.madura.bundle.TestBean#getContent()
+     * @see nz.co.senanque.madura.bundle0.TestBean#getContent()
      */
     public StringWrapper getContent()
     {
@@ -38,7 +40,7 @@ public class TestBeanImpl implements TestBean
     }
 
     /* (non-Javadoc)
-     * @see nz.co.senanque.madura.bundle.TestBean#setContent(nz.co.senanque.madura.bundle.StringWrapper)
+     * @see nz.co.senanque.madura.bundle0.TestBean#setContent(nz.co.senanque.madura.bundle.StringWrapper)
      */
     public void setContent(StringWrapper content)
     {
@@ -64,6 +66,5 @@ public class TestBeanImpl implements TestBean
     {
         m_sampleExport = sampleExport;
     }
-    
 
 }

@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package nz.co.senanque.madura.bundle;
+package nz.co.senanque.madura.bundle0;
+
+import nz.co.senanque.madura.bundle.BundleInterface;
+import nz.co.senanque.madura.bundle.StringWrapper;
 
 import org.springframework.core.io.Resource;
 
@@ -30,5 +33,5 @@ public interface TestBean
     public abstract Resource getResource();
     
     public abstract Object getSampleExport();
-
+    
 }

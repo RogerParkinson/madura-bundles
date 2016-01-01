@@ -15,6 +15,7 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
 /**
@@ -28,6 +29,8 @@ public class TestBeanImpl implements TestBean
     private StringWrapper m_content;
     private Resource m_resource;
     private Object m_sampleExport;
+    @Value("${nz.co.senanque.madura.bundle.TestBeanImpl.m_value:}")
+    private transient String m_value;
 
     /* (non-Javadoc)
      * @see nz.co.senanque.madura.bundle.TestBean#getContent()
@@ -64,6 +67,14 @@ public class TestBeanImpl implements TestBean
     {
         m_sampleExport = sampleExport;
     }
+
+	public String getValue() {
+		return m_value;
+	}
+
+	public void setValue(String value) {
+		m_value = value;
+	}
     
 
 }
