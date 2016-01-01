@@ -124,6 +124,8 @@ Archiver-Version: Plexus Archiver
 	</configuration>
 </plugin>
 ]]></code>
+		<p>Those manifest entries are copied into the Spring environment so if you have added a <courier>PropertySourcesPlaceholderConfigurer</courier> bean
+		to your Config class you can inject those values into the other beans in your bundle.</p>
 		<p>The other thing to do in your Maven build is ensure there is a copy of the BundleRootImpl.class in the resulting jar file.
 		We can't use the one in the application because we need it to be loaded by the bundle class loader, not the application class loader.</p>
 		<p>You don't have to worry about class loaders though. Just add this to your pom file:</p>
@@ -148,7 +150,7 @@ Archiver-Version: Plexus Archiver
 	</executions>
 </plugin>
 ]]></code>	
-		<p>And you're done, you have your bundle. Now let's look at your application.</p>
+		<p>And you're done, you have your bundle. Now let's look at your main application, the thing that calls the bundle.</p>
 		<p>Just like in the bundle you define a Spring context in your application by adding a class that looks like this:</p>
 		<code><![CDATA[
 @Configuration
@@ -163,7 +165,7 @@ public class SpringConfiguration {
 		java class as a configuration class where beans are declared, <courier>@ComponentScan</courier> specifies which packages you want scanned
 		for annotated classes to be made into beans. You must include <courier>nz.co.senanque.madura.bundle</courier>. The <courier>@Import</courier> 
 		specifies an additional class that takes part in the scan, and this is the extra bit that Madura Bundles needs.</p>
-		<p>That extra bit allows you to annotate your bundle interface classes line this:</p>
+		<p>That extra bit allows you to annotate your bundle interface classes like this:</p>
 		<code><![CDATA[
 @BundleInterface("TestBean")
 public interface TestBean
@@ -175,7 +177,8 @@ public interface TestBean
 		magic of dynamic proxies happens. In your main application you defined an annotated interface (actually you probably put it into a maven dependency)
 		and in each of your bundles you defined an implementation of that interface. Once you select which bundle you want the application to use
 		at any instance, the implementation in that bundle becomes active. Other than actually selecting the bundle the application does not need to know
-		it is using a bundle at all.</p>
+		it is using a bundle at all. It just needs to know about the interface. You can have multiple annotated interfaces per bundle, of course, because
+		you have multiple beans per bundle.</p>
 		<p>There is a little bit of configuration needed for the bundle manager and in the above example this is in the config.properties file that
 		looks like this:</p>
 		<code><![CDATA[
@@ -198,6 +201,8 @@ nz.co.senanque.madura.bundle.spring.BundleManagerFactory.time=-1
 String currentBundleName = bundleRoot.getName();
 ...
 		]]></code>
+		<p>That will get you the name of the <emph>current</emph> bundle. If you switch bundles and call <courier>bundleRoot.getName()</courier>
+		again you will find it returns a different name.</p>
 		<p>The last thing you have to know is how to select a bundle. To select a bundle you use the BundleManager bean (it was automatically defined in
 		the above application configuration). Just auto wire it into a class in the usual way and call one of the following methods:</p>
 		<list>
@@ -292,7 +297,10 @@ for (BundleRoot br:bundleManager.getAvailableBundles())
 	xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-	<bean id="TestBean" class="nz.co.senanque.madura.bundle.TestBeanImpl">
+	<bean id="PropertySourcesPlaceholderConfigurer" 
+		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"/>
+
+	<bean id="TestBean" class="nz.co.senanque.madura.bundle0.TestBeanImpl">
 		<property name="content" ref="bundleName"/>
 		<property name="resource" value="classpath:BundleResource.xml"/>
 	</bean>
@@ -354,20 +362,25 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<courier>@Component</courier> beans. The second is scanning for interfaces to turn into proxy beans.</p>
 		<p>You can go a level deeper and avoid annotations altogether, but it is doubtful you want to read about it. Take a look at the 
 		tests in the madura-objects projects for examples.</p>
-		<p>This is the simplest Maven build. You might vary it by adding a classpath in the same way we showed with Ant. However if you are loading this bundle directly from Maven (as opposed to putting the
-		jar file in a sweep directory) then the dependencies come through automatically. It is good practice, therefore, to ensure you scope most of your dependencies as <courier>provided</courier> where they
-		can be provided by the container application. This ensures you don't get an alarmingly large memory footprint.</p>
-        </h1>
-		<h1 t="Advanced Topics">
-		<h2 t="Additional Classpath Entries">
-		<p>You can add extra jar file to the manifest by adding an entry like this:</p>
+		</h1>
+		<h1 t="Bundle Dependencies">
+		<p>Often your bundle code will have dependent code libraries it needs in order to run. There are several approaches to mnaging this.</p>
+		<p>The first way is to use maven based bundles and then just let maven handle the dependencies. This will work, but it is not quite optimal
+		because there are probably duplicate libraries across multiple bundles and your application. These will increase the memory footprint unecessarily.
+		The simple answer to this is to make sure as many bundle dependencies as possible are scoped <courier>provided</courier> in the bundles' pom files, and 
+		make sure these are also dependencies for the application.</p>
+		<p>If you are not using maven based bundles you can use a <courier>Class-Path</courier> entry in the bundle's manifest file
+		and copy the relevant dependencies into a subdirectory under your bundles directory. This is harder to organise and you don't solve the memory
+		footprint problem, but it does work. You only need to add entries for dependencies that are not also dependencies of the application.</p>
+		<p>You use the <courier>Class-Path</courier> entry like this:</p>
 		<code><![CDATA[
 Class-Path: lib2/ant-optional-1.5.1.jar  lib2/antlr-2.7.6.jar lib2/aopalliance-1.0.jar lib2/asm-1.5.3.jar 
 		]]></code>
-		<p>This assumes the there is a directory called lib2, a subdirectory of your bundles directory. This feature is of limited use though.
-		For example you cannot use it with the <courier>WEB-INF/bundles</courier> directory. If your bundle has dependencies that are not in the main application
-		consider using Maven based bundles.</p>
-		</h2>
+		<p>This assumes the there is a directory called lib2, a subdirectory of your bundles directory, and that you copied the relevant jar files into it. 
+		This feature is of limited use though. For example it does not work with the <courier>WEB-INF/bundles</courier> directory. 
+		If your bundle has dependencies that are not in the main application consider using Maven based bundles.</p>
+        </h1>
+		<h1 t="Advanced Topics">
 		<h2 t="Alternate Timer configurations">
 		<p>You may want to use an external scheduler to trigger the scans. This is easy to
 		configure in Spring:</p>
@@ -476,6 +489,9 @@ public class MyBeanImpl {
 			<tw>12cm</tw>
         <tr>
             <th>4.2.0</th>
+        </tr>
+        <tr>
+            <td>Fixed problem with loading environment variables and @PropertySource files.</td>
         </tr>
         <tr>
             <td>Fixed problem with getting classes as resources from the class loader.</td>
