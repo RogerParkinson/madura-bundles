@@ -87,7 +87,7 @@ public class BundleMangerDelegateMaven extends BundleManagerDelegateAbstract {
 					properties.getProperty("Bundle-Version")
 					);
 			
-			ClassLoader classLoader = createClassLoader(urls, properties, realBundleName, className, 0L, url1);
+			ClassLoader classLoader = createClassLoader(urls, properties, realBundleName, className, 0L, new URL(url));
 			Properties p0 = getPropertiesFromJar(urls.get(0));
 			p0.putAll(properties);
 			cleanup(classLoader, className, p0, bundleVersion);
@@ -107,6 +107,7 @@ public class BundleMangerDelegateMaven extends BundleManagerDelegateAbstract {
 		Manifest mf = jarInputStream.getManifest();
 		Attributes attributes = mf.getMainAttributes();
 		Properties properties = getProperties(attributes);
+		jarInputStream.close();
 		return properties;
 	}
 
