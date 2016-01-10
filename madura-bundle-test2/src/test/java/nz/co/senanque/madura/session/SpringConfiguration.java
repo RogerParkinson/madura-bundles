@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.SimpleThreadScope;
 import org.springframework.core.env.Environment;
@@ -59,6 +60,7 @@ public class SpringConfiguration {
 	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
 		return new PropertySourcesPlaceholderConfigurer();
 	}
+	// This is to fake the session scope.
 	@Bean
 	public CustomScopeConfigurer getCustomScopeConfigurer() {
 		CustomScopeConfigurer ret = new CustomScopeConfigurer();
@@ -72,6 +74,7 @@ public class SpringConfiguration {
 		return new TestExportBeanImpl();
 	}
 	@Bean
+	@Scope("session")
 	@BundleExport
 	public TestExportBean2 getTestExportBean2() {
 		return new TestExportBean2Impl();

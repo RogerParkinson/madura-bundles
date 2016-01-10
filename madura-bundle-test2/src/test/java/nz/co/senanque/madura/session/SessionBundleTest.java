@@ -22,8 +22,9 @@ import java.util.Properties;
 
 import nz.co.senanque.madura.bundle.BundleManager;
 import nz.co.senanque.madura.bundle.BundleRoot;
-import nz.co.senanque.madura.bundle.ValueInjectedBean;
 import nz.co.senanque.madura.bundle.TestBean;
+import nz.co.senanque.madura.bundle.TestExportBean2;
+import nz.co.senanque.madura.bundle.ValueInjectedBean;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -70,5 +71,7 @@ public class SessionBundleTest {
         assertEquals("value from configb.properties",value);
         Object s = tb.getSampleExport();
         assertNotNull(s);
+        TestExportBean2 tb2 = tb.getExportBean2();
+        assertNotNull(tb2);
     }
 }

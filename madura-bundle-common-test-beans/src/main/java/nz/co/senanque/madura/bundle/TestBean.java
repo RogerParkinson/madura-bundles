@@ -33,5 +33,6 @@ public interface TestBean
     
     public abstract String getValue();
 
-
+    public abstract TestExportBean2 getExportBean2();
+    
 }
