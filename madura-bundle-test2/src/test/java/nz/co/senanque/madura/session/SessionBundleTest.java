@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package nz.co.senanque.madura.bundle;
+package nz.co.senanque.madura.session;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Properties;
 
+import nz.co.senanque.madura.bundle.BundleManager;
+import nz.co.senanque.madura.bundle.BundleRoot;
+import nz.co.senanque.madura.bundle.ValueInjectedBean;
+import nz.co.senanque.madura.bundle.TestBean;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -32,10 +36,10 @@ import org.springframework.core.io.Resource;
  * @author Roger Parkinson
  *
  */
-public class BundleManagerMaven2BTest {
+public class SessionBundleTest {
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired ApplicationContext applicationContext;
+    @Autowired AnnotationConfigApplicationContext applicationContext;
     @Autowired BundleManager bundleManager;
     @Autowired Properties b;
     

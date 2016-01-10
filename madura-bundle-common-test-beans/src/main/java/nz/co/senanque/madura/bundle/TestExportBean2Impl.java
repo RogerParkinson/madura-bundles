@@ -1,10 +1,7 @@
 package nz.co.senanque.madura.bundle;
 
-import org.springframework.stereotype.Component;
 
-@Component("exportBean")
-@BundleExport
-public class TestExportBeanImpl implements TestExportBean {
+public class TestExportBean2Impl implements TestExportBean2 {
 	
 	/* (non-Javadoc)
 	 * @see nz.co.senanque.madura.bundle.TestExportBean#toString()

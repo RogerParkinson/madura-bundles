@@ -7,11 +7,16 @@ import java.util.Map;
 import nz.co.senanque.madura.bundle.BundleManager;
 import nz.co.senanque.madura.bundle.BundleRoot;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.web.context.request.RequestContextHolder;
 
-public class BundleScope implements Scope {
+public class BundleScope implements Scope, BeanFactoryPostProcessor {
+	
+	public static final String BUNDLE_SCOPE_NAME = "bundle";
 	
 	private class BundleMap {
 		
@@ -170,5 +175,12 @@ public class BundleScope implements Scope {
 		if (bundleMap != null) {
 			bundleMap.cleanup();
 		}
+	}
+
+	@Override
+	public void postProcessBeanFactory(
+			ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		beanFactory.registerScope(BUNDLE_SCOPE_NAME,
+                this);
 	}
 }

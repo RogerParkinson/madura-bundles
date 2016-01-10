@@ -15,15 +15,25 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import nz.co.senanque.madura.bundle.spring.BundleScope;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -31,11 +41,16 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.type.classreading.MethodMetadataReadingVisitor;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 /**
  * This holds the application context for the bundle
@@ -75,7 +90,6 @@ public class BundleRootImpl implements BundleRoot
     	m_applicationContext.close();
 //        m_applicationContext.stop();
     }
-
     /* (non-Javadoc)
      * @see nz.co.senanque.madura.bundle.BundleRootI#init()
      */
@@ -115,13 +129,27 @@ public class BundleRootImpl implements BundleRoot
         {
             dumpClassLoader(cl);
         }
-        for (Map.Entry<String, Object> entry: exportedBeans.entrySet())
-        {
+        // Get the beans annotated for export
+        List<ExportBeanDescriptor> exportBeanList = beansAnnotatedWith(ownerBeanFactory, BundleExport.class);
+        for (ExportBeanDescriptor ebd: exportBeanList) {
+
+        	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(InnerBundleFactory.class);
+        	beanDefinitionBuilder.addPropertyValue("key", ebd.getOwnerBeanName());
+        	beanDefinitionBuilder.addPropertyValue("beanName", ebd.getBeanName());
+        	beanDefinitionBuilder.addPropertyValue("type", ebd.getType());
+        	beanDefinitionBuilder.addPropertyValue("owner", ownerBeanFactory);
+            ctx.registerBeanDefinition(ebd.getBeanName(), beanDefinitionBuilder.getBeanDefinition());
+        }
+        // These are the XML wired for export beans
+        for (Map.Entry<String, Object> entry: exportedBeans.entrySet()) {
         	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(InnerBundleFactory.class);
         	beanDefinitionBuilder.addPropertyValue("key", entry.getKey());
+        	beanDefinitionBuilder.addPropertyValue("beanName", entry.getKey());
+        	beanDefinitionBuilder.addPropertyValue("owner", ownerBeanFactory);
         	beanDefinitionBuilder.addPropertyValue("object", exportedBeans.get(entry.getKey()));
             ctx.registerBeanDefinition(entry.getKey(), beanDefinitionBuilder.getBeanDefinition());
         }
+        
         // Registers the bundleroot (ie this) as a bean
     	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(InnerBundleFactory.class);
     	beanDefinitionBuilder.addPropertyValue("key", "bundleRoot");
@@ -136,11 +164,73 @@ public class BundleRootImpl implements BundleRoot
         if (bundleScope != null)
         {
         	ctx.getBeanFactory().registerScope("bundle", bundleScope);
+        	ctx.getBeanFactory().registerScope("vaadin-ui", bundleScope);
         }
         ctx.refresh();
         m_applicationContext = ctx;
         Thread.currentThread().setContextClassLoader(classLoader);
     }
+    private Class<?> getBeanClass(String name) {
+    	if (!StringUtils.hasText(name)) {
+    		return null;
+    	}
+    	String className = name;
+    	if (name.indexOf("$$") > -1) {
+    		className = StringUtils.split(name, "$$")[0];
+    	}
+		
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+    	return clazz;
+    }
+	public List<ExportBeanDescriptor> beansAnnotatedWith(BeanFactory beanFactory, Class<? extends BundleExport> annotationType) {
+		List<ExportBeanDescriptor> ret = new ArrayList<>();
+		if (beanFactory instanceof DefaultListableBeanFactory) {
+			DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory)beanFactory;
+			Iterator<String> it = defaultListableBeanFactory.getBeanNamesIterator();
+			while( it.hasNext()) {
+				String beanName = it.next();
+				BeanDefinition bd;
+				try {
+					bd = defaultListableBeanFactory.getBeanDefinition(beanName);
+				} catch (NoSuchBeanDefinitionException e) {
+					continue;
+				}
+				BundleExport a = defaultListableBeanFactory.findAnnotationOnBean(beanName, annotationType);
+				if (a != null) {
+					// The actual class is annotated so add it to the list
+					Class<?> clazz = getBeanClass(bd.getBeanClassName());
+					ret.add(new ExportBeanDescriptor(beanName,a,clazz));
+					continue;
+				}
+				Configuration c = defaultListableBeanFactory.findAnnotationOnBean(beanName, Configuration.class);
+				if (c != null) {
+					// This is a configuration class. Look for beans:
+					Class<?> clazz = getBeanClass(bd.getBeanClassName());
+					if (clazz == null) {
+						continue;
+					}
+					for (Method method:clazz.getMethods()) {
+						Bean beanAnnotation = method.getAnnotation(Bean.class);
+						if (beanAnnotation != null && method.isAnnotationPresent(annotationType)) {
+							// This method defines a bean with the target annotation
+							String methodBeanName = method.getName();
+							String[] beanNames = beanAnnotation.name();
+							if (beanNames != null && beanNames.length > 0 && StringUtils.hasText(beanNames[0])) {
+								methodBeanName = beanAnnotation.name()[0];
+							}
+							ret.add(new ExportBeanDescriptor(methodBeanName,method.getAnnotation(annotationType),method.getReturnType()));
+						}
+					}
+				}
+			}
+		}
+		return ret;
+	}
     
 //    private GenericApplicationContext getContext(Class<?> contextClass) {
 //    	GenericApplicationContext ret = new AnnotationConfigApplicationContext(contextClass);

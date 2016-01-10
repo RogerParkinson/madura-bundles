@@ -18,6 +18,9 @@ package nz.co.senanque.madura.bundle;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,6 +36,8 @@ public class InnerBundleFactory implements FactoryBean<Object>, BeanNameAware, I
     private String m_key;
     private String m_beanName;
     private Object m_inheritedBean;
+    private DefaultListableBeanFactory m_owner;
+    private Class<?> m_type;
 
     public void setBeanName(String name)
     {
@@ -41,6 +46,9 @@ public class InnerBundleFactory implements FactoryBean<Object>, BeanNameAware, I
 
     public Object getObject() throws Exception
     {
+    	if (m_inheritedBean == null) {
+    		return m_owner.getBean(m_beanName);
+    	}
         return m_inheritedBean;
     }
     
@@ -51,7 +59,22 @@ public class InnerBundleFactory implements FactoryBean<Object>, BeanNameAware, I
 
     public Class<? extends Object> getObjectType()
     {
-        return (m_inheritedBean==null)?null:m_inheritedBean.getClass();
+    	if (m_type != null) {
+    		return m_type;
+    	}
+    	if (m_inheritedBean != null) {
+    		return m_inheritedBean.getClass();
+    	}
+    	if (m_beanName == null || m_owner == null) {
+    		return null;
+    	}
+    	try {
+    		BeanDefinition bd = m_owner.getBeanDefinition(m_beanName);
+    		String beanClassName = bd.getBeanClassName();
+			return Class.forName(beanClassName);
+		} catch (Exception e) {
+			return null;
+		}
     }
 
     public boolean isSingleton()
@@ -76,4 +99,21 @@ public class InnerBundleFactory implements FactoryBean<Object>, BeanNameAware, I
 	public String getBeanName() {
 		return m_beanName;
 	}
+
+	public DefaultListableBeanFactory getOwner() {
+		return m_owner;
+	}
+
+	public void setOwner(DefaultListableBeanFactory owner) {
+		m_owner = owner;
+	}
+
+	public Class<?> getType() {
+		return m_type;
+	}
+
+	public void setType(Class<?> type) {
+		m_type = type;
+	}
+
 }

@@ -31,6 +31,7 @@ public class TestBeanImpl implements TestBean
     private Object m_sampleExport;
     @Value("${nz.co.senanque.madura.bundle.TestBeanImpl.m_value:}")
     private transient String m_value;
+	private TestExportBean2 m_exportBean2;
 
     /* (non-Javadoc)
      * @see nz.co.senanque.madura.bundle.TestBean#getContent()
@@ -74,6 +75,18 @@ public class TestBeanImpl implements TestBean
 
 	public void setValue(String value) {
 		m_value = value;
+	}
+
+	public void setSampleExport2(TestExportBean2 exportBean2) {
+		setExportBean2(exportBean2);
+	}
+
+	public TestExportBean2 getExportBean2() {
+		return m_exportBean2;
+	}
+
+	public void setExportBean2(TestExportBean2 exportBean2) {
+		m_exportBean2 = exportBean2;
 	}
     
 

@@ -39,6 +39,7 @@ public class Config {
     Environment env;
 	
 	@Autowired TestExportBeanImpl exportBean;
+	@Autowired TestExportBean2 exportBean2;
 
 	public Config() {
 		"".toString();
@@ -64,6 +65,7 @@ public class Config {
 		ret.setResource(new ClassPathResource("classpath:BundleResource4.txt"));
 		ret.setContent(new StringWrapperImpl("TestBean"));
 		ret.setSampleExport(exportBean);
+		ret.setSampleExport2(exportBean2);
 		return ret;
 	}
 

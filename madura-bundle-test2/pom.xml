@@ -77,7 +77,7 @@
 	<build>
     <resources>
       <resource>
-        <directory>.</directory>
+        <directory>src/main/resources</directory>
         <includes><include>*.bundle</include></includes>
         <filtering>true</filtering>
       </resource>

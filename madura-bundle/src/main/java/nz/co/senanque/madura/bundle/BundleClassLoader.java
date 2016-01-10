@@ -322,7 +322,7 @@ public class BundleClassLoader extends URLClassLoader {
         }
     }
     private byte[] findClassData(String name) {
-        return (byte[])bclasses.remove(name);
+        return (byte[])bclasses.get(name);
     }
     public void addJar(JarInputStream stream) {
         byte[] buf = new byte[BUFFER_SIZE];
