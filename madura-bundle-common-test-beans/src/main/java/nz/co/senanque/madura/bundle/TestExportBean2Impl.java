@@ -1,7 +1,11 @@
 package nz.co.senanque.madura.bundle;
 
+import javax.annotation.PostConstruct;
+
 
 public class TestExportBean2Impl implements TestExportBean2 {
+	
+	private int counter=0;
 	
 	/* (non-Javadoc)
 	 * @see nz.co.senanque.madura.bundle.TestExportBean#toString()
@@ -9,6 +13,14 @@ public class TestExportBean2Impl implements TestExportBean2 {
 	@Override
 	public String toString () {
 		return "this is a test export";
+	}
+	
+    @PostConstruct
+    public void init() {
+    }
+
+	public int getCounter() {
+		return counter++;
 	}
 
 }
