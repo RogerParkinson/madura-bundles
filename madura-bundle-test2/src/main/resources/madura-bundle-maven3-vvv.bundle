@@ -1,0 +1,2 @@
+Bundle-Artifact=nz.co.senanque:madura-bundle-maven3:${project.version}
+current.version=${project.version}

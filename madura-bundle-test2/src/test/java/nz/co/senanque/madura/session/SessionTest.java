@@ -17,6 +17,9 @@ package nz.co.senanque.madura.session;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.Collection;
+
 import nz.co.senanque.madura.bundle.BundleManager;
 import nz.co.senanque.madura.bundle.BundleRoot;
 import nz.co.senanque.madura.bundle.TestBean;
@@ -105,39 +108,32 @@ public class SessionTest {
 //				System.identityHashCode(sessionBean));
 	}
 
-	@Test
-	public void requestScope() throws Exception {
-		displayIds("requestScope");
-	}
-
-	@Test
-	public void sessionScope() throws Exception {
-		displayIds("sessionScope");
-	}
-    @Test
-    public void testInit() {
-    	String targetBundle = null;
-    	for (BundleRoot br: bundleManager.getAvailableBundleRoots()) {
-    		targetBundle = br.getName();
-    	}
-    	assertNotNull(targetBundle);
-    	bundleManager.setBundle(targetBundle);
-        testBundleName(bundleManager, targetBundle,"testInit");
-    }
     @Test
     public void testInit2() {
     	String targetBundle = null;
-    	for (BundleRoot br: bundleManager.getAvailableBundleRoots()) {
-    		targetBundle = br.getName();
-    	}
-    	assertNotNull(targetBundle);
+    	Collection<BundleRoot> bundles = bundleManager.getAvailableBundleRoots();
+    	assertEquals(2,bundles.size());
+    	BundleRoot[] bundleArray = bundles.toArray(new BundleRoot[2]);
+
+    	targetBundle = bundleArray[0].getName();
     	bundleManager.setBundle(targetBundle);
-        testBundleName(bundleManager, targetBundle,"testInit2");
+        testBundleName(bundleManager, targetBundle,targetBundle+" T1", 0);
+        
+        targetBundle = bundleArray[1].getName();
+    	bundleManager.setBundle(targetBundle);
+        testBundleName(bundleManager, targetBundle,targetBundle+" T1", 1);
         sessionClean();
         constructSession();
-        testBundleName(bundleManager, targetBundle,"testInit2a");
+
+    	targetBundle = bundleArray[0].getName();
+    	bundleManager.setBundle(targetBundle);
+        testBundleName(bundleManager, targetBundle,targetBundle+" T2", 0);
+        
+        targetBundle = bundleArray[1].getName();
+    	bundleManager.setBundle(targetBundle);
+        testBundleName(bundleManager, targetBundle,targetBundle+" T2", 1);
     }
-    private void testBundleName(BundleManager bm, String bundleName, String source) {
+    private void testBundleName(BundleManager bm, String bundleName, String source, int expected) {
     	displayIds(source);
         BundleRoot n = (BundleRoot)this.applicationContext.getBean("bundleRoot");
         assertEquals(bundleName,n.getName());
@@ -154,7 +150,7 @@ public class SessionTest {
         TestExportBean2 tb2 = tb.getExportBean2();
         assertNotNull(tb2);
         int i = tb2.getCounter();
-        assertEquals(0,i);
+        assertEquals(expected,i);
 //        m_logger.debug("{} counter {} TestExportBean2 {}",source, i, System.identityHashCode(tb2));
     }
 }
