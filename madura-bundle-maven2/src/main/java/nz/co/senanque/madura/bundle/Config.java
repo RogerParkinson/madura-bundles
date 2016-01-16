@@ -15,6 +15,7 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import nz.co.senanque.madura.testbeans.BundleSessionBeanImpl;
 import nz.co.senanque.madura.testbeans.TestBean;
 import nz.co.senanque.madura.testbeans.TestBeanImpl;
 import nz.co.senanque.madura.testbeans.TestExportBean;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
@@ -73,11 +75,11 @@ public class Config {
 		ret.setSampleExport2(exportBean2);
 		return ret;
 	}
-//	@Bean(name="TestBundleBean")
-////	@Scope("bundle")
-//	public TestExportBean2 testBundleBean() {
-//		TestExportBean2 ret = new TestExportBean2Impl();
-//		return ret;
-//	}
+	@Bean(name="TestBundleBean")
+	@Scope("bundle")
+	public TestExportBean2 testBundleBean() {
+		TestExportBean2 ret = new BundleSessionBeanImpl();
+		return ret;
+	}
 
 }
