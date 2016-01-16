@@ -20,6 +20,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Properties;
 
+import nz.co.senanque.madura.testbeans.TestBean;
+import nz.co.senanque.madura.testbeans.ValueInjectedBean;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +43,7 @@ public class BundleManagerMaven2BTest {
     @Autowired BundleManager bundleManager;
     @Autowired Properties b;
     
-    @Test
+    @Test @Ignore
     public void testInit()
     {
     	applicationContext = new AnnotationConfigApplicationContext(SpringConfiguration.class);

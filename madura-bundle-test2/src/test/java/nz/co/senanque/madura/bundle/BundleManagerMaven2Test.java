@@ -20,6 +20,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Properties;
 
+import nz.co.senanque.madura.testbeans.TestBean;
+import nz.co.senanque.madura.testbeans.ValueInjectedBean;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +47,7 @@ public class BundleManagerMaven2Test {
     @Autowired BundleManager bundleManager;
     @Autowired Properties b;
     
-    @Test
+    @Test @Ignore
     public void testInit()
     {
     	BundleManager bm = (BundleManager)this.applicationContext.getBean("bundleManager");

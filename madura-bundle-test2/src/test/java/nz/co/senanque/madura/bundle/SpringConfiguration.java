@@ -16,6 +16,10 @@
 package nz.co.senanque.madura.bundle;
 
 import nz.co.senanque.madura.bundle.spring.EnableBundles;
+import nz.co.senanque.madura.session.TestExportBean2Impl;
+import nz.co.senanque.madura.session.TestExportBeanImpl;
+import nz.co.senanque.madura.testbeans.TestExportBean;
+import nz.co.senanque.madura.testbeans.TestExportBean2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +37,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @EnableBundles
 @ComponentScan(basePackages = {
-		"nz.co.senanque.madura.bundle"})
+		"nz.co.senanque.madura.bundle.spring"})
 @PropertySource("classpath:config.properties")
 public class SpringConfiguration {
 	

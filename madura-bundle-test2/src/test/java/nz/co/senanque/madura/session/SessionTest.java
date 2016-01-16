@@ -18,22 +18,25 @@ package nz.co.senanque.madura.session;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 
 import nz.co.senanque.madura.bundle.BundleManager;
 import nz.co.senanque.madura.bundle.BundleRoot;
-import nz.co.senanque.madura.bundle.TestBean;
-import nz.co.senanque.madura.bundle.TestExportBean2;
-import nz.co.senanque.madura.bundle.ValueInjectedBean;
+import nz.co.senanque.madura.bundle.StringWrapperImpl;
+import nz.co.senanque.madura.bundle.spring.DumpBeanFactory;
+import nz.co.senanque.madura.testbeans.TestBean;
+import nz.co.senanque.madura.testbeans.TestExportBean2;
+import nz.co.senanque.madura.testbeans.ValueInjectedBean;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -44,8 +47,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 /**
+ * Tests Multiple sessions and multiple bundles using
+ * annotations to configure.
+ * 
  * @author Roger Parkinson
  *
  */
@@ -61,7 +68,7 @@ public class SessionTest {
 	@Autowired MockHttpSession session;
 	@Autowired MySessionBean mySessionBean;
 	@Autowired MyRequestBean myRequestBean;
-	@Autowired @Qualifier("getTestExportBean2") TestExportBean2 sessionBean;
+//	@Autowired @Qualifier("getTestExportBean2") TestExportBean2 sessionBean;
     @Autowired BundleManager bundleManager;
     @Autowired ApplicationContext applicationContext;
 
@@ -107,10 +114,36 @@ public class SessionTest {
 //				System.identityHashCode(mySessionBean),
 //				System.identityHashCode(sessionBean));
 	}
+	@Test
+	public void testReflection() throws Exception {
+    	String targetBundle = null;
+    	Collection<BundleRoot> bundles = bundleManager.getAvailableBundleRoots();
+    	assertEquals(2,bundles.size());
+    	BundleRoot[] bundleArray = bundles.toArray(new BundleRoot[2]);
+    	targetBundle = bundleArray[0].getName();
+    	bundleManager.setBundle(targetBundle);
+    	ClassLoader classLoader = bundleArray[0].getBundleClassLoader();
+		ClassLoader mainCL = TestBean.class.getClassLoader();
 
+		Class<?> TestBeanClassImpl = classLoader.loadClass("nz.co.senanque.madura.testbeans.TestBeanImpl");
+		@SuppressWarnings("unused")
+		Class<?> TestBeanClass = classLoader.loadClass("nz.co.senanque.madura.testbeans.TestBean");
+    	@SuppressWarnings("unused")
+		Class<?> TestBeanClassMain = mainCL.loadClass("nz.co.senanque.madura.testbeans.TestBean");
+    	ClassLoader foundCL = TestBeanClass.getClassLoader();
+    	ClassLoader foundCLMain = TestBeanClassMain.getClassLoader();
+    	
+		Method method = TestBean.class.getMethod("getContent", new Class<?>[]{});
+		TestBean tb = (TestBean) TestBeanClassImpl.newInstance();
+		tb.setContent(new StringWrapperImpl("abc"));
+		Object o = method.invoke(tb, null);
+		assertEquals("abc",o.toString());
+	}
+	
     @Test
     public void testInit2() {
     	String targetBundle = null;
+    	DumpBeanFactory.dumpBeans((GenericWebApplicationContext)applicationContext,"main");
     	Collection<BundleRoot> bundles = bundleManager.getAvailableBundleRoots();
     	assertEquals(2,bundles.size());
     	BundleRoot[] bundleArray = bundles.toArray(new BundleRoot[2]);
@@ -138,8 +171,10 @@ public class SessionTest {
         BundleRoot n = (BundleRoot)this.applicationContext.getBean("bundleRoot");
         assertEquals(bundleName,n.getName());
         TestBean tb = (TestBean)this.applicationContext.getBean("TestBean");
-        assertEquals("TestBean",tb.getContent().toString());
-        assertEquals("this is a test export",tb.getSampleExport().toString());
+        Object o = tb.getContent();
+        assertEquals("TestBean",o.toString());
+        o = tb.getSampleExport();
+        assertEquals("this is a test export",o.toString());
         Resource resource = tb.getResource();
         assertNotNull(resource);
         ValueInjectedBean valueInjectedBean = this.applicationContext.getBean(ValueInjectedBean.class);

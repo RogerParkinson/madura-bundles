@@ -15,11 +15,16 @@
   		<version>${project.version}</version>
   		<scope>provided</scope>
   	</dependency>
+	<dependency>
+		<groupId>nz.co.senanque</groupId>
+		<artifactId>madura-bundles-test-interfaces</artifactId>
+		<version>${project.version}</version>
+		<scope>provided</scope>
+	</dependency>
   	<dependency>
   		<groupId>nz.co.senanque</groupId>
-  		<artifactId>madura-bundle-common-test-beans</artifactId>
+  		<artifactId>madura-bundles-test-beans</artifactId>
   		<version>${project.version}</version>
-  		<scope>provided</scope>
   	</dependency>
   </dependencies>
   <build>

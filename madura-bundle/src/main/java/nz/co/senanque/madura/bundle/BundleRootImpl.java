@@ -15,22 +15,22 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import nz.co.senanque.madura.bundle.spring.BundleScope;
+import nz.co.senanque.madura.bundle.spring.DumpBeanFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -48,8 +48,6 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.type.classreading.MethodMetadataReadingVisitor;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 /**
@@ -130,7 +128,7 @@ public class BundleRootImpl implements BundleRoot
             dumpClassLoader(cl);
         }
         // Get the beans annotated for export
-        List<ExportBeanDescriptor> exportBeanList = beansAnnotatedWith(ownerBeanFactory, BundleExport.class);
+        Set<ExportBeanDescriptor> exportBeanList = beansAnnotatedWith(ownerBeanFactory, BundleExport.class);
         for (ExportBeanDescriptor ebd: exportBeanList) {
 
         	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(InnerBundleFactory.class);
@@ -140,11 +138,12 @@ public class BundleRootImpl implements BundleRoot
         	beanDefinitionBuilder.addPropertyValue("owner", ownerBeanFactory);
             ctx.registerBeanDefinition(ebd.getBeanName(), beanDefinitionBuilder.getBeanDefinition());
         }
-        // These are the XML wired for export beans
+        // These are the XML wired for export beans, probably won't work for anything but singletons
         for (Map.Entry<String, Object> entry: exportedBeans.entrySet()) {
         	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(InnerBundleFactory.class);
         	beanDefinitionBuilder.addPropertyValue("key", entry.getKey());
         	beanDefinitionBuilder.addPropertyValue("beanName", entry.getKey());
+        	beanDefinitionBuilder.addPropertyValue("type", entry.getKey().getClass());
         	beanDefinitionBuilder.addPropertyValue("owner", ownerBeanFactory);
         	beanDefinitionBuilder.addPropertyValue("object", exportedBeans.get(entry.getKey()));
             ctx.registerBeanDefinition(entry.getKey(), beanDefinitionBuilder.getBeanDefinition());
@@ -166,7 +165,16 @@ public class BundleRootImpl implements BundleRoot
         	ctx.getBeanFactory().registerScope("bundle", bundleScope);
         	ctx.getBeanFactory().registerScope("vaadin-ui", bundleScope);
         }
-        ctx.refresh();
+        try {
+			ctx.refresh();
+		} catch (BeansException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        DumpBeanFactory.dumpBeans(ctx,properties.getProperty("Bundle-Name"));
         m_applicationContext = ctx;
         Thread.currentThread().setContextClassLoader(classLoader);
     }
@@ -187,8 +195,9 @@ public class BundleRootImpl implements BundleRoot
 		}
     	return clazz;
     }
-	public List<ExportBeanDescriptor> beansAnnotatedWith(BeanFactory beanFactory, Class<? extends BundleExport> annotationType) {
-		List<ExportBeanDescriptor> ret = new ArrayList<>();
+	public Set<ExportBeanDescriptor> beansAnnotatedWith(BeanFactory beanFactory, Class<? extends BundleExport> annotationType) {
+		Set<ExportBeanDescriptor> ret = new TreeSet<>();
+		
 		if (beanFactory instanceof DefaultListableBeanFactory) {
 			DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory)beanFactory;
 			Iterator<String> it = defaultListableBeanFactory.getBeanNamesIterator();

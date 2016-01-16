@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
  * @author Roger Parkinson
  *
  */
-public class ExportBeanDescriptor {
+public class ExportBeanDescriptor implements Comparable<ExportBeanDescriptor> {
 
 	private final String m_beanName;
 	private final String m_ownerBeanName;
@@ -45,5 +45,18 @@ public class ExportBeanDescriptor {
 	public String getOwnerBeanName() {
 		return m_ownerBeanName;
 	}
-
+	
+	public boolean equals(Object o) {
+		if (o instanceof ExportBeanDescriptor && m_beanName != null) {
+			return m_beanName.equals(((ExportBeanDescriptor)o).getBeanName());
+		}
+		return false;
+	}
+	@Override
+	public int compareTo(ExportBeanDescriptor o) {
+		if (m_beanName != null) {
+			return m_beanName.compareTo(o.getBeanName());
+		}
+		return -1;
+	}
 }

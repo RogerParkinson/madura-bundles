@@ -40,19 +40,12 @@
 			<groupId>nz.co.senanque</groupId>
 			<artifactId>madura-bundle</artifactId>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-	  	<dependency>
-	  		<groupId>nz.co.senanque</groupId>
-	  		<artifactId>madura-bundle-common-test-beans</artifactId>
-	  		<version>${project.version}</version>
-	  		<scope>compile</scope>
-	  	</dependency>
+		<dependency>
+			<groupId>nz.co.senanque</groupId>
+			<artifactId>madura-bundles-test-interfaces</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>

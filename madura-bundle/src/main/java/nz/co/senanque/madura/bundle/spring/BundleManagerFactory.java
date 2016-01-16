@@ -15,9 +15,6 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle.spring;
 
-import java.util.Map;
-
-import nz.co.senanque.madura.bundle.BundleExport;
 import nz.co.senanque.madura.bundle.BundleManager;
 import nz.co.senanque.madura.bundle.BundleManagerImpl;
 import nz.co.senanque.madura.bundle.BundleManagerWeb;
@@ -27,7 +24,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -58,8 +54,8 @@ public class BundleManagerFactory implements FactoryBean<BundleManager>, BeanFac
 			m_bundleManager.setDirectory(m_directory);
 			m_bundleManager.setTime(m_time);
 			m_bundleManager.setBeanFactory(m_beanFactory);
-			Map<String,Object> exports = ((DefaultListableBeanFactory)m_beanFactory).getBeansWithAnnotation(BundleExport.class);
-			m_bundleManager.getExportedBeans().putAll(exports);
+//			Map<String,Object> exports = ((DefaultListableBeanFactory)m_beanFactory).getBeansWithAnnotation(BundleExport.class);
+//			m_bundleManager.getExportedBeans().putAll(exports);
 			m_bundleManager.init();
 		}
 		return m_bundleManager;

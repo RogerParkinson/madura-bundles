@@ -9,6 +9,12 @@
   <name>madura-bundle-maven2</name>
   <description>second test bundle for maven: uses a configuration class rather than xml</description>
   <dependencies>
+	<dependency>
+		<groupId>nz.co.senanque</groupId>
+		<artifactId>madura-bundles-test-interfaces</artifactId>
+		<version>${project.version}</version>
+		<scope>provided</scope>
+	</dependency>
   	<dependency>
   		<groupId>nz.co.senanque</groupId>
   		<artifactId>madura-bundle</artifactId>
@@ -17,9 +23,8 @@
   	</dependency>
   	<dependency>
   		<groupId>nz.co.senanque</groupId>
-  		<artifactId>madura-bundle-common-test-beans</artifactId>
+  		<artifactId>madura-bundles-test-beans</artifactId>
   		<version>${project.version}</version>
-  		<scope>provided</scope>
   	</dependency>
   </dependencies>
   <build>

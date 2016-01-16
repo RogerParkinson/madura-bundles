@@ -28,8 +28,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 		<context:annotation-config/>
-		<context:component-scan base-package="nz.co.senanque.madura.bundle"/>
-		<bundle:component-scan base-package="nz.co.senanque.madura.bundle"/>
+		<context:component-scan base-package="nz.co.senanque.madura.bundle.spring,nz.co.senanque.madura.testbean"/>
+		<bundle:component-scan base-package="nz.co.senanque.madura.testbean"/>
 		<bean id="propertyConfigurer"
 			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
 			<property name="location" value="classpath:config.properties"/>

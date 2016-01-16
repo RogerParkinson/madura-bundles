@@ -21,6 +21,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Properties;
 
+import nz.co.senanque.madura.testbeans.TestBean;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,7 @@ public class BundleManagerMavenTest {
         StringWrapper n = (StringWrapper)this.applicationContext.getBean("bundleName");
         assertTrue(n.toString().equals(bundleName));
         TestBean tb = (TestBean)this.applicationContext.getBean("TestBean");
+        StringWrapper sw = tb.getContent();
         assertTrue(tb.getContent().toString().equals(bundleName));
         assertEquals("this is a test export",tb.getSampleExport().toString());
         Resource resource = tb.getResource();

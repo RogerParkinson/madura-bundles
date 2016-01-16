@@ -66,6 +66,12 @@ public class BundleInvocationHandler implements InvocationHandler
             throw e.getTargetException();
 
         }
+        catch (IllegalArgumentException e)
+        {
+//        	m_logger.debug("error bundle: {} bean: {} method: {} error: {}",br.getName(),m_beanName,method.getName(),e.getTargetException().getMessage());
+            throw e;
+
+        }
         finally {
         	Thread.currentThread().setContextClassLoader(classLoader);
 //        	m_logger.debug("finished bundle: {} bean: {} method: {}",br.getName(),m_beanName,method.getName());

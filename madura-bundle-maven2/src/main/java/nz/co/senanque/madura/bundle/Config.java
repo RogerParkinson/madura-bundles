@@ -15,6 +15,11 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle;
 
+import nz.co.senanque.madura.testbeans.TestBean;
+import nz.co.senanque.madura.testbeans.TestBeanImpl;
+import nz.co.senanque.madura.testbeans.TestExportBean;
+import nz.co.senanque.madura.testbeans.TestExportBean2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -38,7 +43,7 @@ public class Config {
 	@Autowired
     Environment env;
 	
-	@Autowired TestExportBeanImpl exportBean;
+	@Autowired TestExportBean exportBean;
 	@Autowired TestExportBean2 exportBean2;
 
 	public Config() {
@@ -68,5 +73,11 @@ public class Config {
 		ret.setSampleExport2(exportBean2);
 		return ret;
 	}
+//	@Bean(name="TestBundleBean")
+////	@Scope("bundle")
+//	public TestExportBean2 testBundleBean() {
+//		TestExportBean2 ret = new TestExportBean2Impl();
+//		return ret;
+//	}
 
 }

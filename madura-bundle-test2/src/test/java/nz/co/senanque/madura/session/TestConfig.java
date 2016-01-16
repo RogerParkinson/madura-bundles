@@ -16,11 +16,8 @@
 package nz.co.senanque.madura.session;
 
 import nz.co.senanque.madura.bundle.BundleExport;
-import nz.co.senanque.madura.bundle.TestExportBean;
-import nz.co.senanque.madura.bundle.TestExportBean2;
-import nz.co.senanque.madura.bundle.TestExportBean2Impl;
-import nz.co.senanque.madura.bundle.TestExportBeanImpl;
 import nz.co.senanque.madura.bundle.spring.EnableBundles;
+import nz.co.senanque.madura.testbeans.TestExportBean2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +37,9 @@ import org.springframework.core.env.Environment;
 @Configuration
 @EnableBundles
 @ComponentScan(basePackages = {
-		"nz.co.senanque.madura.bundle"})
+		"nz.co.senanque.madura.testbeans",
+		"nz.co.senanque.madura.bundle.spring",
+		"nz.co.senanque.madura.session"})
 @PropertySource("classpath:config.properties")
 public class TestConfig {
 	
@@ -50,10 +49,6 @@ public class TestConfig {
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
 		return new PropertySourcesPlaceholderConfigurer();
-	}
-	@Bean
-	public TestExportBean getTestExportBean() {
-		return new TestExportBeanImpl();
 	}
 	@Bean
 	@Scope("request")

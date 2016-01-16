@@ -15,7 +15,7 @@
  *******************************************************************************/
 package nz.co.senanque.madura.b2;
 
-import nz.co.senanque.madura.bundle.ValueInjectedBean;
+import nz.co.senanque.madura.testbeans.ValueInjectedBean;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

@@ -17,17 +17,16 @@ package nz.co.senanque.madura.bundle3;
 
 import nz.co.senanque.madura.bundle.StringWrapper;
 import nz.co.senanque.madura.bundle.StringWrapperImpl;
-import nz.co.senanque.madura.bundle.TestBean;
-import nz.co.senanque.madura.bundle.TestBeanImpl;
-import nz.co.senanque.madura.bundle.TestExportBean2;
-import nz.co.senanque.madura.bundle.TestExportBeanImpl;
+import nz.co.senanque.madura.testbeans.TestBean;
+import nz.co.senanque.madura.testbeans.TestBeanImpl;
+import nz.co.senanque.madura.testbeans.TestExportBean;
+import nz.co.senanque.madura.testbeans.TestExportBean2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
@@ -46,7 +45,7 @@ public class Config {
 	@Autowired
     Environment env;
 	
-	@Autowired TestExportBeanImpl exportBean;
+	@Autowired TestExportBean exportBean;
 	@Autowired TestExportBean2 exportBean2;
 
 	public Config() {
@@ -68,7 +67,6 @@ public class Config {
 		return ret;
 	}
 	@Bean(name="TestBean")
-//	@Scope("session")
 	public TestBean testBean() {
 		TestBeanImpl ret = new TestBeanImpl();
 		ret.setResource(new ClassPathResource("classpath:BundleResource4.txt"));
@@ -77,5 +75,12 @@ public class Config {
 		ret.setSampleExport2(exportBean2);
 		return ret;
 	}
+
+//	@Bean(name="TestBundleBean")
+////	@Scope("bundle")
+//	public TestExportBean2 testBundleBean() {
+//		TestExportBean2 ret = new TestExportBean2Impl();
+//		return ret;
+//	}
 
 }
