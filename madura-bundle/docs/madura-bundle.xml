@@ -154,17 +154,17 @@ Archiver-Version: Plexus Archiver
 		<p>Just like in the bundle you define a Spring context in your application by adding a class that looks like this:</p>
 		<code><![CDATA[
 @Configuration
-@Import(BundledInterfaceRegistrar.class)
+@EnableBundles
 @ComponentScan(basePackages = {
 		"nz.co.senanque.madura.bundle", "nz.co.senanque.madura.test"})
 @PropertySource("classpath:config.properties")
 public class SpringConfiguration {
 ...
 		]]></code>
-		<p>These annotations are all documented in detail in the Spring docs but, briefly, the <courier>@Configuration</courier> declares this
+		<p>These annotations, except for <courier>@EnableBundles</courier> are all documented in detail in the Spring docs but, briefly, the <courier>@Configuration</courier> declares this
 		java class as a configuration class where beans are declared, <courier>@ComponentScan</courier> specifies which packages you want scanned
-		for annotated classes to be made into beans. You must include <courier>nz.co.senanque.madura.bundle</courier>. The <courier>@Import</courier> 
-		specifies an additional class that takes part in the scan, and this is the extra bit that Madura Bundles needs.</p>
+		for annotated classes to be made into beans. You must include <courier>nz.co.senanque.madura.bundle</courier>. The <courier>@EnableBundles</courier> 
+		adds some extra logic to the scan, and this is the extra bit that Madura Bundles needs.</p>
 		<p>That extra bit allows you to annotate your bundle interface classes like this:</p>
 		<code><![CDATA[
 @BundleInterface("TestBean")
@@ -221,6 +221,23 @@ String currentBundleName = bundleRoot.getName();
 		</list>
 		<p>If no bundle is set you will probably see a null pointer exception because the beans you thought were injecting into your code will not be
 		injected and you will find nulls.</p>
+		<p>The actual contents of your bundle can be anything you like, of course, but you also need to define one or more interfaces to be shared
+		with the calling application. These are the interfaces you annotate with <courier>@BundleInterface</courier> and have the application
+		scan. Naturally these interfaces must be in both application and bundle code for them to compile. But there is a trap here. The interface
+		code can be compiled into the application but <emph>not</emph> in any bundle. The reason for this lies in the way the classloader works and
+		we will explain that in a moment. The vital point to make here is that you will almost certainly want to put the interfaces into their
+		own jar file or maven project. The application can have a maven compile dependency on that interface project but the bundles must have a maven <emph>provided</emph>
+		dependency on it. That ensures the interface classes are not included in the bundle run time dependencies.</p>
+		<p>If you are using jar files rather than maven just do not include the interface jar file in the bundle dependencies.</p>
+		<p>Ther is more information on configuring dependencies in <sectionLink t="Bundle Dependencies"/></p>
+		<p>Now, why is this important? The bundle classloader loads classes from the bundle in preference, and your application uses the normal class loader. If
+		you have an interface <courier>MyInterface</courier> the application will load it from the application classloader, of course. The bundle will
+		look for the same class in the bundle class loader. If it finds it there you will see strange errors suggesting that the implementation class
+		of <courier>MyInterface</courier> does not conform to the <courier>MyInterface</courier> specified by the application. The two class definitions
+		are not the same and the JVM complains. If, however, the bundle classloader does not find the <courier>MyInterface</courier> class it will
+		then search the application classloader and it will find it there. In that case the two will match, eliminating the errors.</p>
+		<p>This only matters for interfaces shared across the aplication/bundle boundary. Other interfaces used by the bundle that the application does
+		not see are no concern here. In practice this affects a very specific set of interfaces you have full controll over.</p>
 		</h1>
 		<h1 t="Managing Bundles">
 		<h2 t="Selecting Bundles">
@@ -364,7 +381,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		tests in the madura-objects projects for examples.</p>
 		</h1>
 		<h1 t="Bundle Dependencies">
-		<p>Often your bundle code will have dependent code libraries it needs in order to run. There are several approaches to mnaging this.</p>
+		<p>Often your bundle code will have dependent code libraries it needs in order to run. There are several approaches to managing this.</p>
 		<p>The first way is to use maven based bundles and then just let maven handle the dependencies. This will work, but it is not quite optimal
 		because there are probably duplicate libraries across multiple bundles and your application. These will increase the memory footprint unecessarily.
 		The simple answer to this is to make sure as many bundle dependencies as possible are scoped <courier>provided</courier> in the bundles' pom files, and 
@@ -421,6 +438,13 @@ public class TestExportBean {
 		]]></code>
 		<p>The scanner will identify the export beans and tell the bundle manager about them. You can auto wire the exported
 		beans into your bundled classes as if they were defined locally.</p>
+		<p>You can get exactly the same effect using the <courier>@Bean</courier> annotation in a <courier>@Configuration</courier>.</p>
+		<code><![CDATA[
+@Bean
+@BundleExport
+public TestExportBean2 getTestExportBean2() {
+....
+		]]></code>
 		</h2>
 		<h2 t="Listening for Bundles">
 		<p>You can optionally listen for bundles being added or deleted. This is useful if you need your application
@@ -463,6 +487,19 @@ public class MyBeanImpl {
         <p>In a web application Spring will arrange for one of these beans to be created per session, and a proxy injected where necesary. This means
         that each different session sees its own bean, it does not share it with the other sessions, though the code calling the bean (through the proxy)
         is unaware of this. Spring manages mapping the right beans to each request based on its session identifier.</p>
+        <p>When using bundles you often want to export these beans forthe bundles to use. This is simple to do:</p>
+        <code><![CDATA[
+@Component("myBean")
+@Scope(value="session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@BundleExport     
+public class MyBeanImpl {
+....
+		]]></code>
+        <p>There are some extra qualifiers on the <courier>@Scope</courier> to ensure Spring wraps the bean in a proxy, making it suitable to export to the bundles.
+        and after that the bundles can use it like a normal export bean. One thing to watch with any session beans is that Spring defers instantiation of 
+        session beans until they are asked for because it needs a web session to
+        store them against and there isn't one at startup. So be careful you don't force the session bean to be created early, for example by injecting it into
+        some bean that uses it in an initialisation method.</p>
         <p>But when using bundles you have applications that may switch between several bundles and each of those bundles may define a copy of 
         <courier>myBean</courier> that needs to be a session bean. But you do not want one bean per session. You want one bean per session <emph>per bundle</emph>.</p>
         <p>To achieve this we have a special scope named 'bundle' and you use it like this:</p>
@@ -474,10 +511,6 @@ public class MyBeanImpl {
         <p>The scope is set up automatically by the bundle manager so there isn't anything else you have to do. Naturally this is only valid for
         beans defined inside bundles, not elsewhere. It will work just fine when there is no web session, falling back to an internal dummy session,
         though we can't think of a situation you would need that.</p>
-        <p>When you do want a session bean to share across all bundles define it in the main application as well as in the bundles and make sure it
-        has session scope on each definition. Spring defers instantiation of session beans until they are asked for because it needs a web session to
-        store them against and there isn't one at startup. So be careful you don't force the session bean to be created early, for example by injecting it into
-        some bean that uses it in an initialisation method.</p>
         </h2>
         </h1>
 		<a1 t="License">
@@ -489,6 +522,9 @@ public class MyBeanImpl {
 			<tw>12cm</tw>
         <tr>
             <th>4.2.0</th>
+        </tr>
+        <tr>
+            <td>Reworked the testing structure for more comprehensive tests.</td>
         </tr>
         <tr>
             <td>Fixed problem with loading environment variables and @PropertySource files.</td>
