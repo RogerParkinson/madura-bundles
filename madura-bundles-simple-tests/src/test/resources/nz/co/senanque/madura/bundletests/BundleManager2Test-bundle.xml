@@ -29,7 +29,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 	<context:annotation-config/>
 	<context:component-scan base-package="nz.co.senanque.madura.bundle.spring,nz.co.senanque.madura.bundletests"/>
-	<bundle:component-scan base-package="nz.co.senanque.madura.testbeans,nz.co.senanque.madura.bundletests"/>
+	<bundle:component-scan base-package="nz.co.senanque.madura.testbeans"/>
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
 		<property name="location" value="classpath:config.properties"/>
