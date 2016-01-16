@@ -229,7 +229,8 @@ String currentBundleName = bundleRoot.getName();
 		own jar file or maven project. The application can have a maven compile dependency on that interface project but the bundles must have a maven <emph>provided</emph>
 		dependency on it. That ensures the interface classes are not included in the bundle run time dependencies.</p>
 		<p>If you are using jar files rather than maven just do not include the interface jar file in the bundle dependencies.</p>
-		<p>Ther is more information on configuring dependencies in <sectionLink t="Bundle Dependencies"/></p>
+		<p>There is more information on configuring dependencies in <sectionLink t="Bundle Dependencies"/></p>
+		<img width="12cm" href="images/Dependencies.png">Interface Dependencies</img>
 		<p>Now, why is this important? The bundle classloader loads classes from the bundle in preference, and your application uses the normal class loader. If
 		you have an interface <courier>MyInterface</courier> the application will load it from the application classloader, of course. The bundle will
 		look for the same class in the bundle class loader. If it finds it there you will see strange errors suggesting that the implementation class
