@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import nz.co.senanque.madura.bundle.BundleInterface;
 import nz.co.senanque.madura.bundle.BundleManager;
 import nz.co.senanque.madura.bundle.BundleRoot;
 import nz.co.senanque.madura.bundle.StringWrapperImpl;
@@ -31,7 +32,6 @@ import nz.co.senanque.madura.testbeans.ValueInjectedBean;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -50,8 +50,21 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 /**
- * Tests Multiple sessions and multiple bundles using
+ * Tests multiple sessions and multiple bundles using
  * annotations to configure.
+ * Beans can be
+ * <p><ol>
+ * <li>singleton defined in ap</li>
+ * <li>singleton defined in ap exported to bundle</li>
+ * <li>singleton defined in bundle</li>
+ * <li>session defined in ap</li>
+ * <li>session defined in bundle</li>
+ * <li>singleton defined in ap</li>
+ * <li>session defined in ap exported to bundle</li>
+ * </ol>
+ * <p>
+ * The 1st and 4th are ordinary Spring beans so we don't test those here.
+ * Other tests are marked in the comments using numbers eg {@literal #}2
  * 
  * @author Roger Parkinson
  *
@@ -114,6 +127,11 @@ public class SessionTest {
 //				System.identityHashCode(mySessionBean),
 //				System.identityHashCode(sessionBean));
 	}
+	/**
+	 * This just checks that the beans are being loaded by the classloader we expect.
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testReflection() throws Exception {
     	String targetBundle = null;
@@ -140,6 +158,15 @@ public class SessionTest {
 		assertEquals("abc",o.toString());
 	}
 	
+    /**
+     * Test scenarios use two bundles and two sessions.
+     * Pick the first bundle, test, then the second bundle, test
+     * Then create a new session and do the same tests/bundles
+     * The session beans should increment in the first two tests ten, when
+     * we change session they should start from 0 again.
+     * The exception is the session bean defined in a bundle (test {@literal #}5)
+     * which is always 0 because we don't revisit any session/bundle combination
+     */
     @Test
     public void testInit2() {
     	String targetBundle = null;
@@ -168,24 +195,47 @@ public class SessionTest {
     }
     private void testBundleName(BundleManager bm, String bundleName, String source, int expected) {
     	displayIds(source);
+    	
+    	// check we have the right bundle
         BundleRoot n = (BundleRoot)this.applicationContext.getBean("bundleRoot");
         assertEquals(bundleName,n.getName());
+
+        // #3 Singleton defined in bundle
+        // Bean is @Bean
         TestBean tb = (TestBean)this.applicationContext.getBean("TestBean");
         Object o = tb.getContent();
         assertEquals("TestBean",o.toString());
+        
+        // #2 singleton defined in app and exported to bundle. 
+        // Bean is @Component, interface is @BundleInterface
+        // and bundle injects it into TestBean
         o = tb.getSampleExport();
         assertEquals("this is a test export",o.toString());
+        
         Resource resource = tb.getResource();
         assertNotNull(resource);
+        
+        // #3 singleton defined in bundle, bean is @Component, interface is annotated and value is injected
         ValueInjectedBean valueInjectedBean = this.applicationContext.getBean(ValueInjectedBean.class);
         String value = valueInjectedBean.getValue();
         assertEquals("value from configb.properties",value);
+        
         Object s = tb.getSampleExport();
         assertNotNull(s);
+
+        // #6 session defined in ap exported to bundle
+        // Bean is @Bean @BundleExport and scoped session
+        // Bundle injects it into TestBean and we read the counter
         TestExportBean2 tb2 = tb.getExportBean2();
         assertNotNull(tb2);
         int i = tb2.getCounter();
         assertEquals(expected,i);
+        
 //        m_logger.debug("{} counter {} TestExportBean2 {}",source, i, System.identityHashCode(tb2));
+        // #5 session defined in bundle
+        TestExportBean2 bb = (TestExportBean2)n.getApplicationContext().getBean("TestBundleBean");
+        i = bb.getCounter();
+        assertEquals(0,i);
+//        m_logger.debug("{} counter {} TestExportBean2 {}",source, i, System.identityHashCode(bb));
     }
 }

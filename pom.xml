@@ -257,7 +257,7 @@
 		<module>madura-bundles-test-beans</module>
 		<module>madura-bundles-simple-tests</module>
 		<module>madura-bundle-maven</module>
-<!-- 		<module>madura-bundle-test</module> -->
+		<module>madura-bundle-test</module>
 		<module>madura-bundle-maven2</module>
 		<module>madura-bundle-maven3</module>
 		<module>madura-bundle-test2</module>
