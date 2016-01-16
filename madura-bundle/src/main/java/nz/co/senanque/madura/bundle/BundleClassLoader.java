@@ -97,15 +97,15 @@ public class BundleClassLoader extends URLClassLoader {
             }
             if (c == null) {
             	c = loadLocalClass(name,resolve);
-            	if (c != null && c.isInterface() && m_childFirst) {
-            		// we found an interface, but it is a local one. See if there is a global one
-            		// use that if there is one.
-            		Class<?> i = loadGlobalClass(name,resolve);
-            		if (i != null) {
-            			c = i;
-            			bclasses.remove(name);
-            		}
-            	}
+//            	if (c != null && c.isInterface() && m_childFirst) {
+//            		// we found an interface, but it is a local one. See if there is a global one
+//            		// use that if there is one.
+//            		Class<?> i = loadGlobalClass(name,resolve);
+//            		if (i != null) {
+//            			c = i;
+//            			bclasses.remove(name);
+//            		}
+//            	}
             }
             if (c == null && m_childFirst)
             {
