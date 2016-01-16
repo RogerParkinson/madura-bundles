@@ -7,7 +7,7 @@
 	</parent>
 	<artifactId>madura-bundle-test</artifactId>
 	<name>madura-bundle-test</name>
-	<description>Project that tests the maven bundles</description>
+	<description>Project that tests using the first maven bundle (madura-bundle-maven)</description>
 	<dependencies>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

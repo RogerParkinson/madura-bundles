@@ -7,7 +7,7 @@
   </parent>
   <artifactId>madura-bundles-test-interfaces</artifactId>
   <name>madura-bundles-test-interfaces</name>
-  <description>madura-bundles-test-interfaces</description>
+  <description>Contains the interfaces used by several of the test scenarios</description>
   <dependencies>
   		<dependency>
 			<groupId>nz.co.senanque</groupId>
