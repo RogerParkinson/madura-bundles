@@ -44,7 +44,7 @@ public class BundleVersion implements Comparable<BundleVersion> {
 	}
 	
 	public String getFullVersion() {
-		return m_name+((m_version==null)?"":"-"+m_version);
+		return m_name;//+((m_version==null)?"":"-"+m_version);
 	}
 
 	public BundleRoot getRoot() {
