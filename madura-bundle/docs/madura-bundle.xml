@@ -9,12 +9,10 @@
 		<image>logo.jpg</image>
 		<references>
 			<reference t="Apache Licence 2.0" url="http://www.apache.org/licenses/LICENSE-2.0" />
-			<reference t="slf4j" url="http://www.slf4j.org" />
 			<reference t="Spring Framework" url="http://www.springframework.org" />
-			<reference t="aopalliance" url="http://aopalliance.sourceforge.net/" />
 			<reference t="OSGI" url="http://www.osgi.org" />
-            <reference t="VaadinSupport" url="https://github.com/RogerParkinson/MaduraVaadinSupport"/>
-            <reference t="pizzaOrderBundle" url="https://github.com/RogerParkinson/MaduraPizzaOrderDemo"/>
+            <reference t="Vaadin" url="https://vaadin.com/home"/>
+            <reference t="pizzaOrderBundle" url="https://github.com/RogerParkinson/madura-perspectives/tree/master/madura-perspectives-pizzaorder"/>
             <reference t="maduraBundle" url="https://github.com/RogerParkinson/madura-bundles"/>
             <reference t="perspectivesManager" url="https://github.com/RogerParkinson/MaduraPerspectivesManager"/>
 		</references>
@@ -78,8 +76,6 @@
         for something more like an application you should look at pizzaOrderBundle<referenceLink t="pizzaOrderBundle"/> which is a working example of a bundle that
         plugs into the perspective manager application<referenceLink t="perspectivesManager"/>. PizzaOrderBundle has a self contained UI as well as internal
         data and logic and it uses the bundle mechanism to plug into the main application.</p>
-        <p>There are two distinct bundle managers and which one you want to use will determine how you build your bundles. In all cases, though,
-        bundles are just jar files with some extra stuff.</p>
         </h1>
         <h1 t="Using Bundles">
 		<p>We deploy one jar file per bundle. The jar file contains classes and resources and one or more Spring contexts, either specified by annotations or XML. It can also specify
@@ -518,13 +514,14 @@ public class MyBeanImpl {
 @Component("myBean")
 @Scope("bundle")
 public class MyBeanImpl {
-....        ]]></code>
+....
+		]]></code>
         <p>The scope is set up automatically by the bundle manager so there isn't anything else you have to do. Naturally this is only valid for
         beans defined inside bundles, not elsewhere. It will work just fine when there is no web session, falling back to an internal dummy session,
         though we can't think of a situation you would need that.</p>
         <p>By default the scope relies on Spring's session id which assumes you are using Spring's MVC that records the id in a <courier>ThreadLocal</courier>.
-        If you are using something else, such as Vaadin, you need a different way to get a session id. Just implement <courier>nz.co.senanque.madura.bundle.spring.SessionIdProvider</courier>,
-        in a <courier>@Component</courier> annotated class, and put it into a package scanned by the application. We have already build one for Vaadin. It is used in <referenceLink t="perspectivesManager"/>.</p>
+        If you are using something else, such as Vaadin<referenceLink t="Vaadin"/>, you need a different way to get a session id. Just implement <courier>nz.co.senanque.madura.bundle.spring.SessionIdProvider</courier>,
+        in a <courier>@Component</courier> annotated class, and put it into a package scanned by the application. We have already built one for Vaadin. It is used in <referenceLink t="perspectivesManager"/>.</p>
         </h2>
         </h1>
 		<a1 t="License">
