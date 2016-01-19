@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
+ * Factory that creates a configured BundleManager
+ * 
  * @author Roger Parkinson
  *
  */
@@ -54,8 +56,6 @@ public class BundleManagerFactory implements FactoryBean<BundleManager>, BeanFac
 			m_bundleManager.setDirectory(m_directory);
 			m_bundleManager.setTime(m_time);
 			m_bundleManager.setBeanFactory(m_beanFactory);
-//			Map<String,Object> exports = ((DefaultListableBeanFactory)m_beanFactory).getBeansWithAnnotation(BundleExport.class);
-//			m_bundleManager.getExportedBeans().putAll(exports);
 			m_bundleManager.init();
 		}
 		return m_bundleManager;
@@ -63,7 +63,6 @@ public class BundleManagerFactory implements FactoryBean<BundleManager>, BeanFac
 
 	@Override
 	public Class<?> getObjectType() {
-		// TODO Auto-generated method stub
 		return BundleManager.class;
 	}
 

@@ -22,12 +22,6 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 /**
- * Parses a workflow client bean definition:
- * &lt;client&gt;
- *  sessionFactory="hibernateSessionFactory"
- *  [interval="1000"]
- *  [accessDecisionManager="accessDecisionManager"] 
- *  [defaultExecutor="autoExecutor"]/&gt;>
  *  
  * @author Roger Parkinson
  * @version $Revision: 1.2 $

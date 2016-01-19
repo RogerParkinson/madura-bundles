@@ -14,7 +14,7 @@
             <reference t="Vaadin" url="https://vaadin.com/home"/>
             <reference t="pizzaOrderBundle" url="https://github.com/RogerParkinson/madura-perspectives/tree/master/madura-perspectives-pizzaorder"/>
             <reference t="maduraBundle" url="https://github.com/RogerParkinson/madura-bundles"/>
-            <reference t="perspectivesManager" url="https://github.com/RogerParkinson/MaduraPerspectivesManager"/>
+            <reference t="perspectivesManager" url="https://github.com/RogerParkinson/madura-perspectives/tree/master/madura-perspectives-manager"/>
 		</references>
 	</title>
 	<body>

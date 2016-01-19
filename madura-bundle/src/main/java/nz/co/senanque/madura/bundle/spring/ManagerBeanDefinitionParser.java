@@ -22,9 +22,6 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 /**
- * Parses a bundle manager client bean definition:
- * &lt;client&gt;
- *  directory="whatever"/&gt;>
  *  
  * @author Roger Parkinson
  * @version $Revision: 1.2 $
