@@ -18,7 +18,6 @@ package nz.co.senanque.madura.bundle;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;

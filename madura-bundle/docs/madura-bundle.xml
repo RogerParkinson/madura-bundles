@@ -208,8 +208,10 @@ String currentBundleName = bundleRoot.getName();
 		<list>
 		<ll name="setBundle(String bundleName)">Set the current bundle to the one named and pick the highest version number.</ll>
 		<ll name="setBundle(String bundleName, String version)">Set the current bundle to the one named, using the name and version given.</ll>
+		<ll name="setBundle(BundleVersion bv)">Set the current bundle to the one specified in the bv.</ll>
 		</list>
-		<p>You can set the bundle just by its name and then the latest version will be selected. Or you can specify a specific bundle and version. 
+		<p>You can set the bundle just by its name and then the latest version will be selected. Or you can specify a specific bundle and version
+		by name strings, or you can get the <courier>BundleVersion</courier> from the <courier>bundleRoot</courier> and pass that. 
 		You can switch the bundle at any time and the bundle selected will be used for the current thread, so other threads can continue working
 		with their own bundles. If you pick a version that is not there it will throw an exception.</p>
 		<p>When do you need to set the bundle?</p>
@@ -221,18 +223,26 @@ String currentBundleName = bundleRoot.getName();
 		</list>
 		<p>If no bundle is set you will probably see a null pointer exception because the beans you thought were injecting into your code will not be
 		injected and you will find nulls.</p>
+		<p><courier>BundleManager</courier> also has these two methods:</p>
+		<list>
+		<ll name="reserveBundle(BundleVersion bv)">Reserve the bundle to prevent it from being removed.</ll>
+		<ll name="releaseBundle(BundleVersion bv)">Release the bundle allowing removal.</ll>
+		</list>
+		<p>This allows an application to declare when it is using the specified bundle and version. Applications may be using more than one bundle, 
+		flicking between them as necessary. During that time the bundles being used must not be discarded by the bundle manager, and these two methods
+		tell the bundle manager that they are in use.</p>
 		<p>The actual contents of your bundle can be anything you like, of course, but you also need to define one or more interfaces to be shared
 		with the calling application. These are the interfaces you annotate with <courier>@BundleInterface</courier> and have the application
 		scan. Naturally these interfaces must be in both application and bundle code for them to compile. But there is a trap here. The interface
 		code can be compiled into the application but <emph>not</emph> in any bundle. The reason for this lies in the way the classloader works and
 		we will explain that in a moment. The vital point to make here is that you will almost certainly want to put the interfaces into their
-		own jar file or maven project. The application can have a maven compile dependency on that interface project but the bundles must have a maven <emph>provided</emph>
-		dependency on it. That ensures the interface classes are not included in the bundle run time dependencies.</p>
+		own jar file or maven project. The application can have a maven compile dependency on that interface project but the bundles must have a maven 
+		<emph>provided</emph> dependency on it. That ensures the interface classes are not included in the bundle run time dependencies.</p>
 		<p>If you are using jar files rather than maven just do not include the interface jar file in the bundle dependencies.</p>
 		<p>There is more information on configuring dependencies in <sectionLink t="Bundle Dependencies"/></p>
 		<img width="12cm" href="images/Dependencies.png">Interface Dependencies</img>
-		<p>Now, why is this important? The bundle classloader loads classes from the bundle in preference, and your application uses the normal class loader. If
-		you have an interface <courier>MyInterface</courier> the application will load it from the application classloader, of course. The bundle will
+		<p>Now, why is this important? The bundle classloader loads classes from the bundle in preference, and your application uses the normal class loader. 
+		If you have an interface <courier>MyInterface</courier> the application will load it from the application classloader, of course. The bundle will
 		look for the same class in the bundle class loader. If it finds it there you will see strange errors suggesting that the implementation class
 		of <courier>MyInterface</courier> does not conform to the <courier>MyInterface</courier> specified by the application. The two class definitions
 		are not the same and the JVM complains. If, however, the bundle classloader does not find the <courier>MyInterface</courier> class it will

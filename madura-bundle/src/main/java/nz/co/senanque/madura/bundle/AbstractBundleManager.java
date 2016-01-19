@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import nz.co.senanque.madura.bundle.spring.BundleScope;
+import nz.co.senanque.madura.bundle.spring.SessionIdProvider;
+import nz.co.senanque.madura.bundle.spring.SessionIdProviderImpl;
 import nz.co.senanque.madura.bundlemap.BundleMap;
 import nz.co.senanque.madura.bundlemap.BundleVersion;
 
@@ -20,6 +22,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -45,6 +48,7 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
     public Set<BundleListener> m_bundleListeners = new HashSet<BundleListener>();
     private boolean m_childFirst = true;
     private BundleScope m_bundleScope = new BundleScope();
+    @Autowired(required=false) private SessionIdProvider m_sessionIdProvider;
 
 
     /* (non-Javadoc)
@@ -71,30 +75,35 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
         {
             m_bundleListeners.add(bundleListener);
         }
+        if (m_sessionIdProvider == null) {
+        	m_sessionIdProvider = new SessionIdProviderImpl();
+        }
     	m_bundleScope.setBundleManager(this);
+    	m_bundleScope.setSessionIdProvider(m_sessionIdProvider);
     }
 
     public void setBundle(String bundleName, String version)
     {
     	BundleVersion bv = m_bundleMap.selectBestBundle(bundleName, version);
-        m_currentBundle.set(bv);
-        m_logger.debug("set bundle: {}",bv);
-        if (bv != null) {
-        	bv.increment();
-        }
+    	setBundle(bv);
     }
     public void setBundle(String bundleName)
     {
     	BundleVersion bv = m_bundleMap.selectBestBundle(bundleName);
+    	setBundle(bv);
+    }
+    public void setBundle(BundleVersion bv) {
         m_currentBundle.set(bv);
         m_logger.debug("set bundle: {}",bv);
+    }
+    public void reserveBundle(BundleVersion bv) {
+        m_logger.debug("reserve bundle: {}",bv);
         if (bv != null) {
         	bv.increment();
-        }
+        }    	
     }
-    public void releaseBundle()
+    public void releaseBundle(BundleVersion bv)
     {
-    	BundleVersion bv = m_currentBundle.get();
         m_logger.debug("release bundle: {}",bv);
         if (bv != null) {
         	bv.decrement();
@@ -201,6 +210,5 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
 			m_bundleScope.sessionDestroyed(httpEvent.getSession().getId());
 		}
 	}
-
 
 }

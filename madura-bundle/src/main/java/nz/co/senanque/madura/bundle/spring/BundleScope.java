@@ -12,11 +12,12 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.Scope;
-import org.springframework.web.context.request.RequestContextHolder;
 
 public class BundleScope implements Scope, BeanFactoryPostProcessor {
 	
 	public static final String BUNDLE_SCOPE_NAME = "bundle";
+	
+	public SessionIdProvider m_sessionIdProvider;
 	
 	private class BundleMap {
 		
@@ -71,7 +72,6 @@ public class BundleScope implements Scope, BeanFactoryPostProcessor {
 			bundleBeanHolder.setBean(objectFactory.getObject());
 		}
 		return bundleBeanHolder.getBean();
-
 	}
 
 	/**
@@ -110,12 +110,7 @@ public class BundleScope implements Scope, BeanFactoryPostProcessor {
 	 * @see org.springframework.beans.factory.config.Scope#getConversationId()
 	 */
 	public String getConversationId() {
-		String sessionId = "none";
-		try {
-			sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-		} catch (Exception e) {
-			// ignore exceptions and use 'none'
-		}
+		String sessionId = m_sessionIdProvider.getSessionId();
 		String bundleId = "none";
 		BundleRoot bundleRoot = m_bundleManager.getBundle();
 		if (bundleRoot != null) {
@@ -125,12 +120,7 @@ public class BundleScope implements Scope, BeanFactoryPostProcessor {
 	}
 	
 	private BundleBeanHolder getBeanHolder(String name) {
-		String sessionId = "none";
-		try {
-			sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-		} catch (Exception e) {
-			// ignore exceptions and use 'none'
-		}
+		String sessionId = m_sessionIdProvider.getSessionId();
 		BundleMap bundleMap = objectMap.get(sessionId);
 		if (bundleMap == null) {
 			bundleMap = new BundleMap();
@@ -182,5 +172,13 @@ public class BundleScope implements Scope, BeanFactoryPostProcessor {
 			ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		beanFactory.registerScope(BUNDLE_SCOPE_NAME,
                 this);
+	}
+
+	public SessionIdProvider getSessionIdProvider() {
+		return m_sessionIdProvider;
+	}
+
+	public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
+		m_sessionIdProvider = sessionIdProvider;
 	}
 }
