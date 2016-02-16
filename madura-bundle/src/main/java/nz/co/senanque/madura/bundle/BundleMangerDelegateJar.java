@@ -72,6 +72,7 @@ public class BundleMangerDelegateJar extends BundleManagerDelegateAbstract {
 			Attributes attributes = mf.getMainAttributes();
 			Properties properties = getProperties(attributes);
 			properties.setProperty("bundle.file",bundleName);
+			properties.setProperty("bundle.name",StringUtils.stripFilenameExtension(bundleName));
 			String className = attributes.getValue("Bundle-Activator");
             String classPath = attributes.getValue("Class-Path");
 			List<URL> urls = new ArrayList<URL>();
