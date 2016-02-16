@@ -42,6 +42,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -175,6 +176,12 @@ public class BundleRootImpl implements BundleRoot
 		}
         DumpBeanFactory.dumpBeans(ctx,properties.getProperty("Bundle-Name"));
         m_applicationContext = ctx;
+        try {
+			AbstractMessageSource abstractMessageSource = ctx.getBean(AbstractMessageSource.class);
+			abstractMessageSource.setParentMessageSource(ownerBeanFactory.getBean(AbstractMessageSource.class));
+		} catch (BeansException e) {
+			// ignore any exceptions
+		}
         Thread.currentThread().setContextClassLoader(classLoader);
     }
     private Class<?> getBeanClass(String name) {
