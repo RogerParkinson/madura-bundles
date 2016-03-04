@@ -155,6 +155,11 @@ public class BundleRootImpl implements BundleRoot
     	beanDefinitionBuilder.addPropertyValue("object", this);
         ctx.registerBeanDefinition("bundleRoot", beanDefinitionBuilder.getBeanDefinition());
     	
+        // Registers the bundleName  as a bean
+    	beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(StringWrapperImpl.class);
+    	beanDefinitionBuilder.addConstructorArgValue(properties.getProperty("bundle.name"));
+        ctx.registerBeanDefinition("bundleName", beanDefinitionBuilder.getBeanDefinition());
+    	
         Scope scope = ownerBeanFactory.getRegisteredScope("session");
         if (scope != null)
         {
