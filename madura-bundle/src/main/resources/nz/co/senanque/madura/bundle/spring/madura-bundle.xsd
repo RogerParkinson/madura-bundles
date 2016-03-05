@@ -24,6 +24,8 @@ limitations under the License.
 	attributeFormDefault="unqualified">
 	
  	<xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"/>
+
+	<xsd:attribute name="export" type="xsd:boolean"/>
 	<xsd:element name="bean">
 		<xsd:complexType>
 			<xsd:complexContent>

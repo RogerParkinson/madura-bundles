@@ -39,7 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -71,6 +74,11 @@ public class BundleManagerTest
     @Test
     public void testInit()
     {
+    	GenericApplicationContext app = (GenericApplicationContext)applicationContext;
+    	ConfigurableListableBeanFactory beanFactory = app.getBeanFactory();
+    	BeanDefinition bd1 = beanFactory.getBeanDefinition("TestBean1");
+    	BeanDefinition bd2 = beanFactory.getBeanDefinition("TestBean2");
+    	Object o1 = bd2.getAttribute("export");
         BundleManager bm = getBundleManager();
         bm.setBundle("bundle","1.0");
         testBundleName(bm, "bundle-1.0");
@@ -93,7 +101,7 @@ public class BundleManagerTest
             }
         }
         Map<?,BundleRoot> beans = bm.getBeansOfType(TestBean.class);
-        assertEquals(3,beans.size());
+        assertEquals(4,beans.size());
         o = bm.getBundle().getApplicationContext().getBean("JDOMFactory");
         o.toString();
     }

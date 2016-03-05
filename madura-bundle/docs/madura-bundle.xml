@@ -452,6 +452,30 @@ public class TestExportBean {
 public TestExportBean2 getTestExportBean2() {
 ....
 		]]></code>
+		<p>That allows you to export a bean that uses a class from a library etc, that is not convenient to annotate directly.</p>
+		<p>If you are using XML then you also have two options for exporting:</p>
+		<code><![CDATA[
+<bean id="TestBean2" class="nz.co.senanque.madura.testbeans.TestBeanImpl" bundle:export="true">
+...
+</bean>
+		]]></code>
+		<p>This does exactly the same as the annotations. The last way to export beans is to add them
+		to the bundle manager definition like this:</p>
+		<code><![CDATA[
+<bean id="bundleManager" class="nz.co.senanque.madura.bundle.BundleManagerImpl">
+	<property name="directory" value="./target/bundles"/>
+	<property name="exportedBeans">
+		<map>
+			<entry key="exportBean" value-ref="exportBeanExample"/>
+		</map>
+	</property>
+</bean>
+		]]></code>
+		<p>This just injects a map of exported beans into the bundle manager. It does just a little more
+		than the other methods because it allows you to change the name of the exported bean. There is
+		actually only one bean, defined as <courier>exportBeanExample</courier> in the
+		application context. The bundle contexts, however, refer to this bean as <courier>exportBean</courier>.
+		In practice you don't normaly have any need for this extra name.</p>
 		</h2>
 		<h2 t="Listening for Bundles">
 		<p>You can optionally listen for bundles being added or deleted. This is useful if you need your application
@@ -533,6 +557,9 @@ public class MyBeanImpl {
 			<tw>12cm</tw>
         <tr>
             <th>4.2.0</th>
+        </tr>
+        <tr>
+            <td>Added XML export attribute to bean definitions.</td>
         </tr>
         <tr>
             <td>Extended BundleScope session id provider to allow configurable mechanism.</td>

@@ -34,5 +34,7 @@ public class BundleNamespaceHandler extends NamespaceHandlerSupport
                 new BeanBeanDefinitionParser());
         registerBeanDefinitionParser("component-scan",
                 new BeanScanDefinitionParser());
+        registerBeanDefinitionDecoratorForAttribute("export",
+                new ExportBeanDefinitionDecorator());
     }
 }

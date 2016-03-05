@@ -36,6 +36,12 @@ public class ExportBeanDescriptor implements Comparable<ExportBeanDescriptor> {
 			m_beanName = m_ownerBeanName;
 		}
 	}
+	public ExportBeanDescriptor(String beanName,
+			Class<?> type) {
+		m_ownerBeanName = beanName;
+		m_type = type;
+		m_beanName = m_ownerBeanName;
+	}
 	public String getBeanName() {
 		return m_beanName;
 	}

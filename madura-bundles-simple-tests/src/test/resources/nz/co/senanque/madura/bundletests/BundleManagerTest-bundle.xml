@@ -36,6 +36,10 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="content" ref="bundleName"/>
 	</bean>
 	
+	<bean id="TestBean2" class="nz.co.senanque.madura.testbeans.TestBeanImpl" bundle:export="true">
+		<property name="content" ref="bundleName"/>
+	</bean>
+	
 	<bean id="bundleListener" class="nz.co.senanque.madura.bundle.BundleListenerImpl"/>
 
 </beans>

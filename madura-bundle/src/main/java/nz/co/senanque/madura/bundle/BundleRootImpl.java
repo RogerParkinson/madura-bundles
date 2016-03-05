@@ -138,6 +138,7 @@ public class BundleRootImpl implements BundleRoot
         	beanDefinitionBuilder.addPropertyValue("owner", ownerBeanFactory);
             ctx.registerBeanDefinition(ebd.getBeanName(), beanDefinitionBuilder.getBeanDefinition());
         }
+        
         // These are the XML wired for export beans, probably won't work for anything but singletons
         for (Map.Entry<String, Object> entry: exportedBeans.entrySet()) {
         	BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(InnerBundleFactory.class);
@@ -226,6 +227,12 @@ public class BundleRootImpl implements BundleRoot
 					Class<?> clazz = getBeanClass(bd.getBeanClassName());
 					ret.add(new ExportBeanDescriptor(beanName,a,clazz));
 					continue;
+				}
+				Object exportAttribute = bd.getAttribute("export");
+				if (exportAttribute != null && exportAttribute instanceof Boolean && ((Boolean)exportAttribute).booleanValue()) {
+					Class<?> clazz = getBeanClass(bd.getBeanClassName());
+					ret.add(new ExportBeanDescriptor(beanName,clazz));
+					continue;					
 				}
 				Configuration c = defaultListableBeanFactory.findAnnotationOnBean(beanName, Configuration.class);
 				if (c != null) {
