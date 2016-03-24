@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>nz.co.senanque</groupId>
 		<artifactId>madura-bundles</artifactId>
-		<version>4.2.0</version>
+		<version>4.2.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>madura-bundles-test-beans</artifactId>
 	<description>Contains the beans used by several projects in their tests</description>
