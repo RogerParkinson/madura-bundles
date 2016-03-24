@@ -37,7 +37,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/BundleManagerMaven-bundle.xml"})
-public class BundleManagerMavenTest {
+public class BundleManagerMavenIT {
 
 //    private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     @Autowired ApplicationContext applicationContext;
