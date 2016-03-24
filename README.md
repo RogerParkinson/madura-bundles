@@ -1,9 +1,14 @@
 madura-bundles
-==============
+=======
 
-Updated version of MaduraBundles: restructured the project and added maven
-
-Provides a structured way to dynamically add jar files to your classpath. The jar files can come
-from a sweep directory or from maven.
-
-The container application can inject Spring beans from the jar files (using proxies) in a way that is largely transparent from the calling application.
+This is the parent project for madura-bundles. The details of just what madura-bundles does is in the first sub-project link below. The other projects are to support testing.
+	
+ * [madura-bundle](./madura-bundle/README.md): This is the core project and most of the docs are in here.
+ * madura-bundle-maven: test bundle for maven.
+ * madura-bundle-maven2: second test bundle for maven: uses a configuration class rather than xml.
+ * madura-bundle-maven3: third test bundle for maven: uses a configuration class rather than xml.
+ * madura-bundle-test: Project that tests using the first maven bundle (madura-bundle-maven).
+ * madura-bundle-test2: Project that tests using madura-bundles-maven2 and madura-bundles-maven3 also using multiple sessions.
+ * madura-bundle-simple-tests: Tests the bundle code by generating multiple scratch bundles.
+ * madura-bundle-test-beans: Contains the beans used by several projects in their tests.
+ * madura-bundle-test-interfaces: Contains the interfaces used by several of the test scenarios.
