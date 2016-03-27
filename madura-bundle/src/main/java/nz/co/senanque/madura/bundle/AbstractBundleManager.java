@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
  * @author Roger Parkinson
  *
  */
-public abstract class AbstractBundleManager implements BundleManager, InitializingBean, BeanFactoryAware, ApplicationListener<ApplicationEvent> {
+public abstract class AbstractBundleManager implements BundleManager, BeanFactoryAware, ApplicationListener<ApplicationEvent> {
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     protected BundleMap m_bundleMap = new BundleMap();
@@ -109,11 +109,6 @@ public abstract class AbstractBundleManager implements BundleManager, Initializi
         	bv.decrement();
         }
     }
-    public void afterPropertiesSet()
-    {
-        init();
-    }
-
 	/* (non-Javadoc)
 	 * @see nz.co.senanque.madura.bundle.BundleManager#getBundle()
 	 */
