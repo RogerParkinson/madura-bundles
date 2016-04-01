@@ -44,6 +44,7 @@
 		<slf4j.version>1.7.12</slf4j.version>
 		<mavenVersion>3.1.0</mavenVersion>
 		<skipITs>true</skipITs>
+		<maduradocs.version>6.2.1</maduradocs.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
