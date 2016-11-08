@@ -24,7 +24,4 @@ The second way to use Madura Bundles is dynamic proxying. In this case you can i
 
 This is useful where you have a section of an application which is likely to vary over time but you want sessions that were started to keep running the same code. For example if the application is order entry you might want existing orders to keep using the order entry system they started with and new orders to use the newly deployed system. So you would record the bundle name when you save the order and when the order is fetched for further processing you can select the bundle it was saved with. New orders select the latest bundle.
 
-There are three sub-projects to this:
-* madura-bundles contains the core code including documentation. You'll find a pdf in the target directory after the build.
-* madura-bundle-maven creates a test/example bundle used in the next sub-project.
-* madura-bundle-test is an example of pulling the madura-bundle-maven bundle direct from maven.
+

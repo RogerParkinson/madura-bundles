@@ -562,6 +562,9 @@ public class MyBeanImpl {
             <td>Double loading of bundles on startup: fixed.</td>
         </tr>
         <tr>
+            <td>Java 1.8.</td>
+        </tr>
+        <tr>
             <th>4.2.0</th>
         </tr>
         <tr>
