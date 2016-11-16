@@ -3,7 +3,7 @@
   <parent>
     <groupId>nz.co.senanque</groupId>
     <artifactId>madura-bundles</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.3.0</version>
   </parent>
   <artifactId>madura-bundles-simple-tests</artifactId>
   <name>madura-bundles-simple-tests</name>
@@ -323,7 +323,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
