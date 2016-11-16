@@ -556,7 +556,7 @@ public class MyBeanImpl {
 		<table width="12cm">
 			<tw>12cm</tw>
         <tr>
-            <th>4.2.1</th>
+            <th>4.3.0</th>
         </tr>
         <tr>
             <td>Double loading of bundles on startup: fixed.</td>
