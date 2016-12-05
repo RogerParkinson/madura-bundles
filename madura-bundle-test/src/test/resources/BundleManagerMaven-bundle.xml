@@ -27,19 +27,19 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 http://www.senanque.co.nz/madura/bundle http://www.madurasoftware.com/madura-bundle.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	<context:property-placeholder/>
-	
-		<util:properties id="b" 
-		     location="classpath:madura-bundle-maven-vvv.bundle" />
-     
-     	<bean id="bundleManager" class="nz.co.senanque.madura.bundle.BundleManagerImpl">
-		<property name="directory" value="./target/classes"/>
+<!-- 	<context:property-placeholder location="classpath:config.properties"/> -->
+	<context:annotation-config/>
+	<util:properties id="ep" location="classpath:config.properties"/>
+	<context:component-scan base-package="nz.co.senanque.madura.bundle.conf"/>
+   <bean id="bundleManager" class="nz.co.senanque.madura.bundle.BundleManagerImpl">
+		<property name="directory" value="./target/bundles"/>
 		<property name="childFirst" value="true"/>
 		<property name="exportedBeans">
 			<map>
 				<entry key="exportBean" value-ref="exportBeanExample"/>
 			</map>
 		</property>
+		<property name="exportedProperties" ref="ep"/>
 	</bean>
 	
 	<bean id="exportBeanExample" class="nz.co.senanque.madura.bundle.TestExportBeanImpl"/>

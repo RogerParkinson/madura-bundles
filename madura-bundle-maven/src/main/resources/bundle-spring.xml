@@ -17,12 +17,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-
-	<bean id="PropertySourcesPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"/>
+<!--  	<context:property-placeholder/> -->
+ 	<context:property-placeholder local-override="false" location="classpath:config.properties"/>
 	<bean id="bundleName" class="nz.co.senanque.madura.bundle.StringWrapperImpl">
 		<constructor-arg value="${bundle.name}"/>
 	</bean>
@@ -33,6 +35,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="content" ref="bundleName"/>
 		<property name="resource" value="classpath:BundleResource.txt"/>
 		<property name="sampleExport" ref="exportBean"/>
+		<property name="configParameter" value="${config.parameter}"/>
 	</bean>
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 	    <property name="basenames">

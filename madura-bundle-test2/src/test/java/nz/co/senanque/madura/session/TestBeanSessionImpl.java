@@ -34,6 +34,7 @@ public class TestBeanSessionImpl implements TestBean
     private Object m_sampleExport;
     private transient String m_value;
 	private TestExportBean2 m_exportBean2;
+	private transient String m_configParameter;
 
     /* (non-Javadoc)
      * @see nz.co.senanque.madura.bundle.TestBean#getContent()
@@ -89,6 +90,11 @@ public class TestBeanSessionImpl implements TestBean
 
 	public void setExportBean2(TestExportBean2 exportBean2) {
 		m_exportBean2 = exportBean2;
+	}
+
+	@Override
+	public String getConfigParameter() {
+		return m_configParameter;
 	}
     
 

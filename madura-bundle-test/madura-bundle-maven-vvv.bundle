@@ -1,4 +1,5 @@
 Bundle-Artifact=nz.co.senanque:madura-bundle-maven:${project.version}
-current.version=${project.version}
+#current.version=${project.version}
 #Bundle-Context=bundle-spring.xml
+#config.parameter=12345
 #Bundle-Description=Test bundle from Maven

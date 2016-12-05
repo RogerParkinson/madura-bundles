@@ -34,8 +34,17 @@ public class TestBeanImpl implements TestBean
     @Value("${nz.co.senanque.madura.bundle.TestBeanImpl.m_value:qwerty}")
     private transient String m_value;
 	private TestExportBean2 m_exportBean2;
+	private transient String m_configParameter;
 
-    /* (non-Javadoc)
+    public String getConfigParameter() {
+		return m_configParameter;
+	}
+
+	public void setConfigParameter(String m_configParameter) {
+		this.m_configParameter = m_configParameter;
+	}
+
+	/* (non-Javadoc)
      * @see nz.co.senanque.madura.bundle.TestBean#getContent()
      */
     public StringWrapper getContent()

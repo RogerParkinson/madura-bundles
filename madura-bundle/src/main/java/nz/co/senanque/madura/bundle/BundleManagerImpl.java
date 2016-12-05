@@ -28,7 +28,9 @@ import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.env.Environment;
 
 /**
  * This class manages multiple bundles. Each bundle is a jar file loaded under a different classloader.
@@ -46,7 +48,7 @@ public class BundleManagerImpl extends AbstractBundleManager
     private String m_directory;
     private long m_time; // optional scan timer
     
-    @PostConstruct
+	@PostConstruct
     public void init() {
     	super.init();
         if (getTime() > 0)

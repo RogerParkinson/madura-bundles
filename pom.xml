@@ -38,8 +38,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<pdf>target/${project.artifactId}-${project.version}.pdf</pdf>
-		<spring.framework.version>4.2.3.RELEASE</spring.framework.version>
-		<spring.security.version>4.0.3.RELEASE</spring.security.version>
+		<spring.framework.version>4.3.3.RELEASE</spring.framework.version>
+		<spring.security.version>4.2.0.RELEASE</spring.security.version>
 		<aetherVersion>1.0.0.v20140518</aetherVersion>
 		<slf4j.version>1.7.12</slf4j.version>
 		<mavenVersion>3.1.0</mavenVersion>

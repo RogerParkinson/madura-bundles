@@ -38,4 +38,6 @@ public interface TestBean
 
     public abstract TestExportBean2 getExportBean2();
     
+    public abstract String getConfigParameter();
+    
 }

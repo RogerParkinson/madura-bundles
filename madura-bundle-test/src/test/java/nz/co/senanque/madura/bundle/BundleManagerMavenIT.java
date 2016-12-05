@@ -26,7 +26,9 @@ import nz.co.senanque.madura.testbeans.TestBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -42,13 +44,15 @@ public class BundleManagerMavenIT {
 //    private Logger m_logger = LoggerFactory.getLogger(this.getClass());
     @Autowired ApplicationContext applicationContext;
     @Autowired BundleManager bundleManager;
-    @Autowired Properties b;
+    @Value("${current.version}")
+    String currentVersion;
+    @Value("${config.parameter}")
+    String configParam;
     
     @Test
     public void testInit()
     {
-    	String currentVersion = b.getProperty("current.version");
-    	BundleManager bm = (BundleManager)this.applicationContext.getBean("bundleManager");
+    	BundleManager bm = (BundleManager)applicationContext.getBean("bundleManager");
         bm.setBundle("madura-bundle-maven-"+currentVersion);
         testBundleName(bm, "madura-bundle-maven-"+currentVersion);
     }
@@ -58,7 +62,8 @@ public class BundleManagerMavenIT {
         assertTrue(n.toString().equals(bundleName));
         TestBean tb = (TestBean)this.applicationContext.getBean("TestBean");
         StringWrapper sw = tb.getContent();
-        assertTrue(tb.getContent().toString().equals(bundleName));
+        assertEquals(bundleName,tb.getContent().toString());
+        assertEquals(configParam, tb.getConfigParameter().toString());
         assertEquals("this is a test export",tb.getSampleExport().toString());
         Resource resource = tb.getResource();
         assertNotNull(resource);

@@ -26,6 +26,8 @@ import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -41,9 +43,7 @@ public class BundleManagerWeb extends BundleManagerImpl implements ServletContex
 
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
 	private ServletContext m_servletContext;
-	public BundleManagerWeb() {
-		// TODO Auto-generated constructor stub
-	}
+
 
 	@PostConstruct
     public void init() {

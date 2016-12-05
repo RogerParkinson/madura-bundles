@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
@@ -84,6 +85,7 @@ public class SessionIT {
 //	@Autowired @Qualifier("getTestExportBean2") TestExportBean2 sessionBean;
     @Autowired BundleManager bundleManager;
     @Autowired ApplicationContext applicationContext;
+	@Autowired Environment env;
 
 	protected void startRequest() {
 		request = new MockHttpServletRequest();

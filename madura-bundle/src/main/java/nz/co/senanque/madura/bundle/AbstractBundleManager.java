@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import nz.co.senanque.madura.bundle.spring.BundleScope;
@@ -21,11 +23,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.security.web.session.HttpSessionDestroyedEvent;
 import org.springframework.util.StringUtils;
 
@@ -49,9 +55,21 @@ public abstract class AbstractBundleManager implements BundleManager, BeanFactor
     private boolean m_childFirst = true;
     private BundleScope m_bundleScope = new BundleScope();
     @Autowired(required=false) private SessionIdProvider m_sessionIdProvider;
+    private Properties m_exportedProperties = new Properties();
+    private Environment m_env;
 
+    public void setEnvironment(Environment env) {
+		m_env = env;
+	}
+	public Properties getExportedProperties() {
+		return m_exportedProperties;
+	}
 
-    /* (non-Javadoc)
+	public void setExportedProperties(Properties exportedProperties) {
+		m_exportedProperties = exportedProperties;
+	}
+
+	/* (non-Javadoc)
 	 * @see nz.co.senanque.madura.bundle.BundleManager#shutdown()
 	 */
 	@Override
@@ -80,6 +98,14 @@ public abstract class AbstractBundleManager implements BundleManager, BeanFactor
         }
     	m_bundleScope.setBundleManager(this);
     	m_bundleScope.setSessionIdProvider(m_sessionIdProvider);
+    	if (m_exportedProperties.isEmpty() && m_env instanceof ConfigurableEnvironment) {
+    		MutablePropertySources mps = ((ConfigurableEnvironment)m_env).getPropertySources();
+    		for (PropertySource<?> ps : mps) {
+    			if (ps instanceof ResourcePropertySource) {
+    				m_exportedProperties.putAll(((ResourcePropertySource)ps).getSource());
+    			}
+    		}
+    	}
     }
 
     public void setBundle(String bundleName, String version)

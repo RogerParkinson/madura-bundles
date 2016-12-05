@@ -30,7 +30,15 @@ abstract class BundleManagerDelegateAbstract implements BundleManagerDelegate {
 		@SuppressWarnings("unchecked")
 		Class<BundleRoot> clazz = (Class<BundleRoot>) classLoader.loadClass(className);
 		BundleRoot root = (BundleRoot) clazz.newInstance();
-		root.init(m_bundleManagerImpl.getBeanFactory(), properties,
+		Properties exportedProperties = new Properties();
+		Properties p = m_bundleManagerImpl.getExportedProperties();
+		for (String s: p.stringPropertyNames()) {
+			exportedProperties.put(s, p.get(s));
+		}
+		for (String s: properties.stringPropertyNames()) {
+			exportedProperties.put(s, properties.get(s));
+		}
+		root.init(m_bundleManagerImpl.getBeanFactory(), exportedProperties,
 				classLoader, m_bundleManagerImpl.m_exportedBeans);
 		String fullBundleName = properties.getProperty("bundle.name");
 		

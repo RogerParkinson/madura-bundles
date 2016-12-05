@@ -15,6 +15,8 @@
  *******************************************************************************/
 package nz.co.senanque.madura.bundle.spring;
 
+import javax.annotation.PostConstruct;
+
 import nz.co.senanque.madura.bundle.BundleManager;
 import nz.co.senanque.madura.bundle.BundleManagerImpl;
 import nz.co.senanque.madura.bundle.BundleManagerWeb;
@@ -23,7 +25,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,6 +46,8 @@ public class BundleManagerFactory implements FactoryBean<BundleManager>, BeanFac
     @Value("${nz.co.senanque.madura.bundle.spring.BundleManagerFactory.time:-1}")
     private long m_time; // optional scan timer
 	private BeanFactory m_beanFactory;
+    @Autowired Environment env;
+
 	
 	private BundleManagerImpl m_bundleManager;
 
@@ -53,12 +59,19 @@ public class BundleManagerFactory implements FactoryBean<BundleManager>, BeanFac
 			} else {
 				m_bundleManager = new BundleManagerWeb();
 			}
+		}
+		return m_bundleManager;
+	}
+	
+	@PostConstruct
+	public void init() {
+		if (m_bundleManager != null) {
+			m_bundleManager.setEnvironment(env);
 			m_bundleManager.setDirectory(m_directory);
 			m_bundleManager.setTime(m_time);
 			m_bundleManager.setBeanFactory(m_beanFactory);
 			m_bundleManager.init();
 		}
-		return m_bundleManager;
 	}
 
 	@Override
