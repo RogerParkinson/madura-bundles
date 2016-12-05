@@ -15,6 +15,7 @@
             <reference t="pizzaOrderBundle" url="https://github.com/RogerParkinson/madura-perspectives/tree/master/madura-perspectives-pizzaorder"/>
             <reference t="maduraBundle" url="https://github.com/RogerParkinson/madura-bundles/tree/master/madura-bundle"/>
             <reference t="perspectivesManager" url="https://github.com/RogerParkinson/madura-perspectives/tree/master/madura-perspectives-manager"/>
+            <reference t="Spring Properties" url="https://www.javacodegeeks.com/2012/02/properties-with-spring.html"/>
 		</references>
 	</title>
 	<body>
@@ -321,8 +322,7 @@ for (BundleRoot br:bundleManager.getAvailableBundles())
 	xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-	<bean id="PropertySourcesPlaceholderConfigurer" 
-		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"/>
+	<context:property-placeholder />
 
 	<bean id="TestBean" class="nz.co.senanque.madura.bundle0.TestBeanImpl">
 		<property name="content" ref="bundleName"/>
@@ -374,6 +374,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<context:annotation-config/>
 		<context:component-scan base-package="nz.co.senanque.madura.bundle"/>
 		<bundle:component-scan base-package="nz.co.senanque.madura.test"/>
+		<context:property-placeholder location="classpath:config.properties"/>
 		<bean id="propertyConfigurer" class=
 			"org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 			<property name="location" value="classpath:config.properties"/>
@@ -476,6 +477,48 @@ public TestExportBean2 getTestExportBean2() {
 		actually only one bean, defined as <courier>exportBeanExample</courier> in the
 		application context. The bundle contexts, however, refer to this bean as <courier>exportBean</courier>.
 		In practice you don't normaly have any need for this extra name.</p>
+		</h2>
+		<h2 t="Properties">
+		<p>In the examples you have seen a file called <courier>config.properties</courier> being loaded by the Spring configuration eg:</p>
+		<code><![CDATA[
+<context:property-placeholder location="classpath:config.properties"/>
+		]]></code>
+		<p>This is standard Spring stuff. It loads the properties file in such a way that Spring can use it in various ways that are
+		better described in the Spring documentation than here. The entry in the @Configuration class does much the same:</p>
+		<code><![CDATA[
+@Configuration
+@EnableBundles
+@ComponentScan(basePackages = {
+		"nz.co.senanque.madura.bundle", "nz.co.senanque.madura.test"})
+@PropertySource("classpath:config.properties")
+public class SpringConfiguration {
+...
+		]]></code>
+		<p>By default these application level properties are not passed to the bundle. The bundle loads its own properties. But sometimes
+		you want the application properties to be used in the bundle. To do this you need to add something to your bundle manager configuration:</p>
+		<code><![CDATA[
+<context:property-placeholder location="classpath:config.properties"/>
+<util:properties id="ep" location="classpath:config.properties"/>
+<bean id="bundleManager" class="nz.co.senanque.madura.bundle.BundleManagerImpl">
+	...
+	<property name="exportedProperties" ref="ep"/>
+</bean>
+		]]></code>
+		<p>This injects the properties file into the bundle manager. Loading it with the <courier>util:properties</courier> tag is not the
+		same as loading it with the <courier>context:property-placeholder</courier> tag, so you probably need both. The result is that all bundles
+		will be able to use these properties in the usual ways.</p>
+		<p>So if you export a properties file from your application and then load another properties file in a bundle and their entries conflict
+		what happens? The answer is that it is up to you. You might add a <courier>context:property-placeholder</courier>
+		to your bundle's XML. By default Spring will override the bundle entries with the application entries.</p>
+		<p>But what if you want your bundle properties file to take precedence. Spring has made this easy. Just use:</p>
+		<code><![CDATA[
+<context:property-placeholder local-override="true" location="classpath:config.properties"/>
+		]]></code>
+		<p>That is the situation for XML. Spring handles the XML loaded properties a little differently to @PropertySource loaded properties so we need
+		to do something slightly different with bundles when you use @Configuration to load them. The good news is that it is largely
+		automatic. Properties loaded with @PropertySource are all passed to the bundles without you doing anything else. It defaults to the
+		equivalent of <courier>local-override="false"</courier> though. If you need that to be different you need to do a little more work, but
+		this is getting into Spring features and out of scope for this docuent. Take a look at <referenceLink t="Spring Properties"/> for more details.</p>
 		</h2>
 		<h2 t="Listening for Bundles">
 		<p>You can optionally listen for bundles being added or deleted. This is useful if you need your application
