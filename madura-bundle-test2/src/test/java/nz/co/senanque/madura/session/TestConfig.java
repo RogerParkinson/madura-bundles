@@ -48,7 +48,9 @@ public class TestConfig {
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
-		return new PropertySourcesPlaceholderConfigurer();
+		PropertySourcesPlaceholderConfigurer ret = new PropertySourcesPlaceholderConfigurer();
+		ret.setLocalOverride(false);
+		return ret;
 	}
 	@Bean
 	@Scope("request")
