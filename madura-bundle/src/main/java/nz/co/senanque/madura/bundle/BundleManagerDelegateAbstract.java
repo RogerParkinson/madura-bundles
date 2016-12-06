@@ -28,7 +28,7 @@ abstract class BundleManagerDelegateAbstract implements BundleManagerDelegate {
 	protected void cleanup(ClassLoader classLoader, String className, Properties properties, BundleVersion bundleVersion) 
 					throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		@SuppressWarnings("unchecked")
-		Class<BundleRoot> clazz = (Class<BundleRoot>) classLoader.loadClass(className);
+		Class<BundleRoot> clazz = (Class<BundleRoot>) classLoader.loadClass((className==null)?"nz.co.senanque.madura.bundle.BundleRootImpl":className);
 		BundleRoot root = (BundleRoot) clazz.newInstance();
 		Properties exportedProperties = new Properties();
 		Properties p = m_bundleManagerImpl.getExportedProperties();
