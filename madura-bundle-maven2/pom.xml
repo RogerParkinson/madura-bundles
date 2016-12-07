@@ -26,6 +26,12 @@
   		<artifactId>madura-bundles-test-beans</artifactId>
   		<version>${project.version}</version>
   	</dependency>
+  	<dependency>
+  		<groupId>nz.co.senanque</groupId>
+  		<artifactId>madura-resource-loader</artifactId>
+  		<version>1.3.0-SNAPSHOT</version>
+  		<scope>provided</scope>
+  	</dependency>
   </dependencies>
   <build>
     <plugins>

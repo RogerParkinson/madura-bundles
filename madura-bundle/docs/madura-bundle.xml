@@ -472,29 +472,19 @@ public TestExportBean2 getTestExportBean2() {
 	</property>
 </bean>
 		]]></code>
-		<p>This just injects a map of exported beans into the bundle manager. It does just a little more
-		than the other methods because it allows you to change the name of the exported bean. There is
-		actually only one bean, defined as <courier>exportBeanExample</courier> in the
-		application context. The bundle contexts, however, refer to this bean as <courier>exportBean</courier>.
-		In practice you don't normaly have any need for this extra name.</p>
+		<p>This just injects a map of exported beans into the bundle manager. It does just a little more than the other methods because it allows 
+		you to change the name of the exported bean. There is actually only one bean, defined as <courier>exportBeanExample</courier> in the 
+		application context. The bundle contexts, however, refer to this bean as <courier>exportBean</courier>.	In practice you don't normaly 
+		have any need for this extra name.</p>
 		</h2>
-		<h2 t="Properties">
-		<p>In the examples you have seen a file called <courier>config.properties</courier> being loaded by the Spring configuration eg:</p>
+		<h2 t="Configuring Properties">
+		<p>In several examples you have seen a file called <courier>config.properties</courier> being loaded by the Spring context eg:</p>
 		<code><![CDATA[
 <context:property-placeholder location="classpath:config.properties"/>
 		]]></code>
-		<p>This is standard Spring stuff. It loads the properties file in such a way that Spring can use it in various ways that are
-		better described in the Spring documentation than here. The entry in the @Configuration class does much the same:</p>
-		<code><![CDATA[
-@Configuration
-@EnableBundles
-@ComponentScan(basePackages = {
-		"nz.co.senanque.madura.bundle", "nz.co.senanque.madura.test"})
-@PropertySource("classpath:config.properties")
-public class SpringConfiguration {
-...
-		]]></code>
-		<p>By default these application level properties are not passed to the bundle. The bundle loads its own properties. But sometimes
+		<p>This is standard Spring. It loads the properties file in such a way that Spring can use it in various ways that are
+		better described here <referenceLink t="Spring Properties"/></p>
+		<p>By default these application level properties are not passed to the bundles. The bundle loads its own properties. But sometimes
 		you want the application properties to be used in the bundle. To do this you need to add something to your bundle manager configuration:</p>
 		<code><![CDATA[
 <context:property-placeholder location="classpath:config.properties"/>
@@ -505,20 +495,69 @@ public class SpringConfiguration {
 </bean>
 		]]></code>
 		<p>This injects the properties file into the bundle manager. Loading it with the <courier>util:properties</courier> tag is not the
-		same as loading it with the <courier>context:property-placeholder</courier> tag, so you probably need both. The result is that all bundles
+		same as loading it with the <courier>context:property-placeholder</courier> tag, so you need both. The result is that all bundles
 		will be able to use these properties in the usual ways.</p>
-		<p>So if you export a properties file from your application and then load another properties file in a bundle and their entries conflict
-		what happens? The answer is that it is up to you. You might add a <courier>context:property-placeholder</courier>
-		to your bundle's XML. By default Spring will override the bundle entries with the application entries.</p>
-		<p>But what if you want your bundle properties file to take precedence. Spring has made this easy. Just use:</p>
+		<p>That is the way to do it when configuring with XML. When using @Configuration the situation is different. Load the application properties
+		like this:</p>
+		<code><![CDATA[
+@Configuration
+@EnableBundles
+@ComponentScan(basePackages = {
+		"nz.co.senanque.madura.bundle", "nz.co.senanque.madura.test"})
+@PropertySource("classpath:config.properties")
+public class MyConfig {
+
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
+		PropertySourcesPlaceholderConfigurer ret = new PropertySourcesPlaceholderConfigurer();
+		return ret;
+	}
+	...
+		]]></code>
+		<p>This is ordinary Spring, but there is a hidden difference from the XML. These properties <emph>will</emph> be passed to the
+		bundles, which is probably what you want. Notice the static bean, you absolutely need this for the properties to work.</p>
+		<p>In both case the properties are passed to the bundle and they <emph>override</emph> any local properties of the same name the bundle might create.
+		Sometimes you do not want this, you want locals to override application properties. In XML this is simple. In the bundle
+		you just load your local properties like this:</p>
 		<code><![CDATA[
 <context:property-placeholder local-override="true" location="classpath:config.properties"/>
 		]]></code>
-		<p>That is the situation for XML. Spring handles the XML loaded properties a little differently to @PropertySource loaded properties so we need
-		to do something slightly different with bundles when you use @Configuration to load them. The good news is that it is largely
-		automatic. Properties loaded with @PropertySource are all passed to the bundles without you doing anything else. It defaults to the
-		equivalent of <courier>local-override="false"</courier> though. If you need that to be different you need to do a little more work, but
-		this is getting into Spring features and out of scope for this docuent. Take a look at <referenceLink t="Spring Properties"/> for more details.</p>
+		<p>The official equivalent in @Configuration is to do this:</p>		
+		<code><![CDATA[
+@Configuration
+@EnableBundles
+@ComponentScan(basePackages = {
+		"nz.co.senanque.madura.bundle", "nz.co.senanque.madura.test"})
+@PropertySource("classpath:config.properties")
+public class MyConfig {
+
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
+		PropertySourcesPlaceholderConfigurer ret = new PropertySourcesPlaceholderConfigurer();
+		ret.setLocalOverride(true);
+		return ret;
+	}
+	...
+		]]></code>
+		<p>This, however, does not actually work, so we provide a different @PropertySource class which can be used like this:</p>
+		<code><![CDATA[
+@Configuration
+@ComponentScan(basePackages = {
+		"nz.co.senanque.madura.b2"})
+@PropertySource(value="classpath:configb.properties", localOverride=true)
+public class Config {
+	...
+		]]></code>
+		<p>This PropertySource is <courier>nz.co.senanque.propertysource.PropertySource</courier> rather than the Spring one. And it does not
+		require the static bean that Spring does. To use it you need to add a dependency to your project:</p>
+		<code><![CDATA[
+<dependency>
+    <groupId>nz.co.senanque</groupId>
+    <artifactId>madura-resource-loader</artifactId>
+    <version>1.3.0</version>
+</dependency>
+		]]></code>
+		<p>Add this to your application and as scope=provided to your bundles.</p>
 		</h2>
 		<h2 t="Listening for Bundles">
 		<p>You can optionally listen for bundles being added or deleted. This is useful if you need your application
@@ -598,6 +637,12 @@ public class MyBeanImpl {
 		<a1 t="Release Notes">
 		<table width="12cm">
 			<tw>12cm</tw>
+        <tr>
+            <th>4.4.0</th>
+        </tr>
+        <tr>
+            <td>Added handling of local and external properties.</td>
+        </tr>
         <tr>
             <th>4.3.0</th>
         </tr>

@@ -25,11 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+//import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
+import nz.co.senanque.propertysource.PropertySource;
 
 /**
  * @author Roger Parkinson
@@ -39,7 +40,7 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 @ComponentScan(basePackages = {
 		"nz.co.senanque.madura.b2"})
-@PropertySource("classpath:configb.properties")
+@PropertySource(value="classpath:configb.properties", localOverride=true)
 public class Config {
 	
 	@Autowired
@@ -51,11 +52,11 @@ public class Config {
 	public Config() {
 		"".toString();
 	}
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
-		PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer =  new PropertySourcesPlaceholderConfigurer();
-		return propertySourcesPlaceholderConfigurer;
-	}
+//	@Bean
+//	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
+//		PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer =  new PropertySourcesPlaceholderConfigurer();
+//		return propertySourcesPlaceholderConfigurer;
+//	}
 	@Bean(name="bundleFile")
 	public StringWrapper bundleFile() {
 		StringWrapperImpl ret = new StringWrapperImpl(env.getProperty("bundle.file"));
