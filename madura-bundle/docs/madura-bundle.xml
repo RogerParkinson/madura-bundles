@@ -406,6 +406,15 @@ Class-Path: lib2/ant-optional-1.5.1.jar  lib2/antlr-2.7.6.jar lib2/aopalliance-1
 		If your bundle has dependencies that are not in the main application consider using Maven based bundles.</p>
         </h1>
 		<h1 t="Advanced Topics">
+		<h2 t="JMX">
+		<p>The Bundle Manager is exposed to JMX for several operations, notably forcing it to scan for new bundles. Details of
+		configuring a JMX in an application is beyond the scope of this document but you mostly need to just add the following
+		to your Spring context:</p>
+		<code><![CDATA[
+<bean id="mbeanServer" class="java.lang.management.ManagementFactory" lazy-init="false" factory-method="getPlatformMBeanServer"/>
+<context:mbean-export server="mbeanServer"/>
+		]]></code>
+		</h2>
 		<h2 t="Alternate Timer configurations">
 		<p>You may want to use an external scheduler to trigger the scans. This is easy to
 		configure in Spring:</p>
@@ -639,6 +648,12 @@ public class MyBeanImpl {
 			<tw>12cm</tw>
         <tr>
             <th>4.4.0</th>
+        </tr>
+        <tr>
+            <td>Added JMX functions.</td>
+        </tr>
+        <tr>
+            <td>Changed the way to configure the scan timer to simplify it.</td>
         </tr>
         <tr>
             <td>Added handling of local and external properties.</td>

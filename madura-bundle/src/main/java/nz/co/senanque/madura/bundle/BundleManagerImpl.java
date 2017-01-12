@@ -19,8 +19,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 
@@ -28,9 +26,9 @@ import nz.co.senanque.madura.bundlemap.BundleVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.env.Environment;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * This class manages multiple bundles. Each bundle is a jar file loaded under a different classloader.
@@ -42,6 +40,7 @@ import org.springframework.core.env.Environment;
  * @author Roger Parkinson
  * @version $Revision: 1.5 $
  */
+@ManagedResource(objectName = "nz.co.senanque.madura.bundle:name=BundleManager")
 public class BundleManagerImpl extends AbstractBundleManager
 {
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());
@@ -51,24 +50,8 @@ public class BundleManagerImpl extends AbstractBundleManager
 	@PostConstruct
     public void init() {
     	super.init();
-        if (getTime() > 0)
-        {
-            // we have a timer so launch it now
-            TimerTask t = new TimerTask(){
-
-                @Override
-                public void run() {
-                    scan();
-                    
-                }};
-            Timer timer = new Timer();
-            timer.schedule(t,m_time,m_time);
-        }
-        else
-        {
-            scan();
-        }
-    }
+    	scan();
+	}
     private BundleManagerDelegate getBundleManagerDelegate(File file) {
     	String fileName = file.getName().toLowerCase();
     	int i = fileName.lastIndexOf('.');
@@ -91,6 +74,27 @@ public class BundleManagerImpl extends AbstractBundleManager
 		}
 		return null;
 	}
+	@ManagedOperation(description="Show bundles")
+    public String showBundles() {
+		StringBuilder ret = new StringBuilder();
+		for (BundleVersion bundleVersion: m_bundleMap.getAvailableBundles()) {
+			ret.append(bundleVersion.getName());
+			String v = bundleVersion.getVersion();
+			if (v != null) {
+				ret.append('-');
+				ret.append(v);
+			}
+			ret.append('\n');
+		}
+    	return ret.toString();
+    }
+	@ManagedOperation(description="Reload bundles and show resulting list")
+    public String restart() {
+		shutdown();
+		init();
+    	return showBundles();
+    }
+	@ManagedOperation(description="Scan for bundles")
     public synchronized void scan()
     {
         m_logger.debug("Scanning files");

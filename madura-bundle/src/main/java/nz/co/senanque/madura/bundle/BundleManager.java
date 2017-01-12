@@ -40,4 +40,6 @@ public interface BundleManager
 
 	public abstract BundleScope getScope();
 
+	public abstract void scan() throws Exception;
+
 }

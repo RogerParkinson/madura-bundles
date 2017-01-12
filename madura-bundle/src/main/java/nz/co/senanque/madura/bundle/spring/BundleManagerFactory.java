@@ -43,8 +43,6 @@ public class BundleManagerFactory implements FactoryBean<BundleManager>, BeanFac
     private String m_type;
     @Value("${nz.co.senanque.madura.bundle.spring.BundleManagerFactory.directory:}")
     private String m_directory;
-    @Value("${nz.co.senanque.madura.bundle.spring.BundleManagerFactory.time:-1}")
-    private long m_time; // optional scan timer
 	private BeanFactory m_beanFactory;
     @Autowired Environment env;
 
@@ -68,7 +66,7 @@ public class BundleManagerFactory implements FactoryBean<BundleManager>, BeanFac
 		if (m_bundleManager != null) {
 			m_bundleManager.setEnvironment(env);
 			m_bundleManager.setDirectory(m_directory);
-			m_bundleManager.setTime(m_time);
+//			m_bundleManager.setTime(m_time);
 			m_bundleManager.setBeanFactory(m_beanFactory);
 			m_bundleManager.init();
 		}
@@ -98,14 +96,6 @@ public class BundleManagerFactory implements FactoryBean<BundleManager>, BeanFac
 
 	public void setDirectory(String directory) {
 		m_directory = directory;
-	}
-
-	public long getTime() {
-		return m_time;
-	}
-
-	public void setTime(long time) {
-		m_time = time;
 	}
 
 	@Override
