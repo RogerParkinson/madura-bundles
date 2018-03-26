@@ -1,6 +1,10 @@
 MaduraBundle
 ============
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/nz.co.senanque/madura-bundles/badge.svg)](http://mvnrepository.com/artifact/nz.co.senanque/madura-bundles)
+
+[![build_status](https://travis-ci.org/RogerParkinson/madura-bundles.svg?branch=master)](https://travis-ci.org/RogerParkinson/madura-bundles)
+
 Here's the kind of problem we're solving. Say we have a bunch of resources and code which relates to a specific set of products and we have application code which calls on the product code. We want to be able to change the products without dropping the server. Using Madura Bundle we bundle the products resources and code into a jar file. We can then arrange for that jar file to be loaded dynamically.
 
 The application code, when it wants to access the product information and code just specifies what bundle it wants to use (of the several that might be active). After that the application code doesn't know or care that it is accessing a bundle. It looks like normal code and normal resources. The bundled resources and code are actually injected into the application classes using Spring, so apart from selecting the bundle, the application code knows nothing about the bundles.

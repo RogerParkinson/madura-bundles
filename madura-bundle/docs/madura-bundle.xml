@@ -647,6 +647,12 @@ public class MyBeanImpl {
 		<table width="12cm">
 			<tw>12cm</tw>
         <tr>
+            <th>4.5.0</th>
+        </tr>
+        <tr>
+            <td>Travis build.</td>
+        </tr>
+        <tr>
             <th>4.4.0</th>
         </tr>
         <tr>
