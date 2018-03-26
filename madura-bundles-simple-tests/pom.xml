@@ -23,7 +23,7 @@
 		    <groupId>nz.co.senanque</groupId>
 		    <artifactId>madura-bundle</artifactId>
 		    <version>${project.version}</version>
-		    <scope>provided</scope>
+<!-- 		    <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
