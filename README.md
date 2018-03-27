@@ -3,6 +3,8 @@ madura-bundles
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/nz.co.senanque/madura-bundles/badge.svg)](http://mvnrepository.com/artifact/nz.co.senanque/madura-bundles)
 
+![Maven Central](https://img.shields.io/maven-central/v/nz.co.senanque/madura-bundles.svg)(http://mvnrepository.com/artifact/nz.co.senanque/madura-bundles)
+
 [![build_status](https://travis-ci.org/RogerParkinson/madura-bundles.svg?branch=master)](https://travis-ci.org/RogerParkinson/madura-bundles)
 
 This is the parent project for madura-bundle. The details of just what madura-bundle does is in the first sub-project link below. The other projects are to support testing.
