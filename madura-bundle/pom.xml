@@ -126,33 +126,6 @@
 		<defaultGoal>install</defaultGoal>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<id>attach-artifacts</id>
-						<goals>
-							<goal>attach-artifact</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<artifacts>
-						<artifact>
-							<file>${schema}</file>
-							<classifier>spring</classifier>
-							<type>xsd</type>
-						</artifact>
-						<artifact>
-							<file>${pdf}</file>
-							<type>pdf</type>
-						</artifact>
-					</artifacts>
-				</configuration>
-			</plugin>
-			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.4.3</version>
 				<executions>
@@ -392,6 +365,33 @@
 			<id>release</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<id>attach-artifacts</id>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${schema}</file>
+									<classifier>spring</classifier>
+									<type>xsd</type>
+								</artifact>
+								<artifact>
+									<file>${pdf}</file>
+									<type>pdf</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>nz.co.senanque</groupId>
 						<artifactId>maduradocs</artifactId>
