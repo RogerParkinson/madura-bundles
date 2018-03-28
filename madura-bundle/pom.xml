@@ -349,21 +349,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>nz.co.senanque</groupId>
-				<artifactId>maduradocs</artifactId>
-				<version>${maduradocs.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>pdf</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<subprojectDir>madura-bundle</subprojectDir>
-				</configuration>
-			</plugin>
 
 		</plugins>
 		<pluginManagement>
@@ -407,6 +392,22 @@
 			<id>release</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>nz.co.senanque</groupId>
+						<artifactId>maduradocs</artifactId>
+						<version>${maduradocs.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>pdf</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<subprojectDir>madura-bundle</subprojectDir>
+						</configuration>
+					</plugin>
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
