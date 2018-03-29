@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nz.co.senanque</groupId>
 	<artifactId>madura-bundles</artifactId>
-	<version>4.5.1</version>
+	<version>4.5.2-SNAPSHOT</version>
 	<name>madura-bundles</name>
 	<description>Parent project for Madura Bundles</description>
 	<packaging>pom</packaging>
