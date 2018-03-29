@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"BundleManagerTest-spring.xml"})
+@ContextConfiguration(locations={"/BundleManagerTest-spring.xml"})
 public class BundleManagerXSDTest
 {
 

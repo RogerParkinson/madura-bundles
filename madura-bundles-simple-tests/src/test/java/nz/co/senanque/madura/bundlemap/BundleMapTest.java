@@ -29,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/nz/co/senanque/madura/bundlemap/BundleMapTest-bundle.xml"})
+@ContextConfiguration(locations={"BundleMapTest-bundle.xml"})
 public class BundleMapTest {
 	
 	@Autowired private BundleMap m_bundleMap;
