@@ -1,6 +1,8 @@
 language: java
 jdk: oraclejdk8
-
+env:
+  global:
+    - T_DIR="`pwd`/travis"
 
 before_install:
 - echo $GPG_SECRET_KEYS | base64 --decode | gpg --import
@@ -11,7 +13,8 @@ install: true
 script: mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
 after_success:
-- "./travis/deploy.sh"
+   - "ls $T_DIR"
+   - "$T_DIR/deploy.sh"
 
 #deploy:
 #  provider: script
