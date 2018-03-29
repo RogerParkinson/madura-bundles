@@ -13,7 +13,6 @@ install: true
 script: mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
 after_success:
-   - "ls $T_DIR"
    - "chmod +x $T_DIR/deploy.sh"
    - "$T_DIR/deploy.sh"
 
