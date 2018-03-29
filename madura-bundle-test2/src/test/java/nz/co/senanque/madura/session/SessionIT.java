@@ -73,7 +73,7 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @WebAppConfiguration
-public class SessionIT_ {
+public class SessionIT {
 
 	private Logger m_logger = LoggerFactory.getLogger(this.getClass());
 
