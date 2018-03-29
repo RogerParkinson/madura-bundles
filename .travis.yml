@@ -12,12 +12,3 @@ install: true
 
 script: mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
-after_success:
-   - "chmod +x $T_DIR/deploy.sh"
-   - "$T_DIR/deploy.sh"
-
-#deploy:
-#  provider: script
-#  script: "mvn versions:set -DnewVersion=${TRAVIS_TAG} && mvn deploy --settings travis/settings.xml -DskipITs=true -DskipTests=true -B -U -P release"
-#  on:
-#    tags: true
