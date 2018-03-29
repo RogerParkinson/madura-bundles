@@ -11,7 +11,7 @@ install: true
 script: mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
 after_success:
-- "travis/deploy.sh"
+- "./travis/deploy.sh"
 
 #deploy:
 #  provider: script
