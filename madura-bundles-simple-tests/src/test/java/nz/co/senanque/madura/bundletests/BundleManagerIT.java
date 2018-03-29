@@ -55,7 +55,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/BundleManagerTest-bundle.xml"})
-public class BundleManagerTest
+public class BundleManagerIT
 {
     
     private Logger m_logger = LoggerFactory.getLogger(this.getClass());

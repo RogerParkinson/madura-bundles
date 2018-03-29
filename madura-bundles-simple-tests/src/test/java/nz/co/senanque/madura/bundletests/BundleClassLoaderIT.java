@@ -33,7 +33,7 @@ import org.junit.Test;
  * @author Roger Parkinson
  *
  */
-public class BundleClassLoaderTest {
+public class BundleClassLoaderIT {
 
 	@Test
 	public void test() throws Exception {
