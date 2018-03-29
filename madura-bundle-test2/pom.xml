@@ -8,6 +8,9 @@
 	<artifactId>madura-bundle-test2</artifactId>
 	<name>madura-bundle-test2</name>
 	<description>Project that tests using madura-bundles-maven2 and madura-bundles-maven3 also using multiple sessions.</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

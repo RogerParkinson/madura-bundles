@@ -8,6 +8,9 @@
 	<artifactId>madura-bundle-test</artifactId>
 	<name>madura-bundle-test</name>
 	<description>Project that tests using the first maven bundle (madura-bundle-maven)</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
