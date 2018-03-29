@@ -7,8 +7,18 @@ env:
 before_install:
 - echo $GPG_SECRET_KEYS | base64 --decode | gpg --import
 - echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
+- chmod +x $T_DIR/deploy.sh
 
 install: true
 
 script: mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
+deploy:
+  -
+    provider: script
+    script: $T_DIR/deploy.sh
+    skip_cleanup: true
+    on:
+      repo: RogerParkinson/madura-bundles
+      tags: true
+      jdk: oraclejdk8
