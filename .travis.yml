@@ -6,12 +6,12 @@ before_install:
 - echo $GPG_SECRET_KEYS | base64 --decode | gpg --import
 - echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
 
-install: mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
+install: mvn --settings travis/settings.xml clean install -DskipITs=true -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
-script: mvn --settings travis/settings.xml clean -DskipITs=true -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
+script: mvn --settings travis/settings.xml test -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
 deploy:
   provider: script
-  script: "mvn versions:set -DnewVersion=${TRAVIS_TAG} && mvn clean deploy -DskipITs=true -DskipTests=true -B -U -P release --settings travis/settings.xml"
+  script: "mvn versions:set -DnewVersion=${TRAVIS_TAG} && mvn deploy -DskipITs=true -DskipTests=true -B -U -P release --settings travis/settings.xml"
   on:
     tags: true
