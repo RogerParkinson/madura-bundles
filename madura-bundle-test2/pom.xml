@@ -89,6 +89,7 @@
 		  <artifactId>maven-failsafe-plugin</artifactId>
 		  <version>2.12.4</version>
 	        <configuration>
+	        <forkCount>0</forkCount>
 	          <skipTests>${skipITs}</skipTests>
 	        </configuration>
 		  <executions>
