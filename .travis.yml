@@ -11,12 +11,13 @@ before_install:
 
 install: true
 
-script: mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
+script: 
+  mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
 deploy:
   -
     provider: script
-    script: $T_DIR/deploy.sh
+    script: "mvn versions:set -DnewVersion=${TRAVIS_TAG} && mvn clean deploy -DskipTests=true -B -U -P release --settings travis/settings.xml"
     skip_cleanup: true
     on:
       repo: RogerParkinson/madura-bundles
