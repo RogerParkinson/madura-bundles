@@ -7,7 +7,7 @@ before_install:
 
 install: mvn --settings travis/settings.xml install -skipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
-script: mvn --settings travis/settings.xml test -B
+script: mvn --settings travis/settings.xml clean test -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
 deploy:
   provider: script
