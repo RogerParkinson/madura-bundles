@@ -1,25 +1,16 @@
 language: java
 jdk: oraclejdk8
-env:
-  global:
-    - T_DIR="`pwd`/travis"
+
 
 before_install:
 - echo $GPG_SECRET_KEYS | base64 --decode | gpg --import
 - echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
-- chmod +x $T_DIR/deploy.sh
 
-install: true
+install: mvn --settings travis/settings.xml install -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
-script: 
-  mvn --settings travis/settings.xml clean install -DskipITs=false -DskipTests=false -Dgpg.skip -Dmaven.javadoc.skip=true  -B -V
 
 deploy:
-  -
-    provider: script
-    script: "mvn versions:set -DnewVersion=${TRAVIS_TAG} && mvn clean deploy -DskipTests=true -B -U -P release --settings travis/settings.xml"
-    skip_cleanup: true
-    on:
-      repo: RogerParkinson/madura-bundles
-      tags: true
-      jdk: oraclejdk8
+  provider: script
+  script: "mvn versions:set -DnewVersion=${TRAVIS_TAG} && mvn clean deploy -B -U -P release --settings travis/settings.xml"
+  on:
+    tags: true
