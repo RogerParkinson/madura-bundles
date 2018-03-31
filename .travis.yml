@@ -13,6 +13,6 @@ script:
 deploy:
   -
     provider: script
-    script: "mvn --settings travis/settings.xml versions:set -DnewVersion=${TRAVIS_TAG} && mvn --settings travis/settings.xml clean deploy -DskipITs=false -DskipTests=true -B -U -P release"
+    script: "mvn --settings travis/settings.xml versions:set -DnewVersion=${TRAVIS_TAG} && mvn --settings travis/settings.xml clean deploy -DskipITs=true -DskipTests=true -B -U -P release"
     on:
       tags: true
