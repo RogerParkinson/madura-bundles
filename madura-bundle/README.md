@@ -1,4 +1,4 @@
-MaduraBundle
+madura-bundle
 ============
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/nz.co.senanque/madura-bundles/badge.svg)](http://mvnrepository.com/artifact/nz.co.senanque/madura-bundles)
@@ -17,10 +17,10 @@ A second key difference between this and OSGi is that the bundles can be loaded 
 
 There are two general ways to use Madura Bundles. You can implement a bundle listener. In this you write a listener that will be called whenever a new bundle arrives or is removed from the system. Your listener then locates the relevant beans in the bundle and puts them in some structure you define such as a list. Your application then scans this list for functions. You might use this in the following situations: 
 
-*You have a list of validation operations that your application needs to call at a certain stage and you want to vary them dynamically. By deploying them in bundles with a bundle listener your
+ * You have a list of validation operations that your application needs to call at a certain stage and you want to vary them dynamically. By deploying them in bundles with a bundle listener your
 application can register new validation operations as they are added (and remove them if they are deleted).
 
-*You have various UI components you want to register in a container application. The components might be menu items, with the code to run if they are picked, forms to appear etc. These can be
+ * You have various UI components you want to register in a container application. The components might be menu items, with the code to run if they are picked, forms to appear etc. These can be
 delivered to the application as bundles which, as they register themselves with the application, add their various components to the UI.
 
 Rather than write a bundle listener you can, in simpler cases, just query the bundle manager for beans of a given type. All beans of that type in all the current bundles will be returned.
