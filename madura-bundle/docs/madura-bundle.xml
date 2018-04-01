@@ -647,7 +647,13 @@ public class MyBeanImpl {
 		<table width="12cm">
 			<tw>12cm</tw>
         <tr>
-            <th>4.5.0</th>
+            <th>4.5.9</th>
+        </tr>
+        <tr>
+            <td>Using new Maduradocs which generates better change log.</td>
+        </tr>
+        <tr>
+            <th>4.5.0...</th>
         </tr>
         <tr>
             <td>Travis build.</td>
