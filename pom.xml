@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nz.co.senanque</groupId>
 	<artifactId>madura-bundles</artifactId>
-	<version>4.5.2-SNAPSHOT</version>
+	<version>4.5.9-SNAPSHOT</version>
 	<name>madura-bundles</name>
 	<description>Parent project for Madura Bundles</description>
 	<packaging>pom</packaging>
@@ -45,7 +45,7 @@
 		<slf4j.version>1.7.12</slf4j.version>
 		<mavenVersion>3.1.0</mavenVersion>
 		<skipITs>false</skipITs>
-		<maduradocs.version>6.2.1</maduradocs.version>
+		<maduradocs.version>6.3.2</maduradocs.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

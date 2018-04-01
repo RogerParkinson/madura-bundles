@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>nz.co.senanque</groupId>
 		<artifactId>madura-bundles</artifactId>
-		<version>4.5.2-SNAPSHOT</version>
+		<version>4.5.9-SNAPSHOT</version>
 	</parent>
 	<artifactId>madura-bundle</artifactId>
 	<name>madura-bundle</name>
@@ -210,8 +210,23 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
+				</plugin>
+						<plugin>
+							<groupId>nz.co.senanque</groupId>
+							<artifactId>maduradocs</artifactId>
+							<version>${maduradocs.version}</version>
+							<executions>
+								<execution>
+									<goals>
+										<goal>pdf</goal>
+									</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<subprojectDir>madura-bundle</subprojectDir>
+							</configuration>
+						</plugin>
+				<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
 				<executions>
@@ -390,21 +405,6 @@
 									<type>pdf</type>
 								</artifact>
 							</artifacts>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>nz.co.senanque</groupId>
-						<artifactId>maduradocs</artifactId>
-						<version>${maduradocs.version}</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>pdf</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<subprojectDir>madura-bundle</subprojectDir>
 						</configuration>
 					</plugin>
 
